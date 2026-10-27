@@ -1,0 +1,129 @@
+{
+  "release": "1.0.2",
+  "engine": "1.1.0",
+  "review_context_date": "2026-10-26",
+  "input_archive_sha256": "eaef04661ef60ee12a5ef6d8efda36abdf2da49dbdf7936c5cefd2ab1b1d1e6e",
+  "unit_tests": {
+    "passed": 78,
+    "suites": 11,
+    "log": "logs/redesign_unit_tests.log"
+  },
+  "typecheck_and_build": "passed",
+  "packaged_resource_harness": {
+    "status": "passed",
+    "scope": "HTTP resources and generated service-worker API harness; not a live browser",
+    "buildId": "fc6eb4c23115d19b",
+    "assets": 11,
+    "offlineResourcesVerified": 11,
+    "crossOriginIgnored": true
+  },
+  "live_browser": {
+    "status": "passed scoped interactive development-preview checks",
+    "log": "logs/redesign_browser_qa.md",
+    "checks": [
+      "library and filter",
+      "save/immediate navigation/resume",
+      "report depth consistency",
+      "project JSON export/reopen",
+      "CSV import and 1.5625% control",
+      "Case D six covered and zero absent windows",
+      "worker search and applying a candidate",
+      "light and dark appearances",
+      "375px and 768px library containment",
+      "375px workspace inputs and report containment",
+      "CSV focus trap, Escape, and focus restoration",
+      "teacher guide navigation"
+    ],
+    "not_verified": [
+      "real production browser offline reload",
+      "offline worker in a real browser",
+      "OS print/PDF dialog",
+      "all browsers and assistive technologies"
+    ],
+    "production_browser_runner": "not executed in this environment"
+  },
+  "independent_student_contribution": "not established by this repair; supplied ledger retained",
+  "canonical_dataset_sha256": {
+    "case_a_kepler8b.json": "ba188e8782ff0be96198b66424302c17a4f68a7cc472b7b1a2e4778312c48bf8",
+    "case_b_eclipsing_binary.json": "a374184d137bed94ed8b59421c7ca779a8ef098f1c838e78ea85feae72aadd0c",
+    "case_c_single_dropout.json": "d472c1dde4827b3d7ae5a5a7272a9fbc4e3548d39f4aa760c1d2b20d10adc12d",
+    "case_d_injection.json": "e0aa16ce1b07d26c9be4e728bdc549657db29df8a59de8c4807c51717ea6c7f8"
+  },
+  "base_release": "1.0.1",
+  "base_release_archive_sha256": "9b20cc1222d6bf43033494f2e8f5f1db434016395b6f0d7e61758dc7422056cc",
+  "visual_references": [
+    "https://linear.app/now/how-we-redesigned-the-linear-ui",
+    "https://observablehq.github.io/plot/",
+    "https://science.nasa.gov/eyes/"
+  ],
+  "scientific_engine_byte_identical_to_1_0_1": true,
+  "curated_data_byte_identical_to_1_0_1": true,
+  "source_fits_unchanged": [
+    {
+      "path": "scripts/source_data/kplr006922244-2009166043257_llc.fits",
+      "sha256": "5bc32df02be34ddacb6d95d5e2d0689623bae753f0d989639deeb4c1e5db61ed",
+      "byte_identical": true
+    }
+  ],
+  "copy_polish": {
+    "changes": "Removed account/browser tagline, sidebar slogans and promotional phrasing; retained layout and scientific functionality.",
+    "build": "passed",
+    "packaged_resources": {
+      "status": "passed",
+      "scope": "HTTP resources and generated service-worker API harness; not a live browser",
+      "buildId": "54c67d47bcb46e73",
+      "assets": 11,
+      "offlineResourcesVerified": 11,
+      "crossOriginIgnored": true
+    }
+  },
+  "teacher_guide_update": {
+    "date": "2026-10-26",
+    "input_archive_sha256": "f0f61e0fd78d516631c463cb67f97e79954a753f973f63aa7d1bf4ad3ff185c7",
+    "unit_tests": {
+      "passed": 78,
+      "suites": 11,
+      "log": "logs/teacher_guide_tests.log"
+    },
+    "typecheck_and_build": "passed",
+    "build_log": "logs/teacher_guide_build.log",
+    "packaged_resource_harness": {
+      "status": "passed",
+      "scope": "HTTP resources and generated service-worker API harness; not a live browser",
+      "buildId": "8f33b94ced2cdac0",
+      "assets": 11,
+      "offlineResourcesVerified": 11,
+      "crossOriginIgnored": true
+    },
+    "browser_checks": [
+      "Desktop light and dark theme visual review",
+      "All four notes start collapsed and reveal distinct case discussions",
+      "Enter opens and Space closes the first case note",
+      "Key terms anchor navigation and return to library",
+      "375px and 768px iframe viewports: no horizontal overflow",
+      "Expanded case notes fit phone and tablet viewports"
+    ],
+    "browser_scope": "Interactive development preview. Production HTTP and service-worker API harness also passed.",
+    "not_retested": [
+      "Real production browser offline reload",
+      "OS print dialog",
+      "Destructive data-clear action"
+    ],
+    "protected_files_byte_identical_to_input": [
+      "src/engine/folding.ts",
+      "src/engine/evidence.ts",
+      "src/engine/fit.ts",
+      "src/engine/search.ts",
+      "src/engine/hash.ts",
+      "src/engine/normalization.ts",
+      "src/engine/analysis.ts",
+      "public/data/case_d_injection.json",
+      "public/data/case_b_eclipsing_binary.json",
+      "public/data/case_a_kepler8b.json",
+      "public/data/case_c_single_dropout.json",
+      "scripts/source_data/kplr006922244-2009166043257_llc.fits"
+    ],
+    "current_browser_log": "logs/teacher_guide_browser_qa.md",
+    "prior_screenshots": "Historical; docs/screenshots predates this guide update"
+  }
+}

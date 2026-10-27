@@ -1,0 +1,8122 @@
+{
+  "manifest": {
+    "id": "case_c_single_dropout",
+    "version": "1.0.0",
+    "title": "One Dip, Many Illusions: The Gap Trap",
+    "subtitle": "Synthetic simulation of a single transit event surrounded by large telescope gaps",
+    "kind": "synthetic",
+    "mission": "simulation",
+    "targetId": "SIM-MONO-2099",
+    "sourceUrl": null,
+    "sourceProductId": "dimminglab_sim_v1_mono_seed99",
+    "retrievedAt": "2026-10-26T20:50:00Z",
+    "sourceSha256": null,
+    "canonicalDataSha256": "d472c1dde4827b3d7ae5a5a7272a9fbc4e3548d39f4aa760c1d2b20d10adc12d",
+    "timeFormat": "relative_days",
+    "timeReference": "Simulated Days",
+    "fluxUnit": "Normalized Relative Flux",
+    "segmentPolicy": "Gapped observations (chunks across 45-day window)",
+    "qualityPolicy": "Simulated cadences with observational gaps",
+    "preparationSteps": [
+      "Simulated a single transit-like dip at day 115.0 (depth 1.2%, duration 4.5 hours)",
+      "Inserted extensive telescope observation gaps (gaps between days 106-113, 117-124, 128-138)",
+      "Injected Gaussian noise (sigma=1800 ppm, seed=99)"
+    ],
+    "attribution": "DimmingLab Astronomical Simulator v1.0",
+    "reuseNotes": "Synthetically generated teaching benchmark.",
+    "simulatorVersion": "1.0.0",
+    "seed": 99,
+    "pointCount": 1008,
+    "timeSpanDays": 45.0
+  },
+  "teaching": {
+    "suggestedPeriodDays": 3.75,
+    "suggestedEpochDays": 115.0,
+    "suggestedDurationHours": 4.5,
+    "learningGoal": "Discover how a single real dip can fold neatly on multiple arbitrary trial periods when gaps hide missing events.",
+    "skillPracticed": "Distinguishing folded alignment from genuine repetition in the time domain",
+    "approximateMinutes": 10,
+    "guidedQuestions": [
+      "If you fold this dataset at P = 3.75 days, the phase plot shows a neat dip at phase 0. Does that mean it repeats every 3.75 days?",
+      "Look at the Repetition and Sampling Gaps evidence cards. How many distinct events were actually observed?",
+      "Why is checking the time-series chart essential before claiming a periodic exoplanet?"
+    ],
+    "explanationSummary": "Because of telescope gaps, a single dip at day 115 folds into an apparently convincing dip at P = 3.75 days, P = 5.00 days, or other trial periods. However, the Repetition card warns that only 1 single event exists. A single event cannot confirm periodicity without observing subsequent transits.",
+    "teacherAnswerReveal": {
+      "astronomicalContext": "Mono-transits occur when only one transit is captured during a mission window.",
+      "catalogIdentifier": "Simulated Mono-Transit SIM-MONO-2099",
+      "trueNature": "Single transient event or long-period candidate (P > 45 days)",
+      "evidenceEvaluation": "The Repetition test reports exactly 1 observed event out of 12 predicted windows. The Sampling Gaps test shows >70% of predicted transit windows were unsampled. Periodicity is unproven.",
+      "alternativeExplanations": [
+        "Long-period exoplanet with P > 45 days whose next transit occurred after observations ended.",
+        "Instrumental dropout, cosmic ray hit, or asteroid transit."
+      ]
+    }
+  },
+  "points": [
+    {
+      "time": 100.0,
+      "flux": 0.999744,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 0
+    },
+    {
+      "time": 100.020906,
+      "flux": 1.003703,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 1
+    },
+    {
+      "time": 100.041812,
+      "flux": 1.00051,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 2
+    },
+    {
+      "time": 100.062718,
+      "flux": 1.002394,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 3
+    },
+    {
+      "time": 100.083624,
+      "flux": 0.999722,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 4
+    },
+    {
+      "time": 100.10453,
+      "flux": 0.999876,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 5
+    },
+    {
+      "time": 100.125436,
+      "flux": 1.001359,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 6
+    },
+    {
+      "time": 100.146341,
+      "flux": 1.001486,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 7
+    },
+    {
+      "time": 100.167247,
+      "flux": 0.999796,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 8
+    },
+    {
+      "time": 100.188153,
+      "flux": 0.995738,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 9
+    },
+    {
+      "time": 100.209059,
+      "flux": 0.999699,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 10
+    },
+    {
+      "time": 100.229965,
+      "flux": 1.001234,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 11
+    },
+    {
+      "time": 100.250871,
+      "flux": 1.000042,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 12
+    },
+    {
+      "time": 100.271777,
+      "flux": 1.000821,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 13
+    },
+    {
+      "time": 100.292683,
+      "flux": 1.000487,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 14
+    },
+    {
+      "time": 100.313589,
+      "flux": 0.997417,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 15
+    },
+    {
+      "time": 100.334495,
+      "flux": 1.001589,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 16
+    },
+    {
+      "time": 100.355401,
+      "flux": 0.998956,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 17
+    },
+    {
+      "time": 100.376307,
+      "flux": 0.999097,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 18
+    },
+    {
+      "time": 100.397213,
+      "flux": 1.001064,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 19
+    },
+    {
+      "time": 100.418118,
+      "flux": 0.998683,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 20
+    },
+    {
+      "time": 100.439024,
+      "flux": 1.000471,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 21
+    },
+    {
+      "time": 100.45993,
+      "flux": 0.99846,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 22
+    },
+    {
+      "time": 100.480836,
+      "flux": 0.999662,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 23
+    },
+    {
+      "time": 100.501742,
+      "flux": 0.999328,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 24
+    },
+    {
+      "time": 100.522648,
+      "flux": 0.999168,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 25
+    },
+    {
+      "time": 100.543554,
+      "flux": 0.99853,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 26
+    },
+    {
+      "time": 100.56446,
+      "flux": 0.999919,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 27
+    },
+    {
+      "time": 100.585366,
+      "flux": 1.000218,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 28
+    },
+    {
+      "time": 100.606272,
+      "flux": 1.001667,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 29
+    },
+    {
+      "time": 100.627178,
+      "flux": 0.998967,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 30
+    },
+    {
+      "time": 100.648084,
+      "flux": 1.000095,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 31
+    },
+    {
+      "time": 100.66899,
+      "flux": 1.003973,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 32
+    },
+    {
+      "time": 100.689895,
+      "flux": 1.000705,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 33
+    },
+    {
+      "time": 100.710801,
+      "flux": 1.000869,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 34
+    },
+    {
+      "time": 100.731707,
+      "flux": 1.00078,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 35
+    },
+    {
+      "time": 100.752613,
+      "flux": 0.996932,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 36
+    },
+    {
+      "time": 100.773519,
+      "flux": 0.999561,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 37
+    },
+    {
+      "time": 100.794425,
+      "flux": 0.996149,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 38
+    },
+    {
+      "time": 100.815331,
+      "flux": 1.00155,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 39
+    },
+    {
+      "time": 100.836237,
+      "flux": 1.003061,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 40
+    },
+    {
+      "time": 100.857143,
+      "flux": 0.999048,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 41
+    },
+    {
+      "time": 100.878049,
+      "flux": 1.003174,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 42
+    },
+    {
+      "time": 100.898955,
+      "flux": 0.997981,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 43
+    },
+    {
+      "time": 100.919861,
+      "flux": 0.997855,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 44
+    },
+    {
+      "time": 100.940767,
+      "flux": 1.000995,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 45
+    },
+    {
+      "time": 100.961672,
+      "flux": 0.998531,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 46
+    },
+    {
+      "time": 100.982578,
+      "flux": 0.999106,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 47
+    },
+    {
+      "time": 101.003484,
+      "flux": 1.001955,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 48
+    },
+    {
+      "time": 101.02439,
+      "flux": 0.998246,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 49
+    },
+    {
+      "time": 101.045296,
+      "flux": 0.999492,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 50
+    },
+    {
+      "time": 101.066202,
+      "flux": 0.999789,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 51
+    },
+    {
+      "time": 101.087108,
+      "flux": 1.000681,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 52
+    },
+    {
+      "time": 101.108014,
+      "flux": 1.001318,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 53
+    },
+    {
+      "time": 101.12892,
+      "flux": 0.999814,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 54
+    },
+    {
+      "time": 101.149826,
+      "flux": 0.997842,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 55
+    },
+    {
+      "time": 101.170732,
+      "flux": 1.001818,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 56
+    },
+    {
+      "time": 101.191638,
+      "flux": 1.005176,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 57
+    },
+    {
+      "time": 101.212544,
+      "flux": 1.001477,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 58
+    },
+    {
+      "time": 101.233449,
+      "flux": 1.001009,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 59
+    },
+    {
+      "time": 101.254355,
+      "flux": 0.999324,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 60
+    },
+    {
+      "time": 101.275261,
+      "flux": 0.999546,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 61
+    },
+    {
+      "time": 101.296167,
+      "flux": 0.997499,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 62
+    },
+    {
+      "time": 101.317073,
+      "flux": 1.001111,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 63
+    },
+    {
+      "time": 101.337979,
+      "flux": 0.999756,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 64
+    },
+    {
+      "time": 101.358885,
+      "flux": 1.002318,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 65
+    },
+    {
+      "time": 101.379791,
+      "flux": 0.998133,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 66
+    },
+    {
+      "time": 101.400697,
+      "flux": 1.002456,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 67
+    },
+    {
+      "time": 101.421603,
+      "flux": 0.999442,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 68
+    },
+    {
+      "time": 101.442509,
+      "flux": 0.9989,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 69
+    },
+    {
+      "time": 101.463415,
+      "flux": 0.99913,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 70
+    },
+    {
+      "time": 101.484321,
+      "flux": 0.998904,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 71
+    },
+    {
+      "time": 101.505226,
+      "flux": 0.996241,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 72
+    },
+    {
+      "time": 101.526132,
+      "flux": 1.001151,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 73
+    },
+    {
+      "time": 101.547038,
+      "flux": 1.001394,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 74
+    },
+    {
+      "time": 101.567944,
+      "flux": 1.002301,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 75
+    },
+    {
+      "time": 101.58885,
+      "flux": 1.001269,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 76
+    },
+    {
+      "time": 101.609756,
+      "flux": 1.001181,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 77
+    },
+    {
+      "time": 101.630662,
+      "flux": 0.996979,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 78
+    },
+    {
+      "time": 101.651568,
+      "flux": 1.00033,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 79
+    },
+    {
+      "time": 101.672474,
+      "flux": 0.99796,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 80
+    },
+    {
+      "time": 101.69338,
+      "flux": 0.999498,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 81
+    },
+    {
+      "time": 101.714286,
+      "flux": 1.002514,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 82
+    },
+    {
+      "time": 101.735192,
+      "flux": 1.000058,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 83
+    },
+    {
+      "time": 101.756098,
+      "flux": 0.995295,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 84
+    },
+    {
+      "time": 101.777003,
+      "flux": 0.998197,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 85
+    },
+    {
+      "time": 101.797909,
+      "flux": 0.998978,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 86
+    },
+    {
+      "time": 101.818815,
+      "flux": 0.999594,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 87
+    },
+    {
+      "time": 101.839721,
+      "flux": 1.001688,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 88
+    },
+    {
+      "time": 101.860627,
+      "flux": 1.001506,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 89
+    },
+    {
+      "time": 101.881533,
+      "flux": 1.001462,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 90
+    },
+    {
+      "time": 101.902439,
+      "flux": 1.000418,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 91
+    },
+    {
+      "time": 101.923345,
+      "flux": 0.999469,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 92
+    },
+    {
+      "time": 101.944251,
+      "flux": 0.999349,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 93
+    },
+    {
+      "time": 101.965157,
+      "flux": 1.000778,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 94
+    },
+    {
+      "time": 101.986063,
+      "flux": 1.001681,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 95
+    },
+    {
+      "time": 102.006969,
+      "flux": 1.002795,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 96
+    },
+    {
+      "time": 102.027875,
+      "flux": 1.000169,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 97
+    },
+    {
+      "time": 102.04878,
+      "flux": 1.000531,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 98
+    },
+    {
+      "time": 102.069686,
+      "flux": 1.002674,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 99
+    },
+    {
+      "time": 102.090592,
+      "flux": 0.998044,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 100
+    },
+    {
+      "time": 102.111498,
+      "flux": 1.001478,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 101
+    },
+    {
+      "time": 102.132404,
+      "flux": 0.998582,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 102
+    },
+    {
+      "time": 102.15331,
+      "flux": 1.002869,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 103
+    },
+    {
+      "time": 102.174216,
+      "flux": 1.002531,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 104
+    },
+    {
+      "time": 102.195122,
+      "flux": 1.002961,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 105
+    },
+    {
+      "time": 102.216028,
+      "flux": 1.002775,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 106
+    },
+    {
+      "time": 102.236934,
+      "flux": 1.001513,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 107
+    },
+    {
+      "time": 102.25784,
+      "flux": 0.998158,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 108
+    },
+    {
+      "time": 102.278746,
+      "flux": 1.000891,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 109
+    },
+    {
+      "time": 102.299652,
+      "flux": 1.001612,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 110
+    },
+    {
+      "time": 102.320557,
+      "flux": 1.000859,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 111
+    },
+    {
+      "time": 102.341463,
+      "flux": 0.999794,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 112
+    },
+    {
+      "time": 102.362369,
+      "flux": 1.000282,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 113
+    },
+    {
+      "time": 102.383275,
+      "flux": 1.000698,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 114
+    },
+    {
+      "time": 102.404181,
+      "flux": 0.998153,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 115
+    },
+    {
+      "time": 102.425087,
+      "flux": 1.001222,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 116
+    },
+    {
+      "time": 102.445993,
+      "flux": 1.000999,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 117
+    },
+    {
+      "time": 102.466899,
+      "flux": 0.999763,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 118
+    },
+    {
+      "time": 102.487805,
+      "flux": 1.001202,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 119
+    },
+    {
+      "time": 102.508711,
+      "flux": 1.002095,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 120
+    },
+    {
+      "time": 102.529617,
+      "flux": 0.99817,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 121
+    },
+    {
+      "time": 102.550523,
+      "flux": 1.002647,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 122
+    },
+    {
+      "time": 102.571429,
+      "flux": 1.001829,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 123
+    },
+    {
+      "time": 102.592334,
+      "flux": 1.001811,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 124
+    },
+    {
+      "time": 102.61324,
+      "flux": 1.001795,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 125
+    },
+    {
+      "time": 102.634146,
+      "flux": 1.001286,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 126
+    },
+    {
+      "time": 102.655052,
+      "flux": 1.000001,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 127
+    },
+    {
+      "time": 102.675958,
+      "flux": 0.99868,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 128
+    },
+    {
+      "time": 102.696864,
+      "flux": 1.000922,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 129
+    },
+    {
+      "time": 102.71777,
+      "flux": 1.000239,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 130
+    },
+    {
+      "time": 102.738676,
+      "flux": 0.998751,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 131
+    },
+    {
+      "time": 102.759582,
+      "flux": 1.003167,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 132
+    },
+    {
+      "time": 102.780488,
+      "flux": 1.001513,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 133
+    },
+    {
+      "time": 102.801394,
+      "flux": 0.99944,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 134
+    },
+    {
+      "time": 102.8223,
+      "flux": 0.997166,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 135
+    },
+    {
+      "time": 102.843206,
+      "flux": 0.998491,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 136
+    },
+    {
+      "time": 102.864111,
+      "flux": 1.000879,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 137
+    },
+    {
+      "time": 102.885017,
+      "flux": 0.999536,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 138
+    },
+    {
+      "time": 102.905923,
+      "flux": 0.997629,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 139
+    },
+    {
+      "time": 102.926829,
+      "flux": 1.00048,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 140
+    },
+    {
+      "time": 102.947735,
+      "flux": 0.999714,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 141
+    },
+    {
+      "time": 102.968641,
+      "flux": 0.999275,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 142
+    },
+    {
+      "time": 102.989547,
+      "flux": 0.997759,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 143
+    },
+    {
+      "time": 103.010453,
+      "flux": 1.000602,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 144
+    },
+    {
+      "time": 103.031359,
+      "flux": 0.998069,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 145
+    },
+    {
+      "time": 103.052265,
+      "flux": 0.999617,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 146
+    },
+    {
+      "time": 103.073171,
+      "flux": 1.002089,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 147
+    },
+    {
+      "time": 103.094077,
+      "flux": 1.00224,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 148
+    },
+    {
+      "time": 103.114983,
+      "flux": 0.999769,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 149
+    },
+    {
+      "time": 103.135889,
+      "flux": 0.994457,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 150
+    },
+    {
+      "time": 103.156794,
+      "flux": 1.001359,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 151
+    },
+    {
+      "time": 103.1777,
+      "flux": 0.998328,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 152
+    },
+    {
+      "time": 103.198606,
+      "flux": 0.997492,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 153
+    },
+    {
+      "time": 103.219512,
+      "flux": 1.001332,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 154
+    },
+    {
+      "time": 103.240418,
+      "flux": 0.99667,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 155
+    },
+    {
+      "time": 103.261324,
+      "flux": 1.001282,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 156
+    },
+    {
+      "time": 103.28223,
+      "flux": 1.001629,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 157
+    },
+    {
+      "time": 103.303136,
+      "flux": 1.000905,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 158
+    },
+    {
+      "time": 103.324042,
+      "flux": 1.000377,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 159
+    },
+    {
+      "time": 103.344948,
+      "flux": 0.999798,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 160
+    },
+    {
+      "time": 103.365854,
+      "flux": 0.999129,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 161
+    },
+    {
+      "time": 103.38676,
+      "flux": 0.998052,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 162
+    },
+    {
+      "time": 103.407666,
+      "flux": 1.004263,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 163
+    },
+    {
+      "time": 103.428571,
+      "flux": 0.9992,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 164
+    },
+    {
+      "time": 103.449477,
+      "flux": 0.998338,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 165
+    },
+    {
+      "time": 103.470383,
+      "flux": 0.999832,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 166
+    },
+    {
+      "time": 103.491289,
+      "flux": 1.00104,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 167
+    },
+    {
+      "time": 103.512195,
+      "flux": 1.001837,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 168
+    },
+    {
+      "time": 103.533101,
+      "flux": 0.99959,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 169
+    },
+    {
+      "time": 103.554007,
+      "flux": 0.999657,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 170
+    },
+    {
+      "time": 103.574913,
+      "flux": 0.998558,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 171
+    },
+    {
+      "time": 103.595819,
+      "flux": 0.999539,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 172
+    },
+    {
+      "time": 103.616725,
+      "flux": 1.001558,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 173
+    },
+    {
+      "time": 103.637631,
+      "flux": 0.999888,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 174
+    },
+    {
+      "time": 103.658537,
+      "flux": 0.999339,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 175
+    },
+    {
+      "time": 103.679443,
+      "flux": 1.000308,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 176
+    },
+    {
+      "time": 103.700348,
+      "flux": 0.998593,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 177
+    },
+    {
+      "time": 103.721254,
+      "flux": 0.996117,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 178
+    },
+    {
+      "time": 103.74216,
+      "flux": 0.999124,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 179
+    },
+    {
+      "time": 103.763066,
+      "flux": 0.99462,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 180
+    },
+    {
+      "time": 103.783972,
+      "flux": 0.999524,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 181
+    },
+    {
+      "time": 103.804878,
+      "flux": 1.000741,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 182
+    },
+    {
+      "time": 103.825784,
+      "flux": 1.001778,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 183
+    },
+    {
+      "time": 103.84669,
+      "flux": 1.000954,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 184
+    },
+    {
+      "time": 103.867596,
+      "flux": 1.000065,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 185
+    },
+    {
+      "time": 103.888502,
+      "flux": 0.998154,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 186
+    },
+    {
+      "time": 103.909408,
+      "flux": 0.998022,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 187
+    },
+    {
+      "time": 103.930314,
+      "flux": 0.999622,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 188
+    },
+    {
+      "time": 103.95122,
+      "flux": 0.998443,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 189
+    },
+    {
+      "time": 103.972125,
+      "flux": 0.998268,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 190
+    },
+    {
+      "time": 103.993031,
+      "flux": 1.00008,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 191
+    },
+    {
+      "time": 104.013937,
+      "flux": 0.998467,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 192
+    },
+    {
+      "time": 104.034843,
+      "flux": 0.99673,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 193
+    },
+    {
+      "time": 104.055749,
+      "flux": 0.999607,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 194
+    },
+    {
+      "time": 104.076655,
+      "flux": 0.998291,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 195
+    },
+    {
+      "time": 104.097561,
+      "flux": 1.000932,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 196
+    },
+    {
+      "time": 104.118467,
+      "flux": 1.002329,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 197
+    },
+    {
+      "time": 104.139373,
+      "flux": 1.001368,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 198
+    },
+    {
+      "time": 104.160279,
+      "flux": 1.000786,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 199
+    },
+    {
+      "time": 104.181185,
+      "flux": 1.002458,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 200
+    },
+    {
+      "time": 104.202091,
+      "flux": 0.998235,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 201
+    },
+    {
+      "time": 104.222997,
+      "flux": 0.998962,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 202
+    },
+    {
+      "time": 104.243902,
+      "flux": 1.000334,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 203
+    },
+    {
+      "time": 104.264808,
+      "flux": 0.999288,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 204
+    },
+    {
+      "time": 104.285714,
+      "flux": 1.000261,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 205
+    },
+    {
+      "time": 104.30662,
+      "flux": 0.999319,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 206
+    },
+    {
+      "time": 104.327526,
+      "flux": 0.999528,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 207
+    },
+    {
+      "time": 104.348432,
+      "flux": 0.999231,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 208
+    },
+    {
+      "time": 104.369338,
+      "flux": 1.001339,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 209
+    },
+    {
+      "time": 104.390244,
+      "flux": 0.999665,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 210
+    },
+    {
+      "time": 104.41115,
+      "flux": 0.997641,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 211
+    },
+    {
+      "time": 104.432056,
+      "flux": 0.999781,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 212
+    },
+    {
+      "time": 104.452962,
+      "flux": 0.998904,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 213
+    },
+    {
+      "time": 104.473868,
+      "flux": 1.002599,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 214
+    },
+    {
+      "time": 104.494774,
+      "flux": 1.000652,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 215
+    },
+    {
+      "time": 104.515679,
+      "flux": 1.002287,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 216
+    },
+    {
+      "time": 104.536585,
+      "flux": 1.0002,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 217
+    },
+    {
+      "time": 104.557491,
+      "flux": 1.001658,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 218
+    },
+    {
+      "time": 104.578397,
+      "flux": 1.001377,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 219
+    },
+    {
+      "time": 104.599303,
+      "flux": 1.001004,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 220
+    },
+    {
+      "time": 104.620209,
+      "flux": 0.996868,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 221
+    },
+    {
+      "time": 104.641115,
+      "flux": 1.000359,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 222
+    },
+    {
+      "time": 104.662021,
+      "flux": 1.002449,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 223
+    },
+    {
+      "time": 104.682927,
+      "flux": 1.000024,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 224
+    },
+    {
+      "time": 104.703833,
+      "flux": 1.002106,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 225
+    },
+    {
+      "time": 104.724739,
+      "flux": 0.999135,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 226
+    },
+    {
+      "time": 104.745645,
+      "flux": 0.999448,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 227
+    },
+    {
+      "time": 104.766551,
+      "flux": 1.001239,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 228
+    },
+    {
+      "time": 104.787456,
+      "flux": 0.997456,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 229
+    },
+    {
+      "time": 104.808362,
+      "flux": 1.003011,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 230
+    },
+    {
+      "time": 104.829268,
+      "flux": 0.999504,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 231
+    },
+    {
+      "time": 104.850174,
+      "flux": 1.002364,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 232
+    },
+    {
+      "time": 104.87108,
+      "flux": 0.998924,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 233
+    },
+    {
+      "time": 104.891986,
+      "flux": 1.001353,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 234
+    },
+    {
+      "time": 104.912892,
+      "flux": 0.999252,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 235
+    },
+    {
+      "time": 104.933798,
+      "flux": 0.997231,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 236
+    },
+    {
+      "time": 104.954704,
+      "flux": 0.999238,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 237
+    },
+    {
+      "time": 104.97561,
+      "flux": 0.999796,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 238
+    },
+    {
+      "time": 104.996516,
+      "flux": 1.000864,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 239
+    },
+    {
+      "time": 105.017422,
+      "flux": 0.998578,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 240
+    },
+    {
+      "time": 105.038328,
+      "flux": 1.000935,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 241
+    },
+    {
+      "time": 105.059233,
+      "flux": 0.999533,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 242
+    },
+    {
+      "time": 105.080139,
+      "flux": 0.996438,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 243
+    },
+    {
+      "time": 105.101045,
+      "flux": 1.001772,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 244
+    },
+    {
+      "time": 105.121951,
+      "flux": 1.00194,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 245
+    },
+    {
+      "time": 105.142857,
+      "flux": 0.999357,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 246
+    },
+    {
+      "time": 105.163763,
+      "flux": 0.999663,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 247
+    },
+    {
+      "time": 105.184669,
+      "flux": 0.999057,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 248
+    },
+    {
+      "time": 105.205575,
+      "flux": 1.000685,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 249
+    },
+    {
+      "time": 105.226481,
+      "flux": 0.998939,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 250
+    },
+    {
+      "time": 105.247387,
+      "flux": 1.001497,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 251
+    },
+    {
+      "time": 105.268293,
+      "flux": 0.99974,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 252
+    },
+    {
+      "time": 105.289199,
+      "flux": 0.997664,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 253
+    },
+    {
+      "time": 105.310105,
+      "flux": 1.001235,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 254
+    },
+    {
+      "time": 105.33101,
+      "flux": 1.000847,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 255
+    },
+    {
+      "time": 105.351916,
+      "flux": 0.996674,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 256
+    },
+    {
+      "time": 105.372822,
+      "flux": 1.000334,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 257
+    },
+    {
+      "time": 105.393728,
+      "flux": 1.00101,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 258
+    },
+    {
+      "time": 105.414634,
+      "flux": 0.999832,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 259
+    },
+    {
+      "time": 105.43554,
+      "flux": 0.999137,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 260
+    },
+    {
+      "time": 105.456446,
+      "flux": 1.002211,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 261
+    },
+    {
+      "time": 105.477352,
+      "flux": 0.99881,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 262
+    },
+    {
+      "time": 105.498258,
+      "flux": 1.003138,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 263
+    },
+    {
+      "time": 105.519164,
+      "flux": 0.998701,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 264
+    },
+    {
+      "time": 105.54007,
+      "flux": 1.001692,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 265
+    },
+    {
+      "time": 105.560976,
+      "flux": 1.003248,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 266
+    },
+    {
+      "time": 105.581882,
+      "flux": 0.997691,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 267
+    },
+    {
+      "time": 105.602787,
+      "flux": 1.00086,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 268
+    },
+    {
+      "time": 105.623693,
+      "flux": 0.998702,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 269
+    },
+    {
+      "time": 105.644599,
+      "flux": 1.001443,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 270
+    },
+    {
+      "time": 105.665505,
+      "flux": 1.002584,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 271
+    },
+    {
+      "time": 105.686411,
+      "flux": 1.003195,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 272
+    },
+    {
+      "time": 105.707317,
+      "flux": 1.001848,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 273
+    },
+    {
+      "time": 105.728223,
+      "flux": 0.999403,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 274
+    },
+    {
+      "time": 105.749129,
+      "flux": 1.0013,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 275
+    },
+    {
+      "time": 105.770035,
+      "flux": 1.00474,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 276
+    },
+    {
+      "time": 105.790941,
+      "flux": 1.002269,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 277
+    },
+    {
+      "time": 105.811847,
+      "flux": 1.004021,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 278
+    },
+    {
+      "time": 105.832753,
+      "flux": 1.002098,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 279
+    },
+    {
+      "time": 105.853659,
+      "flux": 0.997884,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 280
+    },
+    {
+      "time": 105.874564,
+      "flux": 0.999543,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 281
+    },
+    {
+      "time": 105.89547,
+      "flux": 1.001317,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 282
+    },
+    {
+      "time": 105.916376,
+      "flux": 0.998354,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 283
+    },
+    {
+      "time": 105.937282,
+      "flux": 1.001288,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 284
+    },
+    {
+      "time": 105.958188,
+      "flux": 0.996577,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 285
+    },
+    {
+      "time": 105.979094,
+      "flux": 0.999915,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 286
+    },
+    {
+      "time": 106.0,
+      "flux": 1.001112,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 287
+    },
+    {
+      "time": 113.0,
+      "flux": 0.996708,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 288
+    },
+    {
+      "time": 113.020942,
+      "flux": 1.001047,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 289
+    },
+    {
+      "time": 113.041885,
+      "flux": 1.001688,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 290
+    },
+    {
+      "time": 113.062827,
+      "flux": 1.001744,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 291
+    },
+    {
+      "time": 113.08377,
+      "flux": 0.997113,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 292
+    },
+    {
+      "time": 113.104712,
+      "flux": 0.997505,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 293
+    },
+    {
+      "time": 113.125654,
+      "flux": 1.002136,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 294
+    },
+    {
+      "time": 113.146597,
+      "flux": 1.002139,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 295
+    },
+    {
+      "time": 113.167539,
+      "flux": 0.998189,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 296
+    },
+    {
+      "time": 113.188482,
+      "flux": 0.997701,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 297
+    },
+    {
+      "time": 113.209424,
+      "flux": 1.001837,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 298
+    },
+    {
+      "time": 113.230366,
+      "flux": 0.996577,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 299
+    },
+    {
+      "time": 113.251309,
+      "flux": 1.001292,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 300
+    },
+    {
+      "time": 113.272251,
+      "flux": 0.997129,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 301
+    },
+    {
+      "time": 113.293194,
+      "flux": 0.99751,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 302
+    },
+    {
+      "time": 113.314136,
+      "flux": 1.000255,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 303
+    },
+    {
+      "time": 113.335079,
+      "flux": 1.001281,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 304
+    },
+    {
+      "time": 113.356021,
+      "flux": 1.00133,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 305
+    },
+    {
+      "time": 113.376963,
+      "flux": 1.000331,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 306
+    },
+    {
+      "time": 113.397906,
+      "flux": 0.998506,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 307
+    },
+    {
+      "time": 113.418848,
+      "flux": 0.998607,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 308
+    },
+    {
+      "time": 113.439791,
+      "flux": 1.00048,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 309
+    },
+    {
+      "time": 113.460733,
+      "flux": 1.001285,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 310
+    },
+    {
+      "time": 113.481675,
+      "flux": 0.998433,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 311
+    },
+    {
+      "time": 113.502618,
+      "flux": 0.998791,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 312
+    },
+    {
+      "time": 113.52356,
+      "flux": 0.998946,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 313
+    },
+    {
+      "time": 113.544503,
+      "flux": 1.000116,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 314
+    },
+    {
+      "time": 113.565445,
+      "flux": 0.998319,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 315
+    },
+    {
+      "time": 113.586387,
+      "flux": 0.999986,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 316
+    },
+    {
+      "time": 113.60733,
+      "flux": 1.000386,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 317
+    },
+    {
+      "time": 113.628272,
+      "flux": 1.000931,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 318
+    },
+    {
+      "time": 113.649215,
+      "flux": 1.00083,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 319
+    },
+    {
+      "time": 113.670157,
+      "flux": 0.997755,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 320
+    },
+    {
+      "time": 113.691099,
+      "flux": 1.000118,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 321
+    },
+    {
+      "time": 113.712042,
+      "flux": 1.000808,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 322
+    },
+    {
+      "time": 113.732984,
+      "flux": 0.99877,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 323
+    },
+    {
+      "time": 113.753927,
+      "flux": 0.999299,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 324
+    },
+    {
+      "time": 113.774869,
+      "flux": 1.00252,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 325
+    },
+    {
+      "time": 113.795812,
+      "flux": 0.996461,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 326
+    },
+    {
+      "time": 113.816754,
+      "flux": 1.003908,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 327
+    },
+    {
+      "time": 113.837696,
+      "flux": 1.002202,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 328
+    },
+    {
+      "time": 113.858639,
+      "flux": 0.999461,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 329
+    },
+    {
+      "time": 113.879581,
+      "flux": 1.002936,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 330
+    },
+    {
+      "time": 113.900524,
+      "flux": 0.998276,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 331
+    },
+    {
+      "time": 113.921466,
+      "flux": 1.000955,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 332
+    },
+    {
+      "time": 113.942408,
+      "flux": 0.997505,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 333
+    },
+    {
+      "time": 113.963351,
+      "flux": 1.002846,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 334
+    },
+    {
+      "time": 113.984293,
+      "flux": 0.99886,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 335
+    },
+    {
+      "time": 114.005236,
+      "flux": 1.001574,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 336
+    },
+    {
+      "time": 114.026178,
+      "flux": 1.000399,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 337
+    },
+    {
+      "time": 114.04712,
+      "flux": 0.999349,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 338
+    },
+    {
+      "time": 114.068063,
+      "flux": 0.999044,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 339
+    },
+    {
+      "time": 114.089005,
+      "flux": 1.004588,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 340
+    },
+    {
+      "time": 114.109948,
+      "flux": 0.998814,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 341
+    },
+    {
+      "time": 114.13089,
+      "flux": 1.000983,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 342
+    },
+    {
+      "time": 114.151832,
+      "flux": 1.001253,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 343
+    },
+    {
+      "time": 114.172775,
+      "flux": 1.002101,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 344
+    },
+    {
+      "time": 114.193717,
+      "flux": 1.002023,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 345
+    },
+    {
+      "time": 114.21466,
+      "flux": 0.998043,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 346
+    },
+    {
+      "time": 114.235602,
+      "flux": 1.000016,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 347
+    },
+    {
+      "time": 114.256545,
+      "flux": 1.001247,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 348
+    },
+    {
+      "time": 114.277487,
+      "flux": 1.000592,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 349
+    },
+    {
+      "time": 114.298429,
+      "flux": 0.998794,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 350
+    },
+    {
+      "time": 114.319372,
+      "flux": 0.999198,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 351
+    },
+    {
+      "time": 114.340314,
+      "flux": 0.999936,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 352
+    },
+    {
+      "time": 114.361257,
+      "flux": 0.997997,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 353
+    },
+    {
+      "time": 114.382199,
+      "flux": 0.999967,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 354
+    },
+    {
+      "time": 114.403141,
+      "flux": 1.001096,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 355
+    },
+    {
+      "time": 114.424084,
+      "flux": 1.001013,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 356
+    },
+    {
+      "time": 114.445026,
+      "flux": 1.000953,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 357
+    },
+    {
+      "time": 114.465969,
+      "flux": 0.998423,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 358
+    },
+    {
+      "time": 114.486911,
+      "flux": 0.99709,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 359
+    },
+    {
+      "time": 114.507853,
+      "flux": 1.000646,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 360
+    },
+    {
+      "time": 114.528796,
+      "flux": 0.998734,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 361
+    },
+    {
+      "time": 114.549738,
+      "flux": 1.00073,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 362
+    },
+    {
+      "time": 114.570681,
+      "flux": 1.002869,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 363
+    },
+    {
+      "time": 114.591623,
+      "flux": 1.000375,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 364
+    },
+    {
+      "time": 114.612565,
+      "flux": 0.999621,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 365
+    },
+    {
+      "time": 114.633508,
+      "flux": 0.998691,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 366
+    },
+    {
+      "time": 114.65445,
+      "flux": 0.998319,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 367
+    },
+    {
+      "time": 114.675393,
+      "flux": 1.002335,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 368
+    },
+    {
+      "time": 114.696335,
+      "flux": 0.995632,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 369
+    },
+    {
+      "time": 114.717277,
+      "flux": 0.999677,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 370
+    },
+    {
+      "time": 114.73822,
+      "flux": 1.002163,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 371
+    },
+    {
+      "time": 114.759162,
+      "flux": 0.99819,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 372
+    },
+    {
+      "time": 114.780105,
+      "flux": 0.999895,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 373
+    },
+    {
+      "time": 114.801047,
+      "flux": 0.999522,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 374
+    },
+    {
+      "time": 114.82199,
+      "flux": 1.001044,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 375
+    },
+    {
+      "time": 114.842932,
+      "flux": 1.002617,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 376
+    },
+    {
+      "time": 114.863874,
+      "flux": 0.999228,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 377
+    },
+    {
+      "time": 114.884817,
+      "flux": 0.998199,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 378
+    },
+    {
+      "time": 114.905759,
+      "flux": 0.998842,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 379
+    },
+    {
+      "time": 114.926702,
+      "flux": 0.991532,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 380
+    },
+    {
+      "time": 114.947644,
+      "flux": 0.991564,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 381
+    },
+    {
+      "time": 114.968586,
+      "flux": 0.988772,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 382
+    },
+    {
+      "time": 114.989529,
+      "flux": 0.989117,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 383
+    },
+    {
+      "time": 115.010471,
+      "flux": 0.986876,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 384
+    },
+    {
+      "time": 115.031414,
+      "flux": 0.989834,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 385
+    },
+    {
+      "time": 115.052356,
+      "flux": 0.987556,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 386
+    },
+    {
+      "time": 115.073298,
+      "flux": 0.986483,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 387
+    },
+    {
+      "time": 115.094241,
+      "flux": 1.000459,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 388
+    },
+    {
+      "time": 115.115183,
+      "flux": 0.999464,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 389
+    },
+    {
+      "time": 115.136126,
+      "flux": 1.000394,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 390
+    },
+    {
+      "time": 115.157068,
+      "flux": 0.999953,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 391
+    },
+    {
+      "time": 115.17801,
+      "flux": 1.000639,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 392
+    },
+    {
+      "time": 115.198953,
+      "flux": 1.000236,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 393
+    },
+    {
+      "time": 115.219895,
+      "flux": 1.003383,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 394
+    },
+    {
+      "time": 115.240838,
+      "flux": 1.001355,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 395
+    },
+    {
+      "time": 115.26178,
+      "flux": 0.99941,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 396
+    },
+    {
+      "time": 115.282723,
+      "flux": 1.000966,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 397
+    },
+    {
+      "time": 115.303665,
+      "flux": 0.99896,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 398
+    },
+    {
+      "time": 115.324607,
+      "flux": 0.999997,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 399
+    },
+    {
+      "time": 115.34555,
+      "flux": 0.998198,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 400
+    },
+    {
+      "time": 115.366492,
+      "flux": 0.998164,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 401
+    },
+    {
+      "time": 115.387435,
+      "flux": 1.000267,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 402
+    },
+    {
+      "time": 115.408377,
+      "flux": 0.99747,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 403
+    },
+    {
+      "time": 115.429319,
+      "flux": 1.000259,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 404
+    },
+    {
+      "time": 115.450262,
+      "flux": 0.999323,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 405
+    },
+    {
+      "time": 115.471204,
+      "flux": 1.000094,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 406
+    },
+    {
+      "time": 115.492147,
+      "flux": 1.001297,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 407
+    },
+    {
+      "time": 115.513089,
+      "flux": 1.001821,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 408
+    },
+    {
+      "time": 115.534031,
+      "flux": 1.000746,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 409
+    },
+    {
+      "time": 115.554974,
+      "flux": 0.998444,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 410
+    },
+    {
+      "time": 115.575916,
+      "flux": 1.001156,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 411
+    },
+    {
+      "time": 115.596859,
+      "flux": 1.002648,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 412
+    },
+    {
+      "time": 115.617801,
+      "flux": 1.000579,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 413
+    },
+    {
+      "time": 115.638743,
+      "flux": 0.996617,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 414
+    },
+    {
+      "time": 115.659686,
+      "flux": 0.997752,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 415
+    },
+    {
+      "time": 115.680628,
+      "flux": 1.000609,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 416
+    },
+    {
+      "time": 115.701571,
+      "flux": 0.999462,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 417
+    },
+    {
+      "time": 115.722513,
+      "flux": 1.004123,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 418
+    },
+    {
+      "time": 115.743455,
+      "flux": 0.999136,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 419
+    },
+    {
+      "time": 115.764398,
+      "flux": 0.999591,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 420
+    },
+    {
+      "time": 115.78534,
+      "flux": 1.001001,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 421
+    },
+    {
+      "time": 115.806283,
+      "flux": 0.995704,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 422
+    },
+    {
+      "time": 115.827225,
+      "flux": 1.001597,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 423
+    },
+    {
+      "time": 115.848168,
+      "flux": 0.999552,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 424
+    },
+    {
+      "time": 115.86911,
+      "flux": 0.99746,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 425
+    },
+    {
+      "time": 115.890052,
+      "flux": 0.999258,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 426
+    },
+    {
+      "time": 115.910995,
+      "flux": 1.002105,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 427
+    },
+    {
+      "time": 115.931937,
+      "flux": 1.000516,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 428
+    },
+    {
+      "time": 115.95288,
+      "flux": 0.995075,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 429
+    },
+    {
+      "time": 115.973822,
+      "flux": 1.000817,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 430
+    },
+    {
+      "time": 115.994764,
+      "flux": 0.999443,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 431
+    },
+    {
+      "time": 116.015707,
+      "flux": 1.000386,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 432
+    },
+    {
+      "time": 116.036649,
+      "flux": 0.997701,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 433
+    },
+    {
+      "time": 116.057592,
+      "flux": 1.001799,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 434
+    },
+    {
+      "time": 116.078534,
+      "flux": 1.001774,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 435
+    },
+    {
+      "time": 116.099476,
+      "flux": 1.00026,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 436
+    },
+    {
+      "time": 116.120419,
+      "flux": 1.000025,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 437
+    },
+    {
+      "time": 116.141361,
+      "flux": 1.002043,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 438
+    },
+    {
+      "time": 116.162304,
+      "flux": 1.000882,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 439
+    },
+    {
+      "time": 116.183246,
+      "flux": 0.999538,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 440
+    },
+    {
+      "time": 116.204188,
+      "flux": 0.999679,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 441
+    },
+    {
+      "time": 116.225131,
+      "flux": 1.000854,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 442
+    },
+    {
+      "time": 116.246073,
+      "flux": 1.003322,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 443
+    },
+    {
+      "time": 116.267016,
+      "flux": 0.999167,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 444
+    },
+    {
+      "time": 116.287958,
+      "flux": 0.999228,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 445
+    },
+    {
+      "time": 116.308901,
+      "flux": 1.001458,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 446
+    },
+    {
+      "time": 116.329843,
+      "flux": 0.999063,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 447
+    },
+    {
+      "time": 116.350785,
+      "flux": 0.998343,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 448
+    },
+    {
+      "time": 116.371728,
+      "flux": 0.998114,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 449
+    },
+    {
+      "time": 116.39267,
+      "flux": 1.002623,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 450
+    },
+    {
+      "time": 116.413613,
+      "flux": 0.998471,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 451
+    },
+    {
+      "time": 116.434555,
+      "flux": 0.999594,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 452
+    },
+    {
+      "time": 116.455497,
+      "flux": 0.99733,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 453
+    },
+    {
+      "time": 116.47644,
+      "flux": 0.999866,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 454
+    },
+    {
+      "time": 116.497382,
+      "flux": 0.999282,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 455
+    },
+    {
+      "time": 116.518325,
+      "flux": 0.999698,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 456
+    },
+    {
+      "time": 116.539267,
+      "flux": 0.999244,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 457
+    },
+    {
+      "time": 116.560209,
+      "flux": 1.000069,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 458
+    },
+    {
+      "time": 116.581152,
+      "flux": 0.999678,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 459
+    },
+    {
+      "time": 116.602094,
+      "flux": 0.999635,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 460
+    },
+    {
+      "time": 116.623037,
+      "flux": 0.998753,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 461
+    },
+    {
+      "time": 116.643979,
+      "flux": 0.99879,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 462
+    },
+    {
+      "time": 116.664921,
+      "flux": 1.001538,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 463
+    },
+    {
+      "time": 116.685864,
+      "flux": 0.999776,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 464
+    },
+    {
+      "time": 116.706806,
+      "flux": 1.002147,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 465
+    },
+    {
+      "time": 116.727749,
+      "flux": 0.99924,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 466
+    },
+    {
+      "time": 116.748691,
+      "flux": 0.998988,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 467
+    },
+    {
+      "time": 116.769634,
+      "flux": 1.001915,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 468
+    },
+    {
+      "time": 116.790576,
+      "flux": 0.999745,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 469
+    },
+    {
+      "time": 116.811518,
+      "flux": 0.999479,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 470
+    },
+    {
+      "time": 116.832461,
+      "flux": 0.999377,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 471
+    },
+    {
+      "time": 116.853403,
+      "flux": 1.00252,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 472
+    },
+    {
+      "time": 116.874346,
+      "flux": 1.000102,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 473
+    },
+    {
+      "time": 116.895288,
+      "flux": 1.001174,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 474
+    },
+    {
+      "time": 116.91623,
+      "flux": 1.001979,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 475
+    },
+    {
+      "time": 116.937173,
+      "flux": 1.000788,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 476
+    },
+    {
+      "time": 116.958115,
+      "flux": 0.99811,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 477
+    },
+    {
+      "time": 116.979058,
+      "flux": 1.000694,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 478
+    },
+    {
+      "time": 117.0,
+      "flux": 1.002352,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 479
+    },
+    {
+      "time": 124.0,
+      "flux": 1.001584,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 480
+    },
+    {
+      "time": 124.020942,
+      "flux": 1.000428,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 481
+    },
+    {
+      "time": 124.041885,
+      "flux": 0.999093,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 482
+    },
+    {
+      "time": 124.062827,
+      "flux": 1.001666,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 483
+    },
+    {
+      "time": 124.08377,
+      "flux": 0.996701,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 484
+    },
+    {
+      "time": 124.104712,
+      "flux": 1.001967,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 485
+    },
+    {
+      "time": 124.125654,
+      "flux": 1.00231,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 486
+    },
+    {
+      "time": 124.146597,
+      "flux": 0.998453,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 487
+    },
+    {
+      "time": 124.167539,
+      "flux": 1.000196,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 488
+    },
+    {
+      "time": 124.188482,
+      "flux": 0.996808,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 489
+    },
+    {
+      "time": 124.209424,
+      "flux": 0.999913,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 490
+    },
+    {
+      "time": 124.230366,
+      "flux": 0.998935,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 491
+    },
+    {
+      "time": 124.251309,
+      "flux": 0.997641,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 492
+    },
+    {
+      "time": 124.272251,
+      "flux": 1.000484,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 493
+    },
+    {
+      "time": 124.293194,
+      "flux": 1.002968,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 494
+    },
+    {
+      "time": 124.314136,
+      "flux": 1.001727,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 495
+    },
+    {
+      "time": 124.335079,
+      "flux": 0.999278,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 496
+    },
+    {
+      "time": 124.356021,
+      "flux": 1.002647,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 497
+    },
+    {
+      "time": 124.376963,
+      "flux": 1.001685,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 498
+    },
+    {
+      "time": 124.397906,
+      "flux": 1.003694,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 499
+    },
+    {
+      "time": 124.418848,
+      "flux": 0.999522,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 500
+    },
+    {
+      "time": 124.439791,
+      "flux": 1.001751,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 501
+    },
+    {
+      "time": 124.460733,
+      "flux": 1.003464,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 502
+    },
+    {
+      "time": 124.481675,
+      "flux": 0.996606,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 503
+    },
+    {
+      "time": 124.502618,
+      "flux": 1.001382,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 504
+    },
+    {
+      "time": 124.52356,
+      "flux": 0.998071,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 505
+    },
+    {
+      "time": 124.544503,
+      "flux": 0.998893,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 506
+    },
+    {
+      "time": 124.565445,
+      "flux": 1.000154,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 507
+    },
+    {
+      "time": 124.586387,
+      "flux": 1.000626,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 508
+    },
+    {
+      "time": 124.60733,
+      "flux": 1.003131,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 509
+    },
+    {
+      "time": 124.628272,
+      "flux": 1.000376,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 510
+    },
+    {
+      "time": 124.649215,
+      "flux": 1.000025,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 511
+    },
+    {
+      "time": 124.670157,
+      "flux": 0.998859,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 512
+    },
+    {
+      "time": 124.691099,
+      "flux": 0.998107,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 513
+    },
+    {
+      "time": 124.712042,
+      "flux": 0.997938,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 514
+    },
+    {
+      "time": 124.732984,
+      "flux": 1.001559,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 515
+    },
+    {
+      "time": 124.753927,
+      "flux": 0.998462,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 516
+    },
+    {
+      "time": 124.774869,
+      "flux": 1.002945,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 517
+    },
+    {
+      "time": 124.795812,
+      "flux": 1.00117,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 518
+    },
+    {
+      "time": 124.816754,
+      "flux": 1.002335,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 519
+    },
+    {
+      "time": 124.837696,
+      "flux": 0.999712,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 520
+    },
+    {
+      "time": 124.858639,
+      "flux": 1.002737,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 521
+    },
+    {
+      "time": 124.879581,
+      "flux": 0.999402,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 522
+    },
+    {
+      "time": 124.900524,
+      "flux": 1.000022,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 523
+    },
+    {
+      "time": 124.921466,
+      "flux": 0.997404,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 524
+    },
+    {
+      "time": 124.942408,
+      "flux": 0.99754,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 525
+    },
+    {
+      "time": 124.963351,
+      "flux": 0.998873,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 526
+    },
+    {
+      "time": 124.984293,
+      "flux": 1.000788,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 527
+    },
+    {
+      "time": 125.005236,
+      "flux": 1.000687,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 528
+    },
+    {
+      "time": 125.026178,
+      "flux": 1.001389,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 529
+    },
+    {
+      "time": 125.04712,
+      "flux": 1.00049,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 530
+    },
+    {
+      "time": 125.068063,
+      "flux": 0.997085,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 531
+    },
+    {
+      "time": 125.089005,
+      "flux": 0.999046,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 532
+    },
+    {
+      "time": 125.109948,
+      "flux": 0.999208,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 533
+    },
+    {
+      "time": 125.13089,
+      "flux": 1.00085,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 534
+    },
+    {
+      "time": 125.151832,
+      "flux": 1.001473,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 535
+    },
+    {
+      "time": 125.172775,
+      "flux": 0.998688,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 536
+    },
+    {
+      "time": 125.193717,
+      "flux": 0.997331,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 537
+    },
+    {
+      "time": 125.21466,
+      "flux": 1.00083,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 538
+    },
+    {
+      "time": 125.235602,
+      "flux": 1.002478,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 539
+    },
+    {
+      "time": 125.256545,
+      "flux": 1.002502,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 540
+    },
+    {
+      "time": 125.277487,
+      "flux": 0.999397,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 541
+    },
+    {
+      "time": 125.298429,
+      "flux": 0.99966,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 542
+    },
+    {
+      "time": 125.319372,
+      "flux": 0.998905,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 543
+    },
+    {
+      "time": 125.340314,
+      "flux": 1.00225,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 544
+    },
+    {
+      "time": 125.361257,
+      "flux": 0.999726,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 545
+    },
+    {
+      "time": 125.382199,
+      "flux": 1.001272,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 546
+    },
+    {
+      "time": 125.403141,
+      "flux": 1.000067,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 547
+    },
+    {
+      "time": 125.424084,
+      "flux": 1.001664,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 548
+    },
+    {
+      "time": 125.445026,
+      "flux": 1.00301,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 549
+    },
+    {
+      "time": 125.465969,
+      "flux": 0.999717,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 550
+    },
+    {
+      "time": 125.486911,
+      "flux": 1.000471,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 551
+    },
+    {
+      "time": 125.507853,
+      "flux": 0.999957,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 552
+    },
+    {
+      "time": 125.528796,
+      "flux": 0.99971,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 553
+    },
+    {
+      "time": 125.549738,
+      "flux": 0.99876,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 554
+    },
+    {
+      "time": 125.570681,
+      "flux": 0.997758,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 555
+    },
+    {
+      "time": 125.591623,
+      "flux": 0.995507,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 556
+    },
+    {
+      "time": 125.612565,
+      "flux": 1.000007,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 557
+    },
+    {
+      "time": 125.633508,
+      "flux": 0.999739,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 558
+    },
+    {
+      "time": 125.65445,
+      "flux": 1.001427,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 559
+    },
+    {
+      "time": 125.675393,
+      "flux": 0.999457,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 560
+    },
+    {
+      "time": 125.696335,
+      "flux": 0.996829,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 561
+    },
+    {
+      "time": 125.717277,
+      "flux": 1.001204,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 562
+    },
+    {
+      "time": 125.73822,
+      "flux": 1.004237,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 563
+    },
+    {
+      "time": 125.759162,
+      "flux": 0.999247,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 564
+    },
+    {
+      "time": 125.780105,
+      "flux": 1.001433,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 565
+    },
+    {
+      "time": 125.801047,
+      "flux": 1.001995,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 566
+    },
+    {
+      "time": 125.82199,
+      "flux": 0.998055,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 567
+    },
+    {
+      "time": 125.842932,
+      "flux": 0.998283,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 568
+    },
+    {
+      "time": 125.863874,
+      "flux": 1.000956,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 569
+    },
+    {
+      "time": 125.884817,
+      "flux": 0.998733,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 570
+    },
+    {
+      "time": 125.905759,
+      "flux": 0.997473,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 571
+    },
+    {
+      "time": 125.926702,
+      "flux": 1.000511,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 572
+    },
+    {
+      "time": 125.947644,
+      "flux": 1.00407,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 573
+    },
+    {
+      "time": 125.968586,
+      "flux": 0.997144,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 574
+    },
+    {
+      "time": 125.989529,
+      "flux": 0.998399,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 575
+    },
+    {
+      "time": 126.010471,
+      "flux": 1.000815,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 576
+    },
+    {
+      "time": 126.031414,
+      "flux": 0.99884,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 577
+    },
+    {
+      "time": 126.052356,
+      "flux": 0.999161,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 578
+    },
+    {
+      "time": 126.073298,
+      "flux": 0.9995,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 579
+    },
+    {
+      "time": 126.094241,
+      "flux": 0.999187,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 580
+    },
+    {
+      "time": 126.115183,
+      "flux": 0.999489,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 581
+    },
+    {
+      "time": 126.136126,
+      "flux": 0.998851,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 582
+    },
+    {
+      "time": 126.157068,
+      "flux": 1.001391,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 583
+    },
+    {
+      "time": 126.17801,
+      "flux": 0.999202,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 584
+    },
+    {
+      "time": 126.198953,
+      "flux": 0.998723,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 585
+    },
+    {
+      "time": 126.219895,
+      "flux": 1.000324,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 586
+    },
+    {
+      "time": 126.240838,
+      "flux": 1.001229,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 587
+    },
+    {
+      "time": 126.26178,
+      "flux": 1.000573,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 588
+    },
+    {
+      "time": 126.282723,
+      "flux": 1.000859,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 589
+    },
+    {
+      "time": 126.303665,
+      "flux": 1.002237,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 590
+    },
+    {
+      "time": 126.324607,
+      "flux": 0.996283,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 591
+    },
+    {
+      "time": 126.34555,
+      "flux": 0.997764,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 592
+    },
+    {
+      "time": 126.366492,
+      "flux": 0.998229,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 593
+    },
+    {
+      "time": 126.387435,
+      "flux": 0.997661,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 594
+    },
+    {
+      "time": 126.408377,
+      "flux": 1.000173,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 595
+    },
+    {
+      "time": 126.429319,
+      "flux": 1.000052,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 596
+    },
+    {
+      "time": 126.450262,
+      "flux": 1.002071,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 597
+    },
+    {
+      "time": 126.471204,
+      "flux": 0.99968,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 598
+    },
+    {
+      "time": 126.492147,
+      "flux": 0.997812,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 599
+    },
+    {
+      "time": 126.513089,
+      "flux": 1.002655,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 600
+    },
+    {
+      "time": 126.534031,
+      "flux": 1.002222,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 601
+    },
+    {
+      "time": 126.554974,
+      "flux": 1.000533,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 602
+    },
+    {
+      "time": 126.575916,
+      "flux": 1.003365,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 603
+    },
+    {
+      "time": 126.596859,
+      "flux": 1.005268,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 604
+    },
+    {
+      "time": 126.617801,
+      "flux": 0.998981,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 605
+    },
+    {
+      "time": 126.638743,
+      "flux": 0.998929,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 606
+    },
+    {
+      "time": 126.659686,
+      "flux": 1.001597,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 607
+    },
+    {
+      "time": 126.680628,
+      "flux": 0.999482,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 608
+    },
+    {
+      "time": 126.701571,
+      "flux": 1.001578,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 609
+    },
+    {
+      "time": 126.722513,
+      "flux": 1.001519,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 610
+    },
+    {
+      "time": 126.743455,
+      "flux": 0.999094,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 611
+    },
+    {
+      "time": 126.764398,
+      "flux": 1.002019,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 612
+    },
+    {
+      "time": 126.78534,
+      "flux": 1.001528,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 613
+    },
+    {
+      "time": 126.806283,
+      "flux": 0.999566,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 614
+    },
+    {
+      "time": 126.827225,
+      "flux": 1.002151,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 615
+    },
+    {
+      "time": 126.848168,
+      "flux": 1.005674,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 616
+    },
+    {
+      "time": 126.86911,
+      "flux": 1.001484,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 617
+    },
+    {
+      "time": 126.890052,
+      "flux": 0.997566,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 618
+    },
+    {
+      "time": 126.910995,
+      "flux": 0.999562,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 619
+    },
+    {
+      "time": 126.931937,
+      "flux": 0.999273,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 620
+    },
+    {
+      "time": 126.95288,
+      "flux": 0.998678,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 621
+    },
+    {
+      "time": 126.973822,
+      "flux": 1.001132,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 622
+    },
+    {
+      "time": 126.994764,
+      "flux": 1.003575,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 623
+    },
+    {
+      "time": 127.015707,
+      "flux": 1.000473,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 624
+    },
+    {
+      "time": 127.036649,
+      "flux": 0.998277,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 625
+    },
+    {
+      "time": 127.057592,
+      "flux": 1.001026,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 626
+    },
+    {
+      "time": 127.078534,
+      "flux": 0.997902,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 627
+    },
+    {
+      "time": 127.099476,
+      "flux": 1.001671,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 628
+    },
+    {
+      "time": 127.120419,
+      "flux": 1.00048,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 629
+    },
+    {
+      "time": 127.141361,
+      "flux": 0.999094,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 630
+    },
+    {
+      "time": 127.162304,
+      "flux": 0.998645,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 631
+    },
+    {
+      "time": 127.183246,
+      "flux": 1.000821,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 632
+    },
+    {
+      "time": 127.204188,
+      "flux": 1.002178,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 633
+    },
+    {
+      "time": 127.225131,
+      "flux": 1.002503,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 634
+    },
+    {
+      "time": 127.246073,
+      "flux": 1.000323,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 635
+    },
+    {
+      "time": 127.267016,
+      "flux": 1.000584,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 636
+    },
+    {
+      "time": 127.287958,
+      "flux": 0.999689,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 637
+    },
+    {
+      "time": 127.308901,
+      "flux": 0.998349,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 638
+    },
+    {
+      "time": 127.329843,
+      "flux": 0.99856,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 639
+    },
+    {
+      "time": 127.350785,
+      "flux": 1.002497,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 640
+    },
+    {
+      "time": 127.371728,
+      "flux": 0.99875,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 641
+    },
+    {
+      "time": 127.39267,
+      "flux": 1.002802,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 642
+    },
+    {
+      "time": 127.413613,
+      "flux": 0.998956,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 643
+    },
+    {
+      "time": 127.434555,
+      "flux": 0.997054,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 644
+    },
+    {
+      "time": 127.455497,
+      "flux": 0.998962,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 645
+    },
+    {
+      "time": 127.47644,
+      "flux": 1.00059,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 646
+    },
+    {
+      "time": 127.497382,
+      "flux": 0.999701,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 647
+    },
+    {
+      "time": 127.518325,
+      "flux": 1.000959,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 648
+    },
+    {
+      "time": 127.539267,
+      "flux": 1.003936,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 649
+    },
+    {
+      "time": 127.560209,
+      "flux": 1.000556,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 650
+    },
+    {
+      "time": 127.581152,
+      "flux": 0.999982,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 651
+    },
+    {
+      "time": 127.602094,
+      "flux": 0.999112,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 652
+    },
+    {
+      "time": 127.623037,
+      "flux": 0.999599,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 653
+    },
+    {
+      "time": 127.643979,
+      "flux": 1.002958,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 654
+    },
+    {
+      "time": 127.664921,
+      "flux": 1.002101,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 655
+    },
+    {
+      "time": 127.685864,
+      "flux": 1.002986,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 656
+    },
+    {
+      "time": 127.706806,
+      "flux": 1.000458,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 657
+    },
+    {
+      "time": 127.727749,
+      "flux": 0.998898,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 658
+    },
+    {
+      "time": 127.748691,
+      "flux": 1.000141,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 659
+    },
+    {
+      "time": 127.769634,
+      "flux": 0.999594,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 660
+    },
+    {
+      "time": 127.790576,
+      "flux": 1.002596,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 661
+    },
+    {
+      "time": 127.811518,
+      "flux": 1.001388,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 662
+    },
+    {
+      "time": 127.832461,
+      "flux": 0.996681,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 663
+    },
+    {
+      "time": 127.853403,
+      "flux": 0.997916,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 664
+    },
+    {
+      "time": 127.874346,
+      "flux": 0.999518,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 665
+    },
+    {
+      "time": 127.895288,
+      "flux": 1.003111,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 666
+    },
+    {
+      "time": 127.91623,
+      "flux": 0.9988,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 667
+    },
+    {
+      "time": 127.937173,
+      "flux": 1.000323,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 668
+    },
+    {
+      "time": 127.958115,
+      "flux": 1.000747,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 669
+    },
+    {
+      "time": 127.979058,
+      "flux": 1.000978,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 670
+    },
+    {
+      "time": 128.0,
+      "flux": 1.001113,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 671
+    },
+    {
+      "time": 138.0,
+      "flux": 0.999011,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 672
+    },
+    {
+      "time": 138.020896,
+      "flux": 1.001766,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 673
+    },
+    {
+      "time": 138.041791,
+      "flux": 0.998863,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 674
+    },
+    {
+      "time": 138.062687,
+      "flux": 1.001667,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 675
+    },
+    {
+      "time": 138.083582,
+      "flux": 0.999376,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 676
+    },
+    {
+      "time": 138.104478,
+      "flux": 0.999195,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 677
+    },
+    {
+      "time": 138.125373,
+      "flux": 0.999882,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 678
+    },
+    {
+      "time": 138.146269,
+      "flux": 0.998522,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 679
+    },
+    {
+      "time": 138.167164,
+      "flux": 1.00078,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 680
+    },
+    {
+      "time": 138.18806,
+      "flux": 1.003699,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 681
+    },
+    {
+      "time": 138.208955,
+      "flux": 0.996023,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 682
+    },
+    {
+      "time": 138.229851,
+      "flux": 1.000664,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 683
+    },
+    {
+      "time": 138.250746,
+      "flux": 0.995766,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 684
+    },
+    {
+      "time": 138.271642,
+      "flux": 1.000746,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 685
+    },
+    {
+      "time": 138.292537,
+      "flux": 0.996225,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 686
+    },
+    {
+      "time": 138.313433,
+      "flux": 0.998768,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 687
+    },
+    {
+      "time": 138.334328,
+      "flux": 1.000302,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 688
+    },
+    {
+      "time": 138.355224,
+      "flux": 0.997552,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 689
+    },
+    {
+      "time": 138.376119,
+      "flux": 1.000223,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 690
+    },
+    {
+      "time": 138.397015,
+      "flux": 1.001161,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 691
+    },
+    {
+      "time": 138.41791,
+      "flux": 1.001417,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 692
+    },
+    {
+      "time": 138.438806,
+      "flux": 0.997623,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 693
+    },
+    {
+      "time": 138.459701,
+      "flux": 1.001388,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 694
+    },
+    {
+      "time": 138.480597,
+      "flux": 0.999047,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 695
+    },
+    {
+      "time": 138.501493,
+      "flux": 1.000956,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 696
+    },
+    {
+      "time": 138.522388,
+      "flux": 1.001992,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 697
+    },
+    {
+      "time": 138.543284,
+      "flux": 0.999015,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 698
+    },
+    {
+      "time": 138.564179,
+      "flux": 1.000823,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 699
+    },
+    {
+      "time": 138.585075,
+      "flux": 0.998671,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 700
+    },
+    {
+      "time": 138.60597,
+      "flux": 0.997945,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 701
+    },
+    {
+      "time": 138.626866,
+      "flux": 1.002099,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 702
+    },
+    {
+      "time": 138.647761,
+      "flux": 0.997502,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 703
+    },
+    {
+      "time": 138.668657,
+      "flux": 1.002098,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 704
+    },
+    {
+      "time": 138.689552,
+      "flux": 1.001807,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 705
+    },
+    {
+      "time": 138.710448,
+      "flux": 0.997747,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 706
+    },
+    {
+      "time": 138.731343,
+      "flux": 0.999108,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 707
+    },
+    {
+      "time": 138.752239,
+      "flux": 0.999903,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 708
+    },
+    {
+      "time": 138.773134,
+      "flux": 0.997678,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 709
+    },
+    {
+      "time": 138.79403,
+      "flux": 1.000006,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 710
+    },
+    {
+      "time": 138.814925,
+      "flux": 0.998962,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 711
+    },
+    {
+      "time": 138.835821,
+      "flux": 0.999487,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 712
+    },
+    {
+      "time": 138.856716,
+      "flux": 0.99762,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 713
+    },
+    {
+      "time": 138.877612,
+      "flux": 0.998021,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 714
+    },
+    {
+      "time": 138.898507,
+      "flux": 0.999551,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 715
+    },
+    {
+      "time": 138.919403,
+      "flux": 1.000735,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 716
+    },
+    {
+      "time": 138.940299,
+      "flux": 1.001432,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 717
+    },
+    {
+      "time": 138.961194,
+      "flux": 0.996522,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 718
+    },
+    {
+      "time": 138.98209,
+      "flux": 0.999356,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 719
+    },
+    {
+      "time": 139.002985,
+      "flux": 1.003711,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 720
+    },
+    {
+      "time": 139.023881,
+      "flux": 1.00047,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 721
+    },
+    {
+      "time": 139.044776,
+      "flux": 0.997381,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 722
+    },
+    {
+      "time": 139.065672,
+      "flux": 0.998708,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 723
+    },
+    {
+      "time": 139.086567,
+      "flux": 1.000496,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 724
+    },
+    {
+      "time": 139.107463,
+      "flux": 1.001603,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 725
+    },
+    {
+      "time": 139.128358,
+      "flux": 1.002124,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 726
+    },
+    {
+      "time": 139.149254,
+      "flux": 1.003335,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 727
+    },
+    {
+      "time": 139.170149,
+      "flux": 1.000777,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 728
+    },
+    {
+      "time": 139.191045,
+      "flux": 1.001385,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 729
+    },
+    {
+      "time": 139.21194,
+      "flux": 1.003122,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 730
+    },
+    {
+      "time": 139.232836,
+      "flux": 1.003726,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 731
+    },
+    {
+      "time": 139.253731,
+      "flux": 0.999973,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 732
+    },
+    {
+      "time": 139.274627,
+      "flux": 1.000455,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 733
+    },
+    {
+      "time": 139.295522,
+      "flux": 1.003255,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 734
+    },
+    {
+      "time": 139.316418,
+      "flux": 1.000545,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 735
+    },
+    {
+      "time": 139.337313,
+      "flux": 0.998709,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 736
+    },
+    {
+      "time": 139.358209,
+      "flux": 1.000984,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 737
+    },
+    {
+      "time": 139.379104,
+      "flux": 0.999325,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 738
+    },
+    {
+      "time": 139.4,
+      "flux": 1.001811,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 739
+    },
+    {
+      "time": 139.420896,
+      "flux": 0.999155,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 740
+    },
+    {
+      "time": 139.441791,
+      "flux": 1.003712,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 741
+    },
+    {
+      "time": 139.462687,
+      "flux": 0.999925,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 742
+    },
+    {
+      "time": 139.483582,
+      "flux": 1.000042,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 743
+    },
+    {
+      "time": 139.504478,
+      "flux": 1.000555,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 744
+    },
+    {
+      "time": 139.525373,
+      "flux": 0.997439,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 745
+    },
+    {
+      "time": 139.546269,
+      "flux": 1.00117,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 746
+    },
+    {
+      "time": 139.567164,
+      "flux": 1.001998,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 747
+    },
+    {
+      "time": 139.58806,
+      "flux": 0.995255,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 748
+    },
+    {
+      "time": 139.608955,
+      "flux": 0.999672,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 749
+    },
+    {
+      "time": 139.629851,
+      "flux": 1.000309,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 750
+    },
+    {
+      "time": 139.650746,
+      "flux": 0.999682,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 751
+    },
+    {
+      "time": 139.671642,
+      "flux": 1.001313,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 752
+    },
+    {
+      "time": 139.692537,
+      "flux": 0.999349,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 753
+    },
+    {
+      "time": 139.713433,
+      "flux": 0.999726,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 754
+    },
+    {
+      "time": 139.734328,
+      "flux": 1.000007,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 755
+    },
+    {
+      "time": 139.755224,
+      "flux": 1.001153,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 756
+    },
+    {
+      "time": 139.776119,
+      "flux": 0.998294,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 757
+    },
+    {
+      "time": 139.797015,
+      "flux": 1.001272,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 758
+    },
+    {
+      "time": 139.81791,
+      "flux": 0.998426,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 759
+    },
+    {
+      "time": 139.838806,
+      "flux": 1.001514,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 760
+    },
+    {
+      "time": 139.859701,
+      "flux": 0.999453,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 761
+    },
+    {
+      "time": 139.880597,
+      "flux": 0.99673,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 762
+    },
+    {
+      "time": 139.901493,
+      "flux": 1.000613,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 763
+    },
+    {
+      "time": 139.922388,
+      "flux": 0.999303,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 764
+    },
+    {
+      "time": 139.943284,
+      "flux": 1.001415,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 765
+    },
+    {
+      "time": 139.964179,
+      "flux": 1.001119,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 766
+    },
+    {
+      "time": 139.985075,
+      "flux": 1.00193,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 767
+    },
+    {
+      "time": 140.00597,
+      "flux": 1.001027,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 768
+    },
+    {
+      "time": 140.026866,
+      "flux": 1.001789,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 769
+    },
+    {
+      "time": 140.047761,
+      "flux": 1.001878,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 770
+    },
+    {
+      "time": 140.068657,
+      "flux": 1.002003,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 771
+    },
+    {
+      "time": 140.089552,
+      "flux": 0.998015,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 772
+    },
+    {
+      "time": 140.110448,
+      "flux": 1.001365,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 773
+    },
+    {
+      "time": 140.131343,
+      "flux": 1.00338,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 774
+    },
+    {
+      "time": 140.152239,
+      "flux": 0.999083,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 775
+    },
+    {
+      "time": 140.173134,
+      "flux": 1.001123,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 776
+    },
+    {
+      "time": 140.19403,
+      "flux": 1.002895,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 777
+    },
+    {
+      "time": 140.214925,
+      "flux": 1.001423,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 778
+    },
+    {
+      "time": 140.235821,
+      "flux": 0.998786,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 779
+    },
+    {
+      "time": 140.256716,
+      "flux": 0.999682,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 780
+    },
+    {
+      "time": 140.277612,
+      "flux": 1.002534,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 781
+    },
+    {
+      "time": 140.298507,
+      "flux": 0.998453,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 782
+    },
+    {
+      "time": 140.319403,
+      "flux": 1.001655,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 783
+    },
+    {
+      "time": 140.340299,
+      "flux": 1.001904,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 784
+    },
+    {
+      "time": 140.361194,
+      "flux": 1.001058,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 785
+    },
+    {
+      "time": 140.38209,
+      "flux": 1.001292,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 786
+    },
+    {
+      "time": 140.402985,
+      "flux": 1.000492,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 787
+    },
+    {
+      "time": 140.423881,
+      "flux": 1.000709,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 788
+    },
+    {
+      "time": 140.444776,
+      "flux": 1.000335,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 789
+    },
+    {
+      "time": 140.465672,
+      "flux": 1.0003,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 790
+    },
+    {
+      "time": 140.486567,
+      "flux": 0.997395,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 791
+    },
+    {
+      "time": 140.507463,
+      "flux": 1.00027,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 792
+    },
+    {
+      "time": 140.528358,
+      "flux": 1.001517,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 793
+    },
+    {
+      "time": 140.549254,
+      "flux": 0.99995,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 794
+    },
+    {
+      "time": 140.570149,
+      "flux": 0.999229,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 795
+    },
+    {
+      "time": 140.591045,
+      "flux": 1.001117,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 796
+    },
+    {
+      "time": 140.61194,
+      "flux": 0.997703,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 797
+    },
+    {
+      "time": 140.632836,
+      "flux": 0.996066,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 798
+    },
+    {
+      "time": 140.653731,
+      "flux": 1.00035,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 799
+    },
+    {
+      "time": 140.674627,
+      "flux": 0.998629,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 800
+    },
+    {
+      "time": 140.695522,
+      "flux": 0.997531,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 801
+    },
+    {
+      "time": 140.716418,
+      "flux": 0.999435,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 802
+    },
+    {
+      "time": 140.737313,
+      "flux": 0.999524,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 803
+    },
+    {
+      "time": 140.758209,
+      "flux": 1.002112,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 804
+    },
+    {
+      "time": 140.779104,
+      "flux": 1.000276,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 805
+    },
+    {
+      "time": 140.8,
+      "flux": 1.001471,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 806
+    },
+    {
+      "time": 140.820896,
+      "flux": 1.001517,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 807
+    },
+    {
+      "time": 140.841791,
+      "flux": 1.000639,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 808
+    },
+    {
+      "time": 140.862687,
+      "flux": 1.00085,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 809
+    },
+    {
+      "time": 140.883582,
+      "flux": 0.999346,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 810
+    },
+    {
+      "time": 140.904478,
+      "flux": 0.999609,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 811
+    },
+    {
+      "time": 140.925373,
+      "flux": 1.000586,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 812
+    },
+    {
+      "time": 140.946269,
+      "flux": 1.000479,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 813
+    },
+    {
+      "time": 140.967164,
+      "flux": 1.005892,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 814
+    },
+    {
+      "time": 140.98806,
+      "flux": 1.000862,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 815
+    },
+    {
+      "time": 141.008955,
+      "flux": 0.998871,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 816
+    },
+    {
+      "time": 141.029851,
+      "flux": 0.998049,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 817
+    },
+    {
+      "time": 141.050746,
+      "flux": 0.997417,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 818
+    },
+    {
+      "time": 141.071642,
+      "flux": 1.002607,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 819
+    },
+    {
+      "time": 141.092537,
+      "flux": 0.998352,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 820
+    },
+    {
+      "time": 141.113433,
+      "flux": 1.001523,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 821
+    },
+    {
+      "time": 141.134328,
+      "flux": 1.00151,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 822
+    },
+    {
+      "time": 141.155224,
+      "flux": 0.998539,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 823
+    },
+    {
+      "time": 141.176119,
+      "flux": 1.000781,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 824
+    },
+    {
+      "time": 141.197015,
+      "flux": 1.001818,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 825
+    },
+    {
+      "time": 141.21791,
+      "flux": 0.996761,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 826
+    },
+    {
+      "time": 141.238806,
+      "flux": 1.001135,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 827
+    },
+    {
+      "time": 141.259701,
+      "flux": 1.002212,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 828
+    },
+    {
+      "time": 141.280597,
+      "flux": 0.999806,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 829
+    },
+    {
+      "time": 141.301493,
+      "flux": 0.99906,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 830
+    },
+    {
+      "time": 141.322388,
+      "flux": 0.999181,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 831
+    },
+    {
+      "time": 141.343284,
+      "flux": 0.995468,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 832
+    },
+    {
+      "time": 141.364179,
+      "flux": 0.998546,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 833
+    },
+    {
+      "time": 141.385075,
+      "flux": 1.000767,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 834
+    },
+    {
+      "time": 141.40597,
+      "flux": 0.997598,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 835
+    },
+    {
+      "time": 141.426866,
+      "flux": 0.999889,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 836
+    },
+    {
+      "time": 141.447761,
+      "flux": 1.001661,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 837
+    },
+    {
+      "time": 141.468657,
+      "flux": 0.999687,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 838
+    },
+    {
+      "time": 141.489552,
+      "flux": 1.001621,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 839
+    },
+    {
+      "time": 141.510448,
+      "flux": 0.997863,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 840
+    },
+    {
+      "time": 141.531343,
+      "flux": 0.999414,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 841
+    },
+    {
+      "time": 141.552239,
+      "flux": 1.002544,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 842
+    },
+    {
+      "time": 141.573134,
+      "flux": 0.998427,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 843
+    },
+    {
+      "time": 141.59403,
+      "flux": 0.99978,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 844
+    },
+    {
+      "time": 141.614925,
+      "flux": 1.006781,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 845
+    },
+    {
+      "time": 141.635821,
+      "flux": 1.001185,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 846
+    },
+    {
+      "time": 141.656716,
+      "flux": 1.00026,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 847
+    },
+    {
+      "time": 141.677612,
+      "flux": 0.997309,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 848
+    },
+    {
+      "time": 141.698507,
+      "flux": 0.999114,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 849
+    },
+    {
+      "time": 141.719403,
+      "flux": 0.999268,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 850
+    },
+    {
+      "time": 141.740299,
+      "flux": 0.99786,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 851
+    },
+    {
+      "time": 141.761194,
+      "flux": 0.998516,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 852
+    },
+    {
+      "time": 141.78209,
+      "flux": 1.000823,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 853
+    },
+    {
+      "time": 141.802985,
+      "flux": 0.998484,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 854
+    },
+    {
+      "time": 141.823881,
+      "flux": 1.000494,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 855
+    },
+    {
+      "time": 141.844776,
+      "flux": 0.99703,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 856
+    },
+    {
+      "time": 141.865672,
+      "flux": 0.997574,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 857
+    },
+    {
+      "time": 141.886567,
+      "flux": 1.002912,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 858
+    },
+    {
+      "time": 141.907463,
+      "flux": 1.00163,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 859
+    },
+    {
+      "time": 141.928358,
+      "flux": 1.001056,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 860
+    },
+    {
+      "time": 141.949254,
+      "flux": 1.001152,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 861
+    },
+    {
+      "time": 141.970149,
+      "flux": 0.999395,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 862
+    },
+    {
+      "time": 141.991045,
+      "flux": 1.001616,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 863
+    },
+    {
+      "time": 142.01194,
+      "flux": 0.998741,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 864
+    },
+    {
+      "time": 142.032836,
+      "flux": 1.001469,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 865
+    },
+    {
+      "time": 142.053731,
+      "flux": 0.998934,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 866
+    },
+    {
+      "time": 142.074627,
+      "flux": 1.001272,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 867
+    },
+    {
+      "time": 142.095522,
+      "flux": 1.000885,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 868
+    },
+    {
+      "time": 142.116418,
+      "flux": 1.00075,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 869
+    },
+    {
+      "time": 142.137313,
+      "flux": 0.997112,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 870
+    },
+    {
+      "time": 142.158209,
+      "flux": 0.998542,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 871
+    },
+    {
+      "time": 142.179104,
+      "flux": 1.001787,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 872
+    },
+    {
+      "time": 142.2,
+      "flux": 0.999573,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 873
+    },
+    {
+      "time": 142.220896,
+      "flux": 0.999641,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 874
+    },
+    {
+      "time": 142.241791,
+      "flux": 0.999297,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 875
+    },
+    {
+      "time": 142.262687,
+      "flux": 1.001856,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 876
+    },
+    {
+      "time": 142.283582,
+      "flux": 1.000335,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 877
+    },
+    {
+      "time": 142.304478,
+      "flux": 0.999434,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 878
+    },
+    {
+      "time": 142.325373,
+      "flux": 0.998823,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 879
+    },
+    {
+      "time": 142.346269,
+      "flux": 0.999755,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 880
+    },
+    {
+      "time": 142.367164,
+      "flux": 0.999422,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 881
+    },
+    {
+      "time": 142.38806,
+      "flux": 1.001812,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 882
+    },
+    {
+      "time": 142.408955,
+      "flux": 1.000261,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 883
+    },
+    {
+      "time": 142.429851,
+      "flux": 0.999641,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 884
+    },
+    {
+      "time": 142.450746,
+      "flux": 0.993308,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 885
+    },
+    {
+      "time": 142.471642,
+      "flux": 0.999838,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 886
+    },
+    {
+      "time": 142.492537,
+      "flux": 1.00047,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 887
+    },
+    {
+      "time": 142.513433,
+      "flux": 0.997602,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 888
+    },
+    {
+      "time": 142.534328,
+      "flux": 1.002076,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 889
+    },
+    {
+      "time": 142.555224,
+      "flux": 0.998503,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 890
+    },
+    {
+      "time": 142.576119,
+      "flux": 0.997901,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 891
+    },
+    {
+      "time": 142.597015,
+      "flux": 0.998176,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 892
+    },
+    {
+      "time": 142.61791,
+      "flux": 0.998515,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 893
+    },
+    {
+      "time": 142.638806,
+      "flux": 0.999572,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 894
+    },
+    {
+      "time": 142.659701,
+      "flux": 0.999152,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 895
+    },
+    {
+      "time": 142.680597,
+      "flux": 0.999739,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 896
+    },
+    {
+      "time": 142.701493,
+      "flux": 0.999125,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 897
+    },
+    {
+      "time": 142.722388,
+      "flux": 0.998981,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 898
+    },
+    {
+      "time": 142.743284,
+      "flux": 0.995947,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 899
+    },
+    {
+      "time": 142.764179,
+      "flux": 1.000523,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 900
+    },
+    {
+      "time": 142.785075,
+      "flux": 1.000635,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 901
+    },
+    {
+      "time": 142.80597,
+      "flux": 1.002149,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 902
+    },
+    {
+      "time": 142.826866,
+      "flux": 0.998205,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 903
+    },
+    {
+      "time": 142.847761,
+      "flux": 1.001193,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 904
+    },
+    {
+      "time": 142.868657,
+      "flux": 1.000128,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 905
+    },
+    {
+      "time": 142.889552,
+      "flux": 1.002313,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 906
+    },
+    {
+      "time": 142.910448,
+      "flux": 1.001486,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 907
+    },
+    {
+      "time": 142.931343,
+      "flux": 1.002248,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 908
+    },
+    {
+      "time": 142.952239,
+      "flux": 1.00035,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 909
+    },
+    {
+      "time": 142.973134,
+      "flux": 1.000056,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 910
+    },
+    {
+      "time": 142.99403,
+      "flux": 1.001133,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 911
+    },
+    {
+      "time": 143.014925,
+      "flux": 1.002464,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 912
+    },
+    {
+      "time": 143.035821,
+      "flux": 1.000019,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 913
+    },
+    {
+      "time": 143.056716,
+      "flux": 0.998867,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 914
+    },
+    {
+      "time": 143.077612,
+      "flux": 1.000718,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 915
+    },
+    {
+      "time": 143.098507,
+      "flux": 1.000555,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 916
+    },
+    {
+      "time": 143.119403,
+      "flux": 0.998064,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 917
+    },
+    {
+      "time": 143.140299,
+      "flux": 0.99824,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 918
+    },
+    {
+      "time": 143.161194,
+      "flux": 0.999251,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 919
+    },
+    {
+      "time": 143.18209,
+      "flux": 0.999288,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 920
+    },
+    {
+      "time": 143.202985,
+      "flux": 1.000873,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 921
+    },
+    {
+      "time": 143.223881,
+      "flux": 1.001004,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 922
+    },
+    {
+      "time": 143.244776,
+      "flux": 0.998601,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 923
+    },
+    {
+      "time": 143.265672,
+      "flux": 0.998142,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 924
+    },
+    {
+      "time": 143.286567,
+      "flux": 0.997737,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 925
+    },
+    {
+      "time": 143.307463,
+      "flux": 0.998397,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 926
+    },
+    {
+      "time": 143.328358,
+      "flux": 1.000205,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 927
+    },
+    {
+      "time": 143.349254,
+      "flux": 1.001357,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 928
+    },
+    {
+      "time": 143.370149,
+      "flux": 1.000334,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 929
+    },
+    {
+      "time": 143.391045,
+      "flux": 1.000564,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 930
+    },
+    {
+      "time": 143.41194,
+      "flux": 0.9977,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 931
+    },
+    {
+      "time": 143.432836,
+      "flux": 1.001525,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 932
+    },
+    {
+      "time": 143.453731,
+      "flux": 1.000571,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 933
+    },
+    {
+      "time": 143.474627,
+      "flux": 1.000543,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 934
+    },
+    {
+      "time": 143.495522,
+      "flux": 0.999862,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 935
+    },
+    {
+      "time": 143.516418,
+      "flux": 1.000614,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 936
+    },
+    {
+      "time": 143.537313,
+      "flux": 1.000019,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 937
+    },
+    {
+      "time": 143.558209,
+      "flux": 0.999729,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 938
+    },
+    {
+      "time": 143.579104,
+      "flux": 1.002305,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 939
+    },
+    {
+      "time": 143.6,
+      "flux": 0.999138,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 940
+    },
+    {
+      "time": 143.620896,
+      "flux": 1.00038,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 941
+    },
+    {
+      "time": 143.641791,
+      "flux": 0.998648,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 942
+    },
+    {
+      "time": 143.662687,
+      "flux": 1.000936,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 943
+    },
+    {
+      "time": 143.683582,
+      "flux": 0.999135,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 944
+    },
+    {
+      "time": 143.704478,
+      "flux": 1.000649,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 945
+    },
+    {
+      "time": 143.725373,
+      "flux": 1.000204,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 946
+    },
+    {
+      "time": 143.746269,
+      "flux": 0.998449,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 947
+    },
+    {
+      "time": 143.767164,
+      "flux": 1.004423,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 948
+    },
+    {
+      "time": 143.78806,
+      "flux": 0.999187,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 949
+    },
+    {
+      "time": 143.808955,
+      "flux": 1.000986,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 950
+    },
+    {
+      "time": 143.829851,
+      "flux": 1.001118,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 951
+    },
+    {
+      "time": 143.850746,
+      "flux": 0.997803,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 952
+    },
+    {
+      "time": 143.871642,
+      "flux": 1.000542,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 953
+    },
+    {
+      "time": 143.892537,
+      "flux": 0.998958,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 954
+    },
+    {
+      "time": 143.913433,
+      "flux": 0.998546,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 955
+    },
+    {
+      "time": 143.934328,
+      "flux": 0.999176,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 956
+    },
+    {
+      "time": 143.955224,
+      "flux": 1.006605,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 957
+    },
+    {
+      "time": 143.976119,
+      "flux": 1.00096,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 958
+    },
+    {
+      "time": 143.997015,
+      "flux": 0.998777,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 959
+    },
+    {
+      "time": 144.01791,
+      "flux": 0.999939,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 960
+    },
+    {
+      "time": 144.038806,
+      "flux": 1.00154,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 961
+    },
+    {
+      "time": 144.059701,
+      "flux": 1.002386,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 962
+    },
+    {
+      "time": 144.080597,
+      "flux": 1.000747,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 963
+    },
+    {
+      "time": 144.101493,
+      "flux": 0.99917,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 964
+    },
+    {
+      "time": 144.122388,
+      "flux": 1.001064,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 965
+    },
+    {
+      "time": 144.143284,
+      "flux": 0.998362,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 966
+    },
+    {
+      "time": 144.164179,
+      "flux": 0.998089,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 967
+    },
+    {
+      "time": 144.185075,
+      "flux": 1.002894,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 968
+    },
+    {
+      "time": 144.20597,
+      "flux": 0.998156,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 969
+    },
+    {
+      "time": 144.226866,
+      "flux": 1.000619,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 970
+    },
+    {
+      "time": 144.247761,
+      "flux": 1.003701,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 971
+    },
+    {
+      "time": 144.268657,
+      "flux": 1.001727,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 972
+    },
+    {
+      "time": 144.289552,
+      "flux": 0.996719,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 973
+    },
+    {
+      "time": 144.310448,
+      "flux": 1.001532,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 974
+    },
+    {
+      "time": 144.331343,
+      "flux": 0.99798,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 975
+    },
+    {
+      "time": 144.352239,
+      "flux": 0.99863,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 976
+    },
+    {
+      "time": 144.373134,
+      "flux": 1.001747,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 977
+    },
+    {
+      "time": 144.39403,
+      "flux": 1.002058,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 978
+    },
+    {
+      "time": 144.414925,
+      "flux": 1.001747,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 979
+    },
+    {
+      "time": 144.435821,
+      "flux": 1.004507,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 980
+    },
+    {
+      "time": 144.456716,
+      "flux": 1.002579,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 981
+    },
+    {
+      "time": 144.477612,
+      "flux": 1.001512,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 982
+    },
+    {
+      "time": 144.498507,
+      "flux": 1.000088,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 983
+    },
+    {
+      "time": 144.519403,
+      "flux": 1.001456,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 984
+    },
+    {
+      "time": 144.540299,
+      "flux": 1.003916,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 985
+    },
+    {
+      "time": 144.561194,
+      "flux": 1.000954,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 986
+    },
+    {
+      "time": 144.58209,
+      "flux": 0.999735,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 987
+    },
+    {
+      "time": 144.602985,
+      "flux": 0.99792,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 988
+    },
+    {
+      "time": 144.623881,
+      "flux": 0.999658,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 989
+    },
+    {
+      "time": 144.644776,
+      "flux": 1.002423,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 990
+    },
+    {
+      "time": 144.665672,
+      "flux": 1.002345,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 991
+    },
+    {
+      "time": 144.686567,
+      "flux": 1.001646,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 992
+    },
+    {
+      "time": 144.707463,
+      "flux": 0.99882,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 993
+    },
+    {
+      "time": 144.728358,
+      "flux": 1.000776,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 994
+    },
+    {
+      "time": 144.749254,
+      "flux": 0.999102,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 995
+    },
+    {
+      "time": 144.770149,
+      "flux": 0.997126,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 996
+    },
+    {
+      "time": 144.791045,
+      "flux": 1.00097,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 997
+    },
+    {
+      "time": 144.81194,
+      "flux": 0.996797,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 998
+    },
+    {
+      "time": 144.832836,
+      "flux": 0.999609,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 999
+    },
+    {
+      "time": 144.853731,
+      "flux": 1.000772,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 1000
+    },
+    {
+      "time": 144.874627,
+      "flux": 0.99954,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 1001
+    },
+    {
+      "time": 144.895522,
+      "flux": 1.000284,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 1002
+    },
+    {
+      "time": 144.916418,
+      "flux": 1.001992,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 1003
+    },
+    {
+      "time": 144.937313,
+      "flux": 0.999169,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 1004
+    },
+    {
+      "time": 144.958209,
+      "flux": 0.998548,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 1005
+    },
+    {
+      "time": 144.979104,
+      "flux": 1.003939,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 1006
+    },
+    {
+      "time": 145.0,
+      "flux": 0.997948,
+      "fluxErr": 0.0018,
+      "quality": 0,
+      "segment": 1,
+      "originalIndex": 1007
+    }
+  ]
+}

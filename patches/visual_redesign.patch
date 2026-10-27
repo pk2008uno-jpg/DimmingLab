@@ -1,0 +1,2052 @@
+--- a/index.html
++++ b/index.html
+@@ -2,7 +2,7 @@
+ <html lang="en">
+   <head>
+     <meta charset="UTF-8" />
+-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪐</text></svg>" />
++    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23202632'/%3E%3Ccircle cx='14' cy='16' r='8' fill='white'/%3E%3Ccircle cx='19' cy='12' r='8' fill='%23202632'/%3E%3C/svg%3E" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     <meta name="description" content="DimmingLab — The Exoplanet Evidence Lab. Investigate real NASA starlight data, challenge misleading signals, and produce reproducible evidence reports." />
+     <title>DimmingLab — The Exoplanet Evidence Lab</title>
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -1,12 +1,12 @@
+ {
+   "name": "dimminglab",
+-  "version": "1.0.0",
++  "version": "1.0.2",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "dimminglab",
+-      "version": "1.0.0",
++      "version": "1.0.2",
+       "dependencies": {
+         "dexie": "^4.4.7",
+         "lucide-react": "^1.61.0",
+--- a/package.json
++++ b/package.json
+@@ -1,7 +1,7 @@
+ {
+   "name": "dimminglab",
+-  "version": "1.0.0",
+-  "description": "DimmingLab — The Exoplanet Evidence Lab for Congressional App Challenge",
++  "version": "1.0.2",
++  "description": "DimmingLab \u2014 The Exoplanet Evidence Lab for Congressional App Challenge",
+   "type": "module",
+   "scripts": {
+     "dev": "vite",
+--- a/src/app/App.tsx
++++ b/src/app/App.tsx
+@@ -23,11 +23,14 @@
+   const [savedProjectsMap, setSavedProjectsMap] = useState<Record<string, InvestigationProject>>({});
+   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+   const [offlineReady, setOfflineReady] = useState(false);
++  const [offlineChecking, setOfflineChecking] = useState(true);
+   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+-    return (localStorage.getItem('dimminglab_theme') as 'dark' | 'light') || 'dark';
++    return localStorage.getItem('dimminglab_theme') === 'dark' ? 'dark' : 'light';
+   });
+   const [isLoadingDataset, setIsLoadingDataset] = useState(false);
+   const [loadError, setLoadError] = useState<string | null>(null);
++
++  useEffect(() => { window.scrollTo(0, 0); }, [currentView]);
+ 
+   const refreshSavedProjects = async () => {
+     try {
+@@ -51,7 +54,7 @@
+ 
+   // Initialize offline pack and check for saved investigations
+   useEffect(() => {
+-    initOfflineSupport().then(setOfflineReady);
++    initOfflineSupport().then(ready => { setOfflineReady(ready); setOfflineChecking(false); }).catch(() => setOfflineChecking(false));
+     refreshSavedProjects();
+   }, []);
+ 
+@@ -206,26 +209,16 @@
+     setCurrentView('report');
+   };
+ 
+-  const isDark = theme === 'dark';
+-
+   return (
+-    <div
+-      style={{
+-        minHeight: '100vh',
+-        backgroundColor: isDark ? '#090d16' : '#f8fafc',
+-        color: isDark ? '#f1f5f9' : '#0f172a',
+-        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+-        transition: 'background-color 0.2s ease, color 0.2s ease',
+-      }}
+-    >
++    <div className="app-shell" data-theme={theme}>
+       {loadError && (
+-        <div style={{ backgroundColor: '#ef4444', color: '#ffffff', padding: '10px 16px', textAlign: 'center', fontSize: '0.875rem', fontWeight: 600 }}>
++        <div className="app-error" role="alert">
+           {loadError}
+         </div>
+       )}
+ 
+       {isLoadingDataset && (
+-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '3px', backgroundColor: '#38bdf8', zIndex: 10000 }} />
++        <div className="loading-bar" role="progressbar" aria-label="Loading investigation" />
+       )}
+ 
+       {currentView === 'library' && (
+@@ -238,7 +231,9 @@
+           onOpenProjectFile={handleOpenProjectFile}
+           onOpenTeacherGuide={() => setCurrentView('teacher')}
+           offlineReady={offlineReady}
+-          theme={theme}
++          offlineChecking={offlineChecking}
++          theme={theme}
++          onToggleTheme={toggleTheme}
+         />
+       )}
+ 
+--- a/src/components/LabBrand.tsx
++++ b/src/components/LabBrand.tsx
+@@ -0,0 +1,13 @@
++import React from 'react';
++
++export const LabBrand: React.FC<{ compact?: boolean }> = ({ compact = false }) => (
++  <span className="lab-brand">
++    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
++      <rect width="32" height="32" rx="9" fill="currentColor" />
++      <circle cx="14" cy="16" r="8" fill="var(--brand-cutout, #fff)" />
++      <circle cx="19" cy="12" r="8" fill="currentColor" />
++      <circle cx="24" cy="23" r="1.5" fill="var(--brand-cutout, #fff)" />
++    </svg>
++    {!compact && <span>Dimming<span className="brand-light">Lab</span></span>}
++  </span>
++);
+--- a/src/features/evidence/ConclusionComposer.tsx
++++ b/src/features/evidence/ConclusionComposer.tsx
+@@ -35,16 +35,16 @@
+   onDownloadProject,
+   theme = 'dark',
+ }) => {
+-  const isDark = theme === 'dark';
+-  const cardBg = isDark ? '#151d2c' : '#ffffff';
+-  const borderCol = isDark ? '#1e293b' : '#e2e8f0';
+-  const inputBg = isDark ? '#0d131f' : '#f8fafc';
+-  const textCol = isDark ? '#f1f5f9' : '#0f172a';
+-  const subText = isDark ? '#94a3b8' : '#64748b';
++  const cardBg = 'var(--surface)';
++  const borderCol = 'var(--border)';
++  const inputBg = 'var(--surface-soft)';
++  const textCol = 'var(--ink)';
++  const subText = 'var(--muted)';
+ 
+   return (
+     <div
+       className="conclusion-composer-card"
++      data-appearance={theme}
+       style={{
+         backgroundColor: cardBg,
+         border: `1px solid ${borderCol}`,
+@@ -55,10 +55,10 @@
+     >
+       <div style={{ marginBottom: '14px' }}>
+         <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: textCol }}>
+-          Scientific Interpretation & Conclusion
++          Make your case
+         </h3>
+         <p style={{ margin: '2px 0 0', fontSize: '0.8125rem', color: subText }}>
+-          Explain what the evidence does—and does not—support. Avoid claiming confirmation without companion mass.
++          Use the checks above to write a careful claim, consider an alternative, and plan the next observation.
+         </p>
+       </div>
+ 
+@@ -180,7 +180,7 @@
+               fontWeight: 600,
+               borderRadius: '6px',
+               border: 'none',
+-              backgroundColor: '#0284c7',
++              backgroundColor: '#245be6',
+               color: '#ffffff',
+               cursor: 'pointer',
+             }}
+--- a/src/features/evidence/EvidenceRail.tsx
++++ b/src/features/evidence/EvidenceRail.tsx
+@@ -1,228 +1,32 @@
+-/**
+- * DimmingLab - Evidence Rail Component
+- * Displays the 5 core scientific diagnostics with structured statuses,
+- * numerical metrics, and honest scientific limitations.
+- */
++import React, { useId, useState } from 'react';
++import { EvidenceItem, EvidenceStatus } from '../../domain/types';
++import { CheckCircle2, AlertTriangle, HelpCircle, ShieldAlert, ChevronDown } from 'lucide-react';
+ 
+-import React, { useState } from 'react';
+-import { EvidenceItem, EvidenceStatus } from '../../domain/types';
+-import { CheckCircle2, AlertTriangle, HelpCircle, ShieldAlert, ChevronDown, ChevronUp } from 'lucide-react';
++export interface EvidenceRailProps { evidence: EvidenceItem[]; theme?: 'dark' | 'light' }
++const STATUS = {
++  measured: { label: 'Measured', Icon: CheckCircle2 },
++  needs_review: { label: 'Needs review', Icon: AlertTriangle },
++  inconclusive: { label: 'Inconclusive', Icon: HelpCircle },
++  not_assessed: { label: 'Not assessed', Icon: ShieldAlert },
++};
+ 
+-export interface EvidenceRailProps {
+-  evidence: EvidenceItem[];
+-  theme?: 'dark' | 'light';
+-}
+-
+-export const EvidenceRail: React.FC<EvidenceRailProps> = ({
+-  evidence,
+-  theme = 'dark',
+-}) => {
+-  const [expandedId, setExpandedId] = useState<string | null>(evidence[0]?.id || null);
+-
+-  const isDark = theme === 'dark';
+-  const cardBg = isDark ? '#151d2c' : '#ffffff';
+-  const borderCol = isDark ? '#1e293b' : '#e2e8f0';
+-  const textCol = isDark ? '#f1f5f9' : '#0f172a';
+-  const subText = isDark ? '#94a3b8' : '#64748b';
+-
+-  const toggleExpand = (id: string) => {
+-    setExpandedId(expandedId === id ? null : id);
+-  };
+-
+-  const getStatusBadge = (status: EvidenceStatus) => {
+-    switch (status) {
+-      case 'measured':
+-        return (
+-          <span
+-            style={{
+-              display: 'inline-flex',
+-              alignItems: 'center',
+-              gap: '4px',
+-              padding: '2px 8px',
+-              borderRadius: '9999px',
+-              fontSize: '0.75rem',
+-              fontWeight: 600,
+-              backgroundColor: isDark ? 'rgba(16, 185, 129, 0.15)' : '#d1fae5',
+-              color: isDark ? '#34d399' : '#065f46',
+-              border: `1px solid ${isDark ? 'rgba(16, 185, 129, 0.3)' : '#a7f3d0'}`,
+-            }}
+-          >
+-            <CheckCircle2 size={12} />
+-            Measured
+-          </span>
+-        );
+-      case 'needs_review':
+-        return (
+-          <span
+-            style={{
+-              display: 'inline-flex',
+-              alignItems: 'center',
+-              gap: '4px',
+-              padding: '2px 8px',
+-              borderRadius: '9999px',
+-              fontSize: '0.75rem',
+-              fontWeight: 600,
+-              backgroundColor: isDark ? 'rgba(239, 68, 68, 0.15)' : '#fee2e2',
+-              color: isDark ? '#f87171' : '#991b1b',
+-              border: `1px solid ${isDark ? 'rgba(239, 68, 68, 0.3)' : '#fca5a5'}`,
+-            }}
+-          >
+-            <AlertTriangle size={12} />
+-            Needs Review
+-          </span>
+-        );
+-      case 'inconclusive':
+-        return (
+-          <span
+-            style={{
+-              display: 'inline-flex',
+-              alignItems: 'center',
+-              gap: '4px',
+-              padding: '2px 8px',
+-              borderRadius: '9999px',
+-              fontSize: '0.75rem',
+-              fontWeight: 600,
+-              backgroundColor: isDark ? 'rgba(245, 158, 11, 0.15)' : '#fef3c7',
+-              color: isDark ? '#fbbf24' : '#92400e',
+-              border: `1px solid ${isDark ? 'rgba(245, 158, 11, 0.3)' : '#fde68a'}`,
+-            }}
+-          >
+-            <HelpCircle size={12} />
+-            Inconclusive
+-          </span>
+-        );
+-      case 'not_assessed':
+-      default:
+-        return (
+-          <span
+-            style={{
+-              display: 'inline-flex',
+-              alignItems: 'center',
+-              gap: '4px',
+-              padding: '2px 8px',
+-              borderRadius: '9999px',
+-              fontSize: '0.75rem',
+-              fontWeight: 600,
+-              backgroundColor: isDark ? 'rgba(100, 116, 139, 0.15)' : '#f1f5f9',
+-              color: isDark ? '#94a3b8' : '#475569',
+-              border: `1px solid ${isDark ? 'rgba(100, 116, 139, 0.3)' : '#cbd5e1'}`,
+-            }}
+-          >
+-            <ShieldAlert size={12} />
+-            Not Assessed
+-          </span>
+-        );
+-    }
+-  };
+-
++export const EvidenceRail: React.FC<EvidenceRailProps> = ({ evidence, theme }) => {
++  const [expandedId, setExpandedId] = useState<string | null>(null);
++  const prefix = useId();
+   return (
+-    <div
+-      className="evidence-rail-card"
+-      style={{
+-        backgroundColor: cardBg,
+-        border: `1px solid ${borderCol}`,
+-        borderRadius: '8px',
+-        padding: '16px',
+-        marginBottom: '16px',
+-      }}
+-    >
+-      <div style={{ marginBottom: '12px' }}>
+-        <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: textCol }}>
+-          Scientific Evidence Challenge Rail
+-        </h3>
+-        <p style={{ margin: '2px 0 0', fontSize: '0.8125rem', color: subText }}>
+-          A neat fold is not enough. Test repetition, check alternating depths, and inspect gaps.
+-        </p>
+-      </div>
+-
+-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+-        {evidence.map((item) => {
+-          const isExpanded = expandedId === item.id;
+-          return (
+-            <div
+-              key={item.id}
+-              style={{
+-                borderRadius: '6px',
+-                border: `1px solid ${borderCol}`,
+-                backgroundColor: isDark ? '#0d131f' : '#f8fafc',
+-                overflow: 'hidden',
+-                transition: 'border-color 0.15s ease',
+-              }}
+-            >
+-              <button
+-                type="button"
+-                onClick={() => toggleExpand(item.id)}
+-                aria-expanded={isExpanded}
+-                style={{
+-                  width: '100%',
+-                  display: 'flex',
+-                  justifyContent: 'space-between',
+-                  alignItems: 'center',
+-                  padding: '10px 12px',
+-                  background: 'none',
+-                  border: 'none',
+-                  textAlign: 'left',
+-                  cursor: 'pointer',
+-                  gap: '8px',
+-                }}
+-              >
+-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+-                  <span style={{ fontWeight: 600, fontSize: '0.875rem', color: textCol }}>
+-                    {item.title}
+-                  </span>
+-                  {getStatusBadge(item.status)}
+-                </div>
+-                <div style={{ color: subText }}>
+-                  {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+-                </div>
+-              </button>
+-
+-              {isExpanded && (
+-                <div style={{ padding: '0 12px 12px 12px', borderTop: `1px solid ${borderCol}` }}>
+-                  <p style={{ margin: '8px 0', fontSize: '0.8125rem', color: isDark ? '#cbd5e1' : '#334155', lineHeight: 1.5 }}>
+-                    {item.explanation}
+-                  </p>
+-
+-                  {item.metrics.length > 0 && (
+-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
+-                      {item.metrics.map((m, mIdx) => (
+-                        <div
+-                          key={mIdx}
+-                          style={{
+-                            padding: '6px 10px',
+-                            borderRadius: '4px',
+-                            backgroundColor: isDark ? '#151d2c' : '#ffffff',
+-                            border: `1px solid ${borderCol}`,
+-                            fontSize: '0.75rem',
+-                          }}
+-                        >
+-                          <span style={{ color: subText }}>{m.name}: </span>
+-                          <span style={{ fontWeight: 600, color: textCol, fontFamily: 'monospace' }}>
+-                            {m.formatted ?? (m.value !== null ? `${m.value} ${m.unit || ''}` : 'N/A')}
+-                          </span>
+-                        </div>
+-                      ))}
+-                    </div>
+-                  )}
+-
+-                  {item.limitations.length > 0 && (
+-                    <div style={{ marginTop: '10px', padding: '8px 10px', borderRadius: '4px', backgroundColor: isDark ? 'rgba(245, 158, 11, 0.08)' : '#fffbeb', border: `1px solid ${isDark ? 'rgba(245, 158, 11, 0.2)' : '#fef3c7'}` }}>
+-                      <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', color: isDark ? '#fbbf24' : '#b45309', letterSpacing: '0.05em' }}>
+-                        Scientific Boundary & Limitations:
+-                      </span>
+-                      <ul style={{ margin: '4px 0 0 16px', padding: 0, fontSize: '0.75rem', color: isDark ? '#e2e8f0' : '#451a03' }}>
+-                        {item.limitations.map((lim, lIdx) => (
+-                          <li key={lIdx} style={{ marginBottom: '2px' }}>{lim}</li>
+-                        ))}
+-                      </ul>
+-                    </div>
+-                  )}
+-                </div>
+-              )}
+-            </div>
+-          );
++    <section className="evidence-rail-card" data-appearance={theme} aria-labelledby={`${prefix}-title`}>
++      <div className="evidence-intro"><span className="eyebrow">THE EVIDENCE CHECKLIST</span><h2 id={`${prefix}-title`}>Challenge the signal</h2><p>A neat fold is a starting point. Open a check to inspect its measurements and limits.</p></div>
++      <div className="evidence-checks">
++        {evidence.map(item => {
++          const expanded = expandedId === item.id;
++          const status = STATUS[item.status as EvidenceStatus] || STATUS.not_assessed;
++          const Icon = status.Icon;
++          return <div className="evidence-check" key={item.id}>
++            <button type="button" className="evidence-toggle" aria-expanded={expanded} aria-controls={`${prefix}-${item.id}`} onClick={() => setExpandedId(expanded ? null : item.id)}><div><span className="evidence-title">{item.title}</span><span className={`evidence-status ${item.status}`}><Icon size={12} />{status.label}</span></div><ChevronDown size={14} className={expanded ? 'chevron-expanded' : ''} /></button>
++            {expanded && <div className="evidence-details" id={`${prefix}-${item.id}`}><p>{item.explanation}</p><dl className="evidence-metrics">{item.metrics.map((metric, index) => <div key={index}><dt>{metric.name}</dt><dd>{metric.formatted ?? (metric.value !== null ? `${metric.value} ${metric.unit || ''}` : 'N/A')}</dd></div>)}</dl>{item.limitations.length > 0 && <div className="evidence-limits"><strong>What this check cannot tell you</strong><ul>{item.limitations.map((limit, index) => <li key={index}>{limit}</li>)}</ul></div>}</div>}
++          </div>;
+         })}
+       </div>
+-    </div>
++    </section>
+   );
+ };
+--- a/src/features/evidence/EvidenceReportView.tsx
++++ b/src/features/evidence/EvidenceReportView.tsx
+@@ -43,71 +43,9 @@
+ 
+   return (
+     <div className="evidence-report-container" style={{ maxWidth: '960px', margin: '0 auto', padding: '24px 16px' }}>
+-      {/* Top Action Bar (hidden on print) */}
+-      <div className="report-action-bar no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
+-        <button
+-          type="button"
+-          onClick={onBackToWorkspace}
+-          style={{
+-            display: 'inline-flex',
+-            alignItems: 'center',
+-            gap: '6px',
+-            padding: '8px 14px',
+-            borderRadius: '6px',
+-            border: '1px solid #334155',
+-            backgroundColor: '#1e293b',
+-            color: '#f1f5f9',
+-            fontSize: '0.875rem',
+-            cursor: 'pointer',
+-          }}
+-        >
+-          <ArrowLeft size={16} />
+-          Back to Workspace
+-        </button>
+-
+-        <div style={{ display: 'flex', gap: '10px' }}>
+-          <button
+-            type="button"
+-            onClick={() => downloadProjectFile(project)}
+-            style={{
+-              display: 'inline-flex',
+-              alignItems: 'center',
+-              gap: '6px',
+-              padding: '8px 14px',
+-              borderRadius: '6px',
+-              border: '1px solid #0284c7',
+-              backgroundColor: '#0284c7',
+-              color: '#ffffff',
+-              fontSize: '0.875rem',
+-              fontWeight: 600,
+-              cursor: 'pointer',
+-            }}
+-          >
+-            <Download size={16} />
+-            Download Project JSON
+-          </button>
+-
+-          <button
+-            type="button"
+-            onClick={() => window.print()}
+-            style={{
+-              display: 'inline-flex',
+-              alignItems: 'center',
+-              gap: '6px',
+-              padding: '8px 14px',
+-              borderRadius: '6px',
+-              border: '1px solid #10b981',
+-              backgroundColor: '#10b981',
+-              color: '#ffffff',
+-              fontSize: '0.875rem',
+-              fontWeight: 600,
+-              cursor: 'pointer',
+-            }}
+-          >
+-            <Printer size={16} />
+-            Print / Save to PDF
+-          </button>
+-        </div>
++      <div className="report-action-bar no-print">
++        <button type="button" onClick={onBackToWorkspace} className="button button-secondary"><ArrowLeft size={15} />Back to Workspace</button>
++        <div><button type="button" onClick={() => downloadProjectFile(project)} className="button button-secondary"><Download size={15} />Download Project JSON</button><button type="button" onClick={() => window.print()} className="button button-primary"><Printer size={15} />Print / Save to PDF</button></div>
+       </div>
+ 
+       {/* Main Printable Document */}
+@@ -166,7 +104,7 @@
+             </h4>
+             <div style={{ fontSize: '0.8125rem', lineHeight: 1.6 }}>
+               <div><strong>Quality Filter:</strong> {settings.qualityFilter === 'clean_only' ? 'Clean quality only' : 'All points'} ({analysis.activePoints.length}/{dataset.points.length} points analyzed)</div>
+-              <div><strong>Flux Normalization:</strong> {settings.normalization === 'median' ? 'Median normalized (baseline ~ 1.0)' : 'None (raw detector counts)'}</div>
++              <div><strong>Flux Normalization:</strong> {settings.normalization === 'median' ? 'Median normalized (baseline ~ 1.0)' : 'None (input flux units)'}</div>
+               <div><strong>Trial Period:</strong> {settings.periodDays.toFixed(4)} days</div>
+               <div><strong>Reference Epoch t₀:</strong> {settings.epochDays.toFixed(4)} days</div>
+               <div><strong>Transit Duration:</strong> {settings.durationHours.toFixed(2)} hours</div>
+@@ -203,7 +141,7 @@
+                 centerPhase: 0.0,
+                 halfPhaseWidth,
+                 baseline: fit.outOfTransitMean,
+-                depth: fit.depth,
++                depth: fit.rawDepth,
+               }}
+               theme="light"
+               height={240}
+@@ -348,7 +286,7 @@
+ 
+         {/* Document Footer */}
+         <div style={{ marginTop: '30px', paddingTop: '12px', borderTop: '1px solid #e2e8f0', textAlign: 'center', fontSize: '0.75rem', color: '#94a3b8' }}>
+-          DimmingLab — The Exoplanet Evidence Lab &bull; Sourced NASA Exoplanet Data &bull; Cryptographically Verified Data Identity
++          DimmingLab — The Exoplanet Evidence Lab &bull; {manifest.kind === 'observed' ? 'Observed measurements' : manifest.kind === 'injection' ? 'Injection experiment' : 'Synthetic simulation'} &bull; Reproducible settings and dataset identity
+         </div>
+       </div>
+     </div>
+--- a/src/features/evidence/exportImport.ts
++++ b/src/features/evidence/exportImport.ts
+@@ -9,7 +9,7 @@
+ 
+ export const CURRENT_SCHEMA_VERSION = 1;
+ export const CURRENT_ENGINE_VERSION = '1.1.0';
+-export const CURRENT_APP_VERSION = '1.0.1';
++export const CURRENT_APP_VERSION = '1.0.2';
+ export const CURATED_DATASET_HASHES: Record<string, string> = {
+   case_a_kepler8b: 'ba188e8782ff0be96198b66424302c17a4f68a7cc472b7b1a2e4778312c48bf8',
+   case_b_eclipsing_binary: 'a374184d137bed94ed8b59421c7ca779a8ef098f1c838e78ea85feae72aadd0c',
+--- a/src/features/import/CsvImportModal.tsx
++++ b/src/features/import/CsvImportModal.tsx
+@@ -4,7 +4,7 @@
+  * Provides live column auto-detection, row validation counts, and duplicate timestamp handling.
+  */
+ 
+-import React, { useState } from 'react';
++import React, { useState, useRef, useEffect } from 'react';
+ import { ColumnMapping, parseLightCurveCsv, ParseValidationResult } from './csvParser';
+ import { LightCurveData, DatasetManifest, TimeFormat, DatasetKind } from '../../domain/types';
+ import { hashLightCurvePoints } from '../../engine/hash';
+@@ -31,14 +31,33 @@
+   const [timeFormat, setTimeFormat] = useState<TimeFormat | ''>('');
+   const [dataKind, setDataKind] = useState<DatasetKind | ''>('');
+ 
++  const dialogRef = useRef<HTMLDivElement>(null);
++  useEffect(() => {
++    if (!isOpen) return;
++    const previous = document.activeElement as HTMLElement | null;
++    const previousOverflow = document.body.style.overflow;
++    document.body.style.overflow = 'hidden';
++    dialogRef.current?.querySelector<HTMLSelectElement>('select')?.focus();
++    const onKeyDown = (event: KeyboardEvent) => {
++      if (event.key === 'Escape') { event.preventDefault(); onClose(); return; }
++      if (event.key !== 'Tab') return;
++      const elements = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex="0"]') || []).filter(element => element.getClientRects().length > 0);
++      const first = elements[0], last = elements[elements.length - 1];
++      if (!first || !last) return;
++      if (event.shiftKey && (document.activeElement === first || !dialogRef.current?.contains(document.activeElement))) { event.preventDefault(); last.focus(); }
++      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
++    };
++    document.addEventListener('keydown', onKeyDown);
++    return () => { document.removeEventListener('keydown', onKeyDown); document.body.style.overflow = previousOverflow; if (previous?.isConnected) previous.focus(); };
++  }, [isOpen, onClose]);
++
+   if (!isOpen) return null;
+ 
+-  const isDark = theme === 'dark';
+-  const modalBg = isDark ? '#151d2c' : '#ffffff';
+-  const borderCol = isDark ? '#1e293b' : '#e2e8f0';
+-  const inputBg = isDark ? '#0d131f' : '#f8fafc';
+-  const textCol = isDark ? '#f1f5f9' : '#0f172a';
+-  const subText = isDark ? '#94a3b8' : '#64748b';
++  const modalBg = 'var(--surface)';
++  const borderCol = 'var(--border)';
++  const inputBg = 'var(--surface-soft)';
++  const textCol = 'var(--ink)';
++  const subText = 'var(--muted)';
+ 
+   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+     const file = e.target.files?.[0];
+@@ -130,6 +149,8 @@
+     >
+       <div
+         role="dialog"
++        ref={dialogRef}
++        data-appearance={theme}
+         aria-modal="true"
+         aria-labelledby="import-title"
+         style={{
+@@ -156,6 +177,7 @@
+           <button
+             type="button"
+             onClick={onClose}
++            aria-label="Close CSV import"
+             style={{ background: 'none', border: 'none', color: subText, cursor: 'pointer' }}
+           >
+             <X size={20} />
+@@ -225,7 +247,7 @@
+               </div>
+ 
+               {/* Column Mapping Section */}
+-              <div style={{ backgroundColor: isDark ? '#0d131f' : '#f8fafc', padding: '12px', borderRadius: '6px', border: `1px solid ${borderCol}` }}>
++              <div style={{ backgroundColor: 'var(--surface-soft)', padding: '12px', borderRadius: '6px', border: `1px solid ${borderCol}` }}>
+                 <h4 style={{ margin: '0 0 10px', fontSize: '0.8125rem', fontWeight: 600, color: textCol }}>
+                   Column Mapping:
+                 </h4>
+@@ -308,7 +330,7 @@
+         </div>
+ 
+         {/* Footer */}
+-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', padding: '14px 20px', borderTop: `1px solid ${borderCol}`, backgroundColor: isDark ? '#0d131f' : '#f8fafc' }}>
++        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', padding: '14px 20px', borderTop: `1px solid ${borderCol}`, backgroundColor: 'var(--surface-soft)' }}>
+           <button
+             type="button"
+             onClick={onClose}
+@@ -324,7 +346,7 @@
+               padding: '8px 18px',
+               borderRadius: '6px',
+               border: 'none',
+-              backgroundColor: '#0284c7',
++              backgroundColor: '#245be6',
+               color: '#ffffff',
+               fontSize: '0.875rem',
+               fontWeight: 600,
+--- a/src/features/library/LibraryView.tsx
++++ b/src/features/library/LibraryView.tsx
+@@ -1,13 +1,9 @@
+-/**
+- * DimmingLab - Investigation Library View
+- * Clean scientific catalog displaying curated investigations with clear distinction
+- * between observed NASA data and synthetic control experiments.
+- */
+-
+-import React, { useRef } from 'react';
++import React, { useRef, useState } from 'react';
+ import { CURATED_INVESTIGATIONS, CuratedInvestigationCard } from '../../data/curatedDatasets';
+ import { InvestigationProject } from '../../domain/types';
+-import { Sparkles, Upload, BookOpen, Clock, Award, CheckCircle2, Wifi, WifiOff, FolderOpen } from 'lucide-react';
++import { ArrowUpRight, ArrowRight, Upload, BookOpen, Clock, CheckCircle2, Wifi, WifiOff, FolderOpen, LayoutGrid, ChevronRight, Sun, Moon, Telescope, FlaskConical } from 'lucide-react';
++import { LabBrand } from '../../components/LabBrand';
++import { SignalPreview } from './SignalPreview';
+ 
+ export interface LibraryViewProps {
+   onSelectInvestigation: (card: CuratedInvestigationCard, resumeSaved?: boolean) => void;
+@@ -18,307 +14,66 @@
+   onOpenProjectFile: (fileContent: string) => void;
+   onOpenTeacherGuide: () => void;
+   offlineReady: boolean;
++  offlineChecking?: boolean;
+   theme?: 'dark' | 'light';
++  onToggleTheme: () => void;
+ }
+ 
+-export const LibraryView: React.FC<LibraryViewProps> = ({
+-  onSelectInvestigation,
+-  savedProject,
+-  savedProjectsMap = {},
+-  onResumeSaved,
+-  onOpenImport,
+-  onOpenProjectFile,
+-  onOpenTeacherGuide,
+-  offlineReady,
+-  theme = 'dark',
+-}) => {
+-  const isDark = theme === 'dark';
+-  const cardBg = isDark ? '#151d2c' : '#ffffff';
+-  const borderCol = isDark ? '#1e293b' : '#e2e8f0';
+-  const textCol = isDark ? '#f1f5f9' : '#0f172a';
+-  const subText = isDark ? '#94a3b8' : '#64748b';
++const CASE_COPY = [
++  { title: 'The repeating transit', question: 'Can you find a planet in real starlight?', skill: 'Align repeating dips', category: 'Observed NASA data' },
++  { title: 'The convincing impostor', question: 'A regular dip. A different explanation.', skill: 'Compare alternating depths', category: 'Synthetic simulation' },
++  { title: 'One dip, many illusions', question: 'What happens when the telescope misses a beat?', skill: 'Test gaps & repetition', category: 'Synthetic simulation' },
++  { title: 'Hidden in the noise', question: 'A faint signal is waiting to be recovered.', skill: 'Recover an injected signal', category: 'Injection experiment' },
++];
++
++export const LibraryView: React.FC<LibraryViewProps> = ({ onSelectInvestigation, savedProject, savedProjectsMap = {}, onResumeSaved, onOpenImport, onOpenProjectFile, onOpenTeacherGuide, offlineReady, offlineChecking = false, theme = 'light', onToggleTheme }) => {
+   const fileInputRef = useRef<HTMLInputElement>(null);
++  const [filter, setFilter] = useState<'all' | 'observed' | 'controls'>('all');
++  const first = CURATED_INVESTIGATIONS[0];
++  const openProject = () => fileInputRef.current?.click();
+ 
+   return (
+-    <div style={{ maxWidth: '1080px', margin: '0 auto', padding: '32px 16px' }}>
+-      {/* Hero Header */}
+-      <div style={{ textAlign: 'center', marginBottom: '36px' }}>
+-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', borderRadius: '9999px', backgroundColor: isDark ? 'rgba(2, 132, 199, 0.15)' : '#e0f2fe', color: isDark ? '#38bdf8' : '#0284c7', fontSize: '0.8125rem', fontWeight: 600, marginBottom: '12px' }}>
+-          <Sparkles size={14} />
+-          Congressional App Challenge &bull; Exoplanet Science Lab
+-        </div>
+-        <h1 style={{ margin: '0 0 8px', fontSize: '2.25rem', fontWeight: 800, color: textCol, letterSpacing: '-0.025em' }}>
+-          DimmingLab — The Exoplanet Evidence Lab
+-        </h1>
+-        <p style={{ margin: '0 auto', maxWidth: '640px', fontSize: '1.0625rem', color: subText, lineHeight: 1.6 }}>
+-          Investigate real NASA starlight measurements, align repeating dips, challenge misleading patterns, and produce reproducible evidence reports.
+-        </p>
++    <div className="library-layout">
++      <a className="skip-link" href="#library-main">Skip to investigations</a>
++      <aside className="library-sidebar" aria-label="Lab navigation">
++        <LabBrand />
++        <div className="sidebar-section-label">YOUR WORKSPACE</div>
++        <nav className="sidebar-nav">
++          <button className="sidebar-link active" type="button" aria-current="page" onClick={() => { setFilter('all'); document.getElementById('investigations')?.scrollIntoView({ behavior: 'smooth' }); }}><LayoutGrid size={17} />Investigations<span className="nav-count">04</span></button>
++          <button className="sidebar-link" type="button" onClick={openProject} aria-label="Open Saved Project (.json)"><FolderOpen size={17} />Open project</button>
++          <button className="sidebar-link" type="button" onClick={onOpenImport} aria-label="Import Light Curve (CSV)"><Upload size={17} />Import data</button>
++        </nav>
++        <div className="sidebar-section-label">RESOURCES</div>
++        <nav className="sidebar-nav" aria-label="Resources"><button className="sidebar-link" type="button" onClick={onOpenTeacherGuide}><BookOpen size={17} />Teacher Guide & Sources<ArrowUpRight size={13} /></button></nav>
++        <div className="sidebar-fieldnote"><Telescope size={23} /><p>Small changes in light.<br />Big questions to ask.</p><span>A lab for curious minds.</span></div>
++        <div className="sidebar-bottom"><span className="sidebar-version">THE EXOPLANET EVIDENCE LAB</span><button className="theme-switch" type="button" onClick={onToggleTheme} aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}>{theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}<span>{theme === 'dark' ? 'Light appearance' : 'Dark appearance'}</span></button></div>
++      </aside>
+ 
+-        {/* Action Bar */}
+-        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '20px', flexWrap: 'wrap' }}>
+-          {savedProject && (
+-            <button
+-              type="button"
+-              onClick={onResumeSaved}
+-              style={{
+-                display: 'inline-flex',
+-                alignItems: 'center',
+-                gap: '8px',
+-                padding: '10px 20px',
+-                fontSize: '0.9375rem',
+-                fontWeight: 600,
+-                borderRadius: '8px',
+-                border: 'none',
+-                backgroundColor: '#10b981',
+-                color: '#ffffff',
+-                cursor: 'pointer',
+-                boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
+-              }}
+-            >
+-              <CheckCircle2 size={16} />
+-              Continue Saved Investigation ({savedProject.datasetTitle})
+-            </button>
+-          )}
++      <div className="library-content">
++        <header className="library-topbar"><span className="breadcrumb">Workspace <ChevronRight size={13} /><strong>Investigations</strong></span><span className={`offline-state ${offlineReady ? 'ready' : ''}`} role="status" title={offlineReady ? 'The complete classroom pack is cached for offline use.' : offlineChecking ? 'Checking the classroom pack.' : 'The offline pack is not ready in this session. Keep the browser online.'}>{offlineReady ? <Wifi size={14} /> : <WifiOff size={14} />}<span>{offlineReady ? 'Offline Classroom Pack Ready' : offlineChecking ? 'Preparing offline pack…' : 'Online session'}</span></span></header>
++        <main id="library-main" className="library-main">
++          <section className="library-hero" aria-labelledby="library-heading">
++            <div className="hero-copy"><div className="eyebrow"><span className="small-cross">+</span> LOOK CLOSER. ASK BETTER QUESTIONS.</div><h1 id="library-heading">Find the story<br />in the <span>starlight.</span></h1><p>A star dims. Is it a planet, a second star, or a trick in the data? Use real observations, test your ideas, and build a case from evidence.</p><div className="hero-actions"><button type="button" className="button button-primary" onClick={() => onSelectInvestigation(first, !!savedProjectsMap[first.id])}>{savedProjectsMap[first.id] ? 'Continue Kepler-8 b' : 'Start with Kepler-8 b'}<ArrowRight size={17} /></button><button type="button" className="text-button" onClick={onOpenTeacherGuide}>How the lab works<ArrowUpRight size={15} /></button></div><div className="hero-note"><span className="status-dot" /> No account needed. Your work stays in this browser.</div></div>
++            <div className="hero-observatory"><div className="observatory-top"><span>FIELD NOTES / 01</span><span className="observatory-live"><span />KEPLER-8 b</span></div><div className="orbit-scene" aria-hidden="true"><div className="orbit orbit-one" /><div className="orbit orbit-two" /><div className="star-disc" /><div className="planet-disc" /><span className="orbit-marker" /><div className="scene-coordinate coordinate-top">KIC 006922244</div><div className="scene-coordinate coordinate-bottom">A WORLD REVEALED BY LIGHT</div></div><div className="observatory-chart"><div className="observatory-caption"><span>ARCHIVE LIGHT CURVE</span><span>NASA / KEPLER</span></div><SignalPreview path={first.dataPath} title="Kepler-8 b" hero /></div><div className="observatory-foot">Orbit illustration above · observed measurements below</div></div>
++          </section>
+ 
+-          <button
+-            type="button"
+-            onClick={() => fileInputRef.current?.click()}
+-            style={{
+-              display: 'inline-flex',
+-              alignItems: 'center',
+-              gap: '6px',
+-              padding: '10px 18px',
+-              fontSize: '0.9375rem',
+-              fontWeight: 600,
+-              borderRadius: '8px',
+-              border: `1px solid ${borderCol}`,
+-              backgroundColor: cardBg,
+-              color: textCol,
+-              cursor: 'pointer',
+-            }}
+-          >
+-            <FolderOpen size={16} />
+-            Open Saved Project (.json)
+-          </button>
+-          <input
+-            type="file"
+-            ref={fileInputRef}
+-            accept=".json,application/json"
+-            style={{ display: 'none' }}
+-            onChange={(e) => {
+-              const file = e.target.files?.[0];
+-              if (file) {
+-                const reader = new FileReader();
+-                reader.onload = (event) => {
+-                  const text = event.target?.result;
+-                  if (typeof text === 'string') {
+-                    onOpenProjectFile(text);
+-                  }
+-                };
+-                reader.readAsText(file);
+-                e.target.value = '';
+-              }
+-            }}
+-          />
++          {savedProject && <section className="resume-strip" aria-label="Continue your work"><span className="resume-icon"><FolderOpen size={20} /></span><div><span className="eyebrow">PICK UP WHERE YOU LEFT OFF</span><p>{savedProject.datasetTitle}</p></div><button type="button" className="button button-secondary" onClick={onResumeSaved}>Continue Saved Investigation<ArrowRight size={16} /></button></section>}
+ 
+-          <button
+-            type="button"
+-            onClick={onOpenImport}
+-            style={{
+-              display: 'inline-flex',
+-              alignItems: 'center',
+-              gap: '6px',
+-              padding: '10px 18px',
+-              fontSize: '0.9375rem',
+-              fontWeight: 600,
+-              borderRadius: '8px',
+-              border: `1px solid ${borderCol}`,
+-              backgroundColor: cardBg,
+-              color: textCol,
+-              cursor: 'pointer',
+-            }}
+-          >
+-            <Upload size={16} />
+-            Import Light Curve (CSV)
+-          </button>
++          <section id="investigations" className="investigations-section" aria-labelledby="investigations-heading">
++            <div className="section-heading"><div><div className="eyebrow">THE INVESTIGATION LIBRARY</div><h2 id="investigations-heading">Four signals. Four different stories.</h2><p>Start with an observation. Learn to question what you see.</p></div><span className="catalog-count">01 observed dataset · 03 controlled experiments</span></div>
++            <div className="catalog-toolbar"><div className="filter-tabs" role="group" aria-label="Filter investigations">{([{ id: 'all', label: 'All investigations', count: 4 }, { id: 'observed', label: 'Observed data', count: 1 }, { id: 'controls', label: 'Experiments', count: 3 }] as const).map(tab => <button key={tab.id} type="button" className={filter === tab.id ? 'selected' : ''} aria-pressed={filter === tab.id} onClick={() => setFilter(tab.id)}>{tab.label}<span>{tab.count}</span></button>)}</div><span className="catalog-hint"><Clock size={13} />10–12 minutes each</span></div>
++            <div className="investigation-grid">{CURATED_INVESTIGATIONS.map((card, index) => {
++              if ((filter === 'observed' && card.kind !== 'observed') || (filter === 'controls' && card.kind === 'observed')) return null;
++              const copy = CASE_COPY[index], saved = savedProjectsMap[card.id];
++              return <article className={`investigation-card case-${index}`} key={card.id}><div className="case-topline"><span className="case-index">CASE 0{index + 1}</span><span className={`data-kind ${card.kind}`}>{card.kind === 'observed' ? <Telescope size={12} /> : <FlaskConical size={12} />}{copy.category}</span></div><div className="case-visual"><SignalPreview path={card.dataPath} title={card.title} /></div><div className="case-copy"><span className="case-target">{card.targetId}</span><h3>{copy.title}</h3><p>{copy.question}</p><div className="case-skill"><span>IN THIS INVESTIGATION</span><strong>{copy.skill}</strong></div><div className="case-footer"><span><Clock size={13} />{card.approximateMinutes} min</span><button type="button" className="case-open" onClick={() => onSelectInvestigation(card, !!saved)} aria-label={saved ? `Resume Saved Investigation: ${card.title}` : `Open Investigation: ${card.title}`}>{saved ? 'Resume investigation' : 'Open investigation'}<ArrowUpRight size={17} /></button></div>{saved && <div className="saved-case-row"><span><CheckCircle2 size={12} />Saved draft</span><button type="button" onClick={() => onSelectInvestigation(card, false)}>Start fresh</button></div>}</div></article>;
++            })}</div>
++          </section>
+ 
+-          <button
+-            type="button"
+-            onClick={onOpenTeacherGuide}
+-            style={{
+-              display: 'inline-flex',
+-              alignItems: 'center',
+-              gap: '6px',
+-              padding: '10px 18px',
+-              fontSize: '0.9375rem',
+-              fontWeight: 600,
+-              borderRadius: '8px',
+-              border: `1px solid ${borderCol}`,
+-              backgroundColor: cardBg,
+-              color: textCol,
+-              cursor: 'pointer',
+-            }}
+-          >
+-            <BookOpen size={16} />
+-            Teacher Guide & Sources
+-          </button>
+-        </div>
+-
+-        {/* Offline Status Badge */}
+-        <div style={{ marginTop: '14px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: offlineReady ? '#10b981' : subText }}>
+-          {offlineReady ? <Wifi size={14} /> : <WifiOff size={14} />}
+-          <span>{offlineReady ? 'Offline Classroom Pack Ready (Works without internet)' : 'Checking offline cache status...'}</span>
+-        </div>
++          <section className="method-strip" aria-label="The investigation process"><div><span className="eyebrow">THE SCIENTIFIC HABIT</span><h2>A signal is a starting point.<br />Evidence makes the case.</h2></div><ol><li><span>01</span><div><strong>Find it.</strong><p>Explore the light. Align the dips.</p></div></li><li><span>02</span><div><strong>Challenge it.</strong><p>Check repetition, depths, and gaps.</p></div></li><li><span>03</span><div><strong>Explain it.</strong><p>Write a claim your evidence supports.</p></div></li></ol></section>
++          <footer className="library-footer"><LabBrand /><span>Built for exploration. Grounded in evidence.</span><button type="button" className="text-button" onClick={onOpenTeacherGuide}>Data sources & scientific limits<ArrowUpRight size={13} /></button></footer>
++        </main>
+       </div>
+-
+-      {/* Investigation Cards Grid */}
+-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+-        {CURATED_INVESTIGATIONS.map((card) => {
+-          const isObserved = card.kind === 'observed';
+-          const isInjection = card.kind === 'injection';
+-
+-          return (
+-            <div
+-              key={card.id}
+-              className="investigation-card"
+-              style={{
+-                backgroundColor: cardBg,
+-                border: `1px solid ${borderCol}`,
+-                borderRadius: '10px',
+-                padding: '20px',
+-                display: 'flex',
+-                flexDirection: 'column',
+-                justifyContent: 'space-between',
+-                transition: 'transform 0.15s ease, border-color 0.15s ease',
+-              }}
+-            >
+-              <div>
+-                {/* Badge Row */}
+-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+-                  <span
+-                    style={{
+-                      padding: '3px 8px',
+-                      borderRadius: '4px',
+-                      fontSize: '0.7rem',
+-                      fontWeight: 700,
+-                      textTransform: 'uppercase',
+-                      letterSpacing: '0.04em',
+-                      backgroundColor: isObserved
+-                        ? (isDark ? 'rgba(56, 189, 248, 0.15)' : '#e0f2fe')
+-                        : isInjection
+-                        ? (isDark ? 'rgba(168, 85, 247, 0.15)' : '#f3e8ff')
+-                        : (isDark ? 'rgba(245, 158, 11, 0.15)' : '#fef3c7'),
+-                      color: isObserved
+-                        ? (isDark ? '#38bdf8' : '#0284c7')
+-                        : isInjection
+-                        ? (isDark ? '#c084fc' : '#7e22ce')
+-                        : (isDark ? '#fbbf24' : '#b45309'),
+-                      border: `1px solid ${
+-                        isObserved
+-                          ? (isDark ? 'rgba(56, 189, 248, 0.3)' : '#bae6fd')
+-                          : isInjection
+-                          ? (isDark ? 'rgba(168, 85, 247, 0.3)' : '#e9d5ff')
+-                          : (isDark ? 'rgba(245, 158, 11, 0.3)' : '#fde68a')
+-                      }`,
+-                    }}
+-                  >
+-                    {isObserved ? 'Observed NASA Data' : isInjection ? 'Injection Experiment' : 'Synthetic Impostor'}
+-                  </span>
+-
+-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: subText }}>
+-                    <Clock size={12} />
+-                    {card.approximateMinutes} min
+-                  </span>
+-                </div>
+-
+-                <h3 style={{ margin: '0 0 4px', fontSize: '1.125rem', fontWeight: 700, color: textCol }}>
+-                  {card.title}
+-                </h3>
+-                <div style={{ fontSize: '0.75rem', color: isDark ? '#38bdf8' : '#0369a1', fontFamily: 'monospace', marginBottom: '10px' }}>
+-                  {card.targetId} &bull; {card.subtitle}
+-                </div>
+-
+-                <p style={{ margin: '0 0 14px', fontSize: '0.8125rem', color: isDark ? '#cbd5e1' : '#475569', lineHeight: 1.5 }}>
+-                  {card.description}
+-                </p>
+-
+-                <div style={{ padding: '8px 10px', borderRadius: '6px', backgroundColor: isDark ? '#0d131f' : '#f8fafc', border: `1px solid ${borderCol}`, fontSize: '0.75rem', marginBottom: '16px' }}>
+-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: isDark ? '#fbbf24' : '#b45309', fontWeight: 600, marginBottom: '2px' }}>
+-                    <Award size={12} />
+-                    Skill Practiced:
+-                  </div>
+-                  <div style={{ color: textCol }}>{card.skillPracticed}</div>
+-                </div>
+-              </div>
+-
+-              {savedProjectsMap[card.id] ? (
+-                <div>
+-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#10b981', marginBottom: '8px', fontWeight: 600 }}>
+-                    <CheckCircle2 size={13} />
+-                    <span>Saved draft in progress</span>
+-                  </div>
+-                  <button
+-                    type="button"
+-                    onClick={() => onSelectInvestigation(card, true)}
+-                    style={{
+-                      width: '100%',
+-                      padding: '10px 16px',
+-                      borderRadius: '6px',
+-                      border: 'none',
+-                      backgroundColor: '#10b981',
+-                      color: '#ffffff',
+-                      fontSize: '0.875rem',
+-                      fontWeight: 600,
+-                      cursor: 'pointer',
+-                      textAlign: 'center',
+-                      marginBottom: '8px',
+-                    }}
+-                  >
+-                    Resume Saved Investigation &rarr;
+-                  </button>
+-                  <button
+-                    type="button"
+-                    onClick={() => onSelectInvestigation(card, false)}
+-                    style={{
+-                      width: '100%',
+-                      padding: '6px 12px',
+-                      borderRadius: '6px',
+-                      border: `1px solid ${borderCol}`,
+-                      backgroundColor: 'transparent',
+-                      color: subText,
+-                      fontSize: '0.75rem',
+-                      fontWeight: 500,
+-                      cursor: 'pointer',
+-                      textAlign: 'center',
+-                    }}
+-                  >
+-                    Start Fresh (Reset parameters)
+-                  </button>
+-                </div>
+-              ) : (
+-                <button
+-                  type="button"
+-                  onClick={() => onSelectInvestigation(card, false)}
+-                  style={{
+-                    width: '100%',
+-                    padding: '10px 16px',
+-                    borderRadius: '6px',
+-                    border: 'none',
+-                    backgroundColor: '#0284c7',
+-                    color: '#ffffff',
+-                    fontSize: '0.875rem',
+-                    fontWeight: 600,
+-                    cursor: 'pointer',
+-                    textAlign: 'center',
+-                  }}
+-                >
+-                  Start Investigation &rarr;
+-                </button>
+-              )}
+-            </div>
+-          );
+-        })}
+-      </div>
++      <input type="file" ref={fileInputRef} accept=".json,application/json" hidden onChange={e => { const file = e.target.files?.[0]; if (file) { const reader = new FileReader(); reader.onload = event => { if (typeof event.target?.result === 'string') onOpenProjectFile(event.target.result); }; reader.readAsText(file); e.target.value = ''; } }} />
+     </div>
+   );
+ };
+--- a/src/features/library/SignalPreview.tsx
++++ b/src/features/library/SignalPreview.tsx
+@@ -0,0 +1,37 @@
++import React, { useEffect, useState } from 'react';
++import type { LightCurveData } from '../../domain/types';
++
++/** Small multiples made from the actual packaged data, never a fabricated light curve. */
++export const SignalPreview: React.FC<{ path: string; title: string; hero?: boolean }> = ({ path, title, hero = false }) => {
++  const [preview, setPreview] = useState<{ dots: string; min: number; max: number } | null>(null);
++  const [unavailable, setUnavailable] = useState(false);
++  useEffect(() => {
++    const controller = new AbortController();
++    fetch(path, { signal: controller.signal }).then(res => {
++      if (!res.ok) throw new Error('Preview unavailable');
++      return res.json();
++    }).then((data: LightCurveData) => {
++      const points = data.points.filter(p => Number.isFinite(p.time) && Number.isFinite(p.flux));
++      if (!points.length) throw new Error('No preview measurements');
++      const times = points.map(p => p.time), fluxes = points.map(p => p.flux);
++      const min = Math.min(...times), max = Math.max(...times);
++      const low = Math.min(...fluxes), high = Math.max(...fluxes);
++      const dots = points.map(p => {
++        const x = 12 + (p.time - min) / (max - min || 1) * 336;
++        const y = 12 + (1 - (p.flux - low) / (high - low || 1)) * 66;
++        return `M${x.toFixed(1)},${y.toFixed(1)}h.2`;
++      }).join('');
++      setPreview({ dots, min, max });
++    }).catch(() => { if (!controller.signal.aborted) setUnavailable(true); });
++    return () => controller.abort();
++  }, [path]);
++  return (
++    <figure className={`signal-preview ${hero ? 'signal-preview-hero' : ''}`}>
++      <svg viewBox="0 0 360 92" role="img" aria-label={`${title}: brightness over time from the supplied data. Open the investigation for full axes and measurements.`}>
++        {[22, 47, 72].map(y => <line key={y} x1="8" x2="352" y1={y} y2={y} className="preview-grid" />)}
++        {preview && <path d={preview.dots} fill="none" stroke="currentColor" strokeWidth={hero ? 1.5 : 1.7} strokeLinecap="round" opacity=".8" />}
++      </svg>
++      <figcaption><span>Brightness / time</span><span>{preview ? `${preview.min.toFixed(1)}–${preview.max.toFixed(1)} d` : unavailable ? 'Preview unavailable' : 'Loading preview…'}</span></figcaption>
++    </figure>
++  );
++};
+--- a/src/features/teacher/TeacherGuideView.tsx
++++ b/src/features/teacher/TeacherGuideView.tsx
+@@ -22,10 +22,10 @@
+   const [deleteStatus, setDeleteStatus] = useState<string | null>(null);
+ 
+   const isDark = theme === 'dark';
+-  const cardBg = isDark ? '#151d2c' : '#ffffff';
+-  const borderCol = isDark ? '#1e293b' : '#e2e8f0';
+-  const textCol = isDark ? '#f1f5f9' : '#0f172a';
+-  const subText = isDark ? '#94a3b8' : '#64748b';
++  const cardBg = 'var(--surface)';
++  const borderCol = 'var(--border)';
++  const textCol = 'var(--ink)';
++  const subText = 'var(--muted)';
+ 
+   const toggleReveal = (id: string) => {
+     setRevealedAnswers(prev => ({ ...prev, [id]: !prev[id] }));
+@@ -40,7 +40,7 @@
+   };
+ 
+   return (
+-    <div style={{ maxWidth: '960px', margin: '0 auto', padding: '24px 16px' }}>
++    <div className="teacher-page" style={{ maxWidth: '960px', margin: '0 auto', padding: '24px 16px' }}>
+       {/* Header */}
+       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '10px' }}>
+         <button
+@@ -90,29 +90,29 @@
+         </p>
+ 
+         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+-          <div style={{ padding: '12px', borderRadius: '6px', backgroundColor: isDark ? '#0d131f' : '#f8fafc', border: `1px solid ${borderCol}` }}>
+-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#0284c7', textTransform: 'uppercase' }}>Step 1: Open & Explore</div>
++          <div style={{ padding: '12px', borderRadius: '6px', backgroundColor: 'var(--surface-soft)', border: `1px solid ${borderCol}` }}>
++            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#245be6', textTransform: 'uppercase' }}>Step 1: Open & Explore</div>
+             <p style={{ margin: '4px 0 0', fontSize: '0.8125rem', color: textCol }}>
+               Open a light curve. Learn that the y-axis is star brightness changing over time.
+             </p>
+           </div>
+ 
+-          <div style={{ padding: '12px', borderRadius: '6px', backgroundColor: isDark ? '#0d131f' : '#f8fafc', border: `1px solid ${borderCol}` }}>
+-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#0284c7', textTransform: 'uppercase' }}>Step 2: Fold Periodic Dips</div>
++          <div style={{ padding: '12px', borderRadius: '6px', backgroundColor: 'var(--surface-soft)', border: `1px solid ${borderCol}` }}>
++            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#245be6', textTransform: 'uppercase' }}>Step 2: Fold Periodic Dips</div>
+             <p style={{ margin: '4px 0 0', fontSize: '0.8125rem', color: textCol }}>
+               Change the trial period. See scattered dips align into a single profile at phase 0.0.
+             </p>
+           </div>
+ 
+-          <div style={{ padding: '12px', borderRadius: '6px', backgroundColor: isDark ? '#0d131f' : '#f8fafc', border: `1px solid ${borderCol}` }}>
+-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#0284c7', textTransform: 'uppercase' }}>Step 3: Challenge the Signal</div>
++          <div style={{ padding: '12px', borderRadius: '6px', backgroundColor: 'var(--surface-soft)', border: `1px solid ${borderCol}` }}>
++            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#245be6', textTransform: 'uppercase' }}>Step 3: Challenge the Signal</div>
+             <p style={{ margin: '4px 0 0', fontSize: '0.8125rem', color: textCol }}>
+               Check repetition counts, compare odd/even depths, and inspect telescope gaps.
+             </p>
+           </div>
+ 
+-          <div style={{ padding: '12px', borderRadius: '6px', backgroundColor: isDark ? '#0d131f' : '#f8fafc', border: `1px solid ${borderCol}` }}>
+-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#0284c7', textTransform: 'uppercase' }}>Step 4: Author Evidence</div>
++          <div style={{ padding: '12px', borderRadius: '6px', backgroundColor: 'var(--surface-soft)', border: `1px solid ${borderCol}` }}>
++            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#245be6', textTransform: 'uppercase' }}>Step 4: Author Evidence</div>
+             <p style={{ margin: '4px 0 0', fontSize: '0.8125rem', color: textCol }}>
+               Write a qualified hypothesis and export a reproducible PDF evidence sheet.
+             </p>
+@@ -155,13 +155,13 @@
+           <div>
+             <dt style={{ fontWeight: 600, color: '#38bdf8' }}>Transit Depth (ΔF/F):</dt>
+             <dd style={{ margin: '2px 0 0', color: subText }}>
+-              The fraction of light blocked: (Rp / R*)^2. Equals out-of-transit flux minus in-transit flux.
++              The fractional dimming (Fout − Fin) / Fout. For a dark companion crossing a uniform, unblended stellar disc, depth is approximately (Rp / R*)².
+             </dd>
+           </div>
+           <div>
+             <dt style={{ fontWeight: 600, color: '#38bdf8' }}>Eclipsing Binary:</dt>
+             <dd style={{ margin: '2px 0 0', color: subText }}>
+-              Two stars orbiting each other. Produces alternating deeper primary and shallower secondary eclipses every orbit.
++              Two stars orbiting each other. Their eclipses can have different depths; similar stars may produce nearly equal depths.
+             </dd>
+           </div>
+           <div>
+@@ -197,7 +197,7 @@
+                   padding: '14px',
+                   borderRadius: '6px',
+                   border: `1px solid ${borderCol}`,
+-                  backgroundColor: isDark ? '#0d131f' : '#f8fafc',
++                  backgroundColor: 'var(--surface-soft)',
+                 }}
+               >
+                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+--- a/src/features/workspace/LightCurveCanvas.tsx
++++ b/src/features/workspace/LightCurveCanvas.tsx
+@@ -97,13 +97,13 @@
+   const effMaxY = maxY + yPadding;
+ 
+   const isDark = theme === 'dark';
+-  const bgColor = isDark ? '#0d131f' : '#ffffff';
+-  const gridColor = isDark ? 'rgba(255, 255, 255, 0.07)' : 'rgba(0, 0, 0, 0.07)';
+-  const textColor = isDark ? '#94a3b8' : '#64748b';
+-  const axisColor = isDark ? '#334155' : '#cbd5e1';
+-  const pointColorOut = isDark ? '#60a5fa' : '#2563eb';
+-  const pointColorIn = isDark ? '#38bdf8' : '#0284c7';
+-  const boxModelColor = isDark ? '#fbbf24' : '#d97706';
++  const bgColor = isDark ? '#191e28' : '#ffffff';
++  const gridColor = isDark ? 'rgba(220, 230, 250, 0.06)' : 'rgba(80, 100, 130, 0.07)';
++  const textColor = isDark ? '#a3adbe' : '#606b7b';
++  const axisColor = isDark ? '#3d485b' : '#d4dbe5';
++  const pointColorOut = isDark ? '#8ca9d2' : '#6083b6';
++  const pointColorIn = isDark ? '#6acbd2' : '#0f8e9e';
++  const boxModelColor = isDark ? '#e2bd7c' : '#b17822';
+ 
+   const renderPlot = () => {
+     const canvas = canvasRef.current;
+@@ -142,7 +142,7 @@
+ 
+     // Highlight windows (e.g. in-transit times)
+     if (highlightWindows && highlightWindows.length > 0) {
+-      ctx.fillStyle = isDark ? 'rgba(56, 189, 248, 0.12)' : 'rgba(2, 132, 199, 0.12)';
++      ctx.fillStyle = isDark ? 'rgba(106, 203, 210, 0.1)' : 'rgba(15, 142, 158, 0.08)';
+       for (const w of highlightWindows) {
+         if (w.end < minX || w.start > maxX) continue;
+         const x1 = Math.max(padLeft, toX(w.start));
+@@ -156,7 +156,7 @@
+     // Grid lines & Axis ticks (X)
+     ctx.strokeStyle = gridColor;
+     ctx.lineWidth = 1;
+-    ctx.font = '11px system-ui, sans-serif';
++    ctx.font = '10px ui-monospace, Consolas, monospace';
+     ctx.fillStyle = textColor;
+     ctx.textAlign = 'center';
+ 
+@@ -238,7 +238,7 @@
+     }
+ 
+     // Plot scatter points
+-    const ptRadius = data.length > 5000 ? 1.5 : data.length > 2000 ? 2.0 : 2.5;
++    const ptRadius = data.length > 5000 ? 1.2 : data.length > 2000 ? 1.5 : 1.8;
+ 
+     // Draw out-of-transit points first
+     ctx.fillStyle = pointColorOut;
+@@ -332,7 +332,7 @@
+   return (
+     <div className="light-curve-plot-card" ref={containerRef} style={{ width: '100%', position: 'relative' }}>
+       <div className="plot-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+-        <h4 style={{ margin: 0, fontSize: '0.875rem', fontWeight: 600, color: isDark ? '#e2e8f0' : '#1e293b' }}>
++        <h4 style={{ margin: 0, fontSize: '0.875rem', fontWeight: 600, color: 'var(--ink)' }}>
+           {title}
+         </h4>
+         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+--- a/src/features/workspace/ParameterControls.tsx
++++ b/src/features/workspace/ParameterControls.tsx
+@@ -48,11 +48,11 @@
+   }, [showSearchModal]);
+ 
+   const isDark = theme === 'dark';
+-  const cardBg = isDark ? '#151d2c' : '#ffffff';
+-  const borderCol = isDark ? '#1e293b' : '#e2e8f0';
+-  const inputBg = isDark ? '#0d131f' : '#f8fafc';
+-  const textCol = isDark ? '#f1f5f9' : '#0f172a';
+-  const subText = isDark ? '#94a3b8' : '#64748b';
++  const cardBg = 'var(--surface)';
++  const borderCol = 'var(--border)';
++  const inputBg = 'var(--surface-soft)';
++  const textCol = 'var(--ink)';
++  const subText = 'var(--muted)';
+ 
+   const updateField = <K extends keyof InvestigationSettings>(
+     field: K,
+@@ -92,10 +92,10 @@
+       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+         <div>
+           <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: textCol }}>
+-            Folding & Box Model Parameters
++            Set your trial model
+           </h3>
+           <p style={{ margin: '2px 0 0', fontSize: '0.8125rem', color: subText }}>
+-            Adjust the trial period to align repeating dips at phase 0.0
++            Change the period, epoch, and duration. The plots and evidence update together.
+           </p>
+         </div>
+ 
+@@ -134,7 +134,7 @@
+               fontWeight: 600,
+               borderRadius: '6px',
+               border: 'none',
+-              backgroundColor: '#0284c7',
++              backgroundColor: '#245be6',
+               color: '#ffffff',
+               cursor: isSearching ? 'not-allowed' : 'pointer',
+             }}
+@@ -145,7 +145,7 @@
+         </div>
+       </div>
+ 
+-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: '14px' }}>
++      <div className="parameter-fields" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: '14px' }}>
+         {/* Period Control */}
+         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+           <label htmlFor="input-period" style={{ fontSize: '0.8125rem', fontWeight: 600, color: textCol }}>
+@@ -354,20 +354,19 @@
+       {/* Search Candidates Modal / Drawer */}
+       {showSearchModal && (
+         <div
+-          role="dialog"
+-          aria-modal="true"
++          role="region"
+           aria-labelledby="search-modal-title"
+           style={{
+             marginTop: '16px',
+             padding: '14px',
+             borderRadius: '6px',
+-            backgroundColor: isDark ? '#0d131f' : '#f1f5f9',
++            backgroundColor: 'var(--surface-soft)',
+             border: `1px solid ${borderCol}`,
+           }}
+         >
+           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+             <h4 id="search-modal-title" style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 600, color: textCol }}>
+-              Automated Periodic Dip Scan (BLS-style Web Worker)
++              Repeating-dip search results
+             </h4>
+             <div style={{ display: 'flex', gap: '8px' }}>
+               {isSearching && (
+@@ -390,7 +389,7 @@
+               <button
+                 type="button"
+                 onClick={() => setShowSearchModal(false)}
+-                aria-label="Close search modal"
++                aria-label="Close search results"
+                 style={{
+                   background: 'none',
+                   border: 'none',
+@@ -410,18 +409,18 @@
+                 <span>Scanning frequency grid across time baseline...</span>
+                 <span>{searchProgress?.progressPercent ?? 0}%</span>
+               </div>
+-              <div style={{ width: '100%', height: '8px', backgroundColor: isDark ? '#1e293b' : '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
++              <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--border)', borderRadius: '4px', overflow: 'hidden' }}>
+                 <div
+                   style={{
+                     width: `${searchProgress?.progressPercent ?? 0}%`,
+                     height: '100%',
+-                    backgroundColor: '#0284c7',
++                    backgroundColor: '#245be6',
+                     transition: 'width 0.2s ease',
+                   }}
+                 />
+               </div>
+               {searchProgress?.bestCandidateSoFar && (
+-                <p style={{ margin: '6px 0 0', fontSize: '0.75rem', color: isDark ? '#38bdf8' : '#0284c7' }}>
++                <p style={{ margin: '6px 0 0', fontSize: '0.75rem', color: isDark ? '#38bdf8' : '#245be6' }}>
+                   Best candidate peak so far: P = {searchProgress.bestCandidateSoFar.periodDays.toFixed(4)} days (depth: {searchProgress.bestCandidateSoFar.depthPpm} ppm)
+                 </p>
+               )}
+@@ -449,7 +448,7 @@
+                       alignItems: 'center',
+                       padding: '8px 12px',
+                       borderRadius: '6px',
+-                      backgroundColor: isDark ? '#151d2c' : '#ffffff',
++                      backgroundColor: 'var(--surface)',
+                       border: `1px solid ${borderCol}`,
+                     }}
+                   >
+--- a/src/features/workspace/WorkspaceView.tsx
++++ b/src/features/workspace/WorkspaceView.tsx
+@@ -21,7 +21,8 @@
+ import { saveActiveProject } from '../../storage/db';
+ import { downloadProjectFile, CURRENT_APP_VERSION, CURRENT_ENGINE_VERSION } from '../evidence/exportImport';
+ import { computeAnalysisSnapshot } from '../../engine/analysis';
+-import { ArrowLeft, Save, Sun, Moon, Info } from 'lucide-react';
++import { ArrowLeft, Save, Sun, Moon, Info, FileText, Telescope, FlaskConical } from 'lucide-react';
++import { LabBrand } from '../../components/LabBrand';
+ 
+ export interface WorkspaceViewProps {
+   dataset: LightCurveData;
+@@ -247,228 +248,48 @@
+   }, [diagnosticReport.events, settings.durationHours]);
+ 
+   const isDark = theme === 'dark';
+-  const cardBg = isDark ? '#151d2c' : '#ffffff';
+-  const borderCol = isDark ? '#1e293b' : '#e2e8f0';
+-  const textCol = isDark ? '#f1f5f9' : '#0f172a';
+-  const subText = isDark ? '#94a3b8' : '#64748b';
++  const timeLabel = manifest.timeFormat === 'relative_days' ? 'Relative days' : manifest.timeFormat;
++  const fluxLabel = settings.normalization === 'none' ? 'Input flux' : 'Normalized flux';
+ 
+   return (
+-    <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '16px' }}>
+-      {/* Workspace Header */}
+-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+-          <button
+-            type="button"
+-            onClick={handleBackToLibrary}
+-            style={{
+-              display: 'inline-flex',
+-              alignItems: 'center',
+-              gap: '4px',
+-              padding: '6px 12px',
+-              borderRadius: '6px',
+-              border: `1px solid ${borderCol}`,
+-              backgroundColor: cardBg,
+-              color: textCol,
+-              fontSize: '0.8125rem',
+-              cursor: 'pointer',
+-            }}
+-          >
+-            <ArrowLeft size={14} />
+-            Library
+-          </button>
+-
+-          <div>
+-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+-              <h1 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: textCol }}>
+-                {manifest.title}
+-              </h1>
+-              <span
+-                style={{
+-                  padding: '2px 6px',
+-                  borderRadius: '4px',
+-                  fontSize: '0.6875rem',
+-                  fontWeight: 700,
+-                  textTransform: 'uppercase',
+-                  backgroundColor: manifest.kind === 'observed'
+-                    ? (isDark ? 'rgba(56, 189, 248, 0.15)' : '#e0f2fe')
+-                    : (isDark ? 'rgba(245, 158, 11, 0.15)' : '#fef3c7'),
+-                  color: manifest.kind === 'observed'
+-                    ? (isDark ? '#38bdf8' : '#0284c7')
+-                    : (isDark ? '#fbbf24' : '#b45309'),
+-                }}
+-              >
+-                {manifest.kind}
+-              </span>
+-            </div>
+-            <div style={{ fontSize: '0.75rem', color: subText, fontFamily: 'monospace' }}>
+-              Target: {manifest.targetId || 'Custom'} &bull; Hash: {manifest.canonicalDataSha256.substring(0, 8)}...
+-            </div>
+-          </div>
++    <main className="workspace-page">
++      <header className="workspace-masthead">
++        <div><LabBrand /><span className="masthead-divider" /><span className="breadcrumb">Investigation workspace</span></div>
++        <div className="workspace-tools">
++          <span className={`save-status ${saveIndicator === 'error' ? 'error' : ''}`} role="status"><Save size={12} />{saveIndicator === 'saving' ? 'Saving…' : saveIndicator === 'error' ? 'Save failed' : 'Saved to browser'}</span>
++          <button type="button" onClick={handleBackToLibrary} className="button button-secondary"><ArrowLeft size={13} />Library</button>
++          <button type="button" onClick={onToggleTheme} className="icon-button" title="Toggle Dark/Light theme" aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}>{isDark ? <Sun size={15} /> : <Moon size={15} />}</button>
+         </div>
+-
+-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: isDark ? '#34d399' : '#059669' }}>
+-            <Save size={12} />
+-            {saveIndicator === 'saving' ? 'Saving...' : 'Saved to browser'}
+-          </span>
+-
+-          <button
+-            type="button"
+-            onClick={onToggleTheme}
+-            title="Toggle Dark/Light theme"
+-            style={{
+-              padding: '6px',
+-              borderRadius: '6px',
+-              border: `1px solid ${borderCol}`,
+-              backgroundColor: cardBg,
+-              color: textCol,
+-              cursor: 'pointer',
+-              display: 'flex',
+-            }}
+-          >
+-            {isDark ? <Sun size={16} /> : <Moon size={16} />}
+-          </button>
++      </header>
++      <div className="workspace-titlebar"><div><span className="eyebrow">OBSERVE / TEST / INTERPRET</span><h1>{manifest.title}</h1><p>{manifest.targetId || 'Custom dataset'} · {analysis.activePoints.length.toLocaleString()} observations · {timeLabel} time reference</p></div><span className={`data-kind ${manifest.kind}`}>{manifest.kind === 'observed' ? <Telescope size={13} /> : <FlaskConical size={13} />}{manifest.kind === 'observed' ? (manifest.id.startsWith('custom_') ? 'Observed data' : 'Observed NASA data') : manifest.kind === 'injection' ? 'Injection experiment' : 'Synthetic simulation'}</span></div>
++      {teaching?.guidedQuestions?.length ? <div className="task-note"><Info size={16} /><span><strong>Your question:</strong> {teaching.guidedQuestions[0]}</span></div> : null}
++      {saveError && <div className="save-error" role="alert"><span>{saveError}</span><button type="button" className="button button-secondary" onClick={() => downloadProjectFile(currentProject)}>Export Project to JSON</button></div>}
++      <dl className="analysis-summary" aria-label="Current analysis summary">
++        <div><dt>TRIAL PERIOD</dt><dd>{settings.periodDays.toFixed(4)} <small>days</small></dd></div>
++        <div><dt>RELATIVE BOX DEPTH</dt><dd>{analysis.depthFormatted.relativePercentText}</dd></div>
++        <div><dt>PREDICTED WINDOWS WITH DATA</dt><dd>{diagnosticReport.coveredWindowCount} <small>/ {diagnosticReport.predictedWindowCount} predicted</small></dd></div>
++        <div><dt>DETECTED DIMMING EVENTS</dt><dd>{diagnosticReport.dimmingDetectedCount} <small>at this trial period</small></dd></div>
++      </dl>
++      <div className="workspace-grid">
++        <div className="workspace-analysis">
++          <ParameterControls settings={settings} onSettingsChange={setSettings} defaultSettings={defaultSettings} onStartSearch={handleStartSearch} onCancelSearch={handleCancelSearch} isSearching={isSearching} searchProgress={searchProgress} searchCandidates={searchCandidates} onApplyCandidate={handleApplyCandidate} theme={theme} />
++          <section className="analysis-panel" aria-label="Observation plots">
++            <div className="panel-heading"><span className="panel-number">01</span><div><h2>Read the starlight</h2><p>Look for dips in the original sequence of observations.</p></div></div>
++            <LightCurveCanvas title="Full observation light curve" data={timePlotData} xLabel={`Time (${timeLabel})`} yLabel={fluxLabel} highlightWindows={highlightWindows} theme={theme} height={250} />
++            <div className="plot-legend"><span><i className="legend-dot" />Brightness measurements</span><span><i className="legend-window" />Predicted transit windows</span></div>
++          </section>
++          <section className="analysis-panel" aria-label="Phase folded plot">
++            <div className="panel-heading"><span className="panel-number">02</span><div><h2>Bring the pattern into focus</h2><p>Fold observations at your trial period. Does the signal line up?</p></div></div>
++            <LightCurveCanvas title="Phase-folded light curve" data={phasePlotData} xLabel="Orbital phase" yLabel={fluxLabel} boxModel={{ centerPhase: 0, halfPhaseWidth: halfPhase, baseline: primaryFit.outOfTransitMean, depth: primaryFit.rawDepth }} theme={theme} height={285} />
++            <div className="plot-legend"><span><i className="legend-dot" />Folded measurements</span><span><i className="legend-fit" />Two-level box model</span></div>
++          </section>
+         </div>
++        <aside className="workspace-aside" aria-label="Evidence and interpretation">
++          <EvidenceRail evidence={diagnosticReport.items} theme={theme} />
++          <ConclusionComposer hypothesis={hypothesis} onHypothesisChange={setHypothesis} conclusion={conclusion} onConclusionChange={setConclusion} alternativeExplanation={alternativeExplanation} onAlternativeChange={setAlternativeExplanation} nextObservation={nextObservation} onNextObservationChange={setNextObservation} onOpenReport={handleOpenReport} onDownloadProject={() => downloadProjectFile(currentProject)} theme={theme} />
++        </aside>
+       </div>
+-
+-      {/* Task Prompt Banner */}
+-      {teaching?.guidedQuestions && teaching.guidedQuestions.length > 0 && (
+-        <div
+-          style={{
+-            padding: '10px 14px',
+-            borderRadius: '6px',
+-            backgroundColor: isDark ? 'rgba(2, 132, 199, 0.12)' : '#f0f9ff',
+-            border: `1px solid ${isDark ? 'rgba(2, 132, 199, 0.25)' : '#bae6fd'}`,
+-            marginBottom: '16px',
+-            display: 'flex',
+-            alignItems: 'center',
+-            gap: '10px',
+-          }}
+-        >
+-          <Info size={18} color="#0284c7" />
+-          <span style={{ fontSize: '0.8125rem', color: isDark ? '#e0f2fe' : '#0369a1', fontWeight: 500 }}>
+-            <strong>Investigation Task:</strong> {teaching.guidedQuestions[0]}
+-          </span>
+-        </div>
+-      )}
+-
+-      {/* Save Error Alert if storage fails */}
+-      {saveError && (
+-        <div
+-          role="alert"
+-          style={{
+-            padding: '10px 14px',
+-            borderRadius: '6px',
+-            backgroundColor: '#ef44441a',
+-            border: '1px solid #ef4444',
+-            color: '#f87171',
+-            fontSize: '0.8125rem',
+-            marginBottom: '16px',
+-            display: 'flex',
+-            justifyContent: 'space-between',
+-            alignItems: 'center',
+-            gap: '10px',
+-          }}
+-        >
+-          <span>{saveError}</span>
+-          <button
+-            type="button"
+-            onClick={() => downloadProjectFile(currentProject)}
+-            style={{
+-              padding: '4px 10px',
+-              borderRadius: '4px',
+-              border: 'none',
+-              backgroundColor: '#ef4444',
+-              color: '#ffffff',
+-              fontSize: '0.75rem',
+-              fontWeight: 600,
+-              cursor: 'pointer',
+-            }}
+-          >
+-            Export Project to JSON
+-          </button>
+-        </div>
+-      )}
+-
+-      {/* Main Grid: Left Charts + Controls, Right Evidence Rail */}
+-      <div className="workspace-grid" style={{ gap: '16px', alignItems: 'start' }}>
+-        {/* Left Column: Plots and Parameter Controls */}
+-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+-          {/* Linked Astronomical Plots */}
+-          <div
+-            style={{
+-              backgroundColor: cardBg,
+-              border: `1px solid ${borderCol}`,
+-              borderRadius: '8px',
+-              padding: '16px',
+-              display: 'flex',
+-              flexDirection: 'column',
+-              gap: '16px',
+-            }}
+-          >
+-            <LightCurveCanvas
+-              title="1. Full Observation Light Curve (Cyan = In-Transit Windows)"
+-              data={timePlotData}
+-              xLabel={`Time (${manifest.timeFormat})`}
+-              yLabel="Flux"
+-              highlightWindows={highlightWindows}
+-              theme={theme}
+-              height={220}
+-            />
+-
+-            <LightCurveCanvas
+-              title="2. Phase-Folded Light Curve with Two-Level Box Transit Fit (Amber)"
+-              data={phasePlotData}
+-              xLabel="Orbital Phase [-0.5 to 0.5]"
+-              yLabel="Normalized Flux"
+-              boxModel={{
+-                centerPhase: 0.0,
+-                halfPhaseWidth: halfPhase,
+-                baseline: primaryFit.outOfTransitMean,
+-                depth: primaryFit.depth,
+-              }}
+-              theme={theme}
+-              height={260}
+-            />
+-          </div>
+-
+-          {/* Parameter Controls Panel */}
+-          <ParameterControls
+-            settings={settings}
+-            onSettingsChange={setSettings}
+-            defaultSettings={defaultSettings}
+-            onStartSearch={handleStartSearch}
+-            onCancelSearch={handleCancelSearch}
+-            isSearching={isSearching}
+-            searchProgress={searchProgress}
+-            searchCandidates={searchCandidates}
+-            onApplyCandidate={handleApplyCandidate}
+-            theme={theme}
+-          />
+-        </div>
+-
+-        {/* Right Column: Diagnostic Evidence Rail & Conclusion Composer */}
+-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+-          <EvidenceRail
+-            evidence={diagnosticReport.items}
+-            theme={theme}
+-          />
+-
+-          <ConclusionComposer
+-            hypothesis={hypothesis}
+-            onHypothesisChange={setHypothesis}
+-            conclusion={conclusion}
+-            onConclusionChange={setConclusion}
+-            alternativeExplanation={alternativeExplanation}
+-            onAlternativeChange={setAlternativeExplanation}
+-            nextObservation={nextObservation}
+-            onNextObservationChange={setNextObservation}
+-            onOpenReport={handleOpenReport}
+-            onDownloadProject={() => downloadProjectFile(currentProject)}
+-            theme={theme}
+-          />
+-        </div>
+-      </div>
+-    </div>
++      <footer className="workspace-footer"><FileText size={11} /> Your settings, evidence, and reasoning travel together in the exported project.</footer>
++    </main>
+   );
+ };
+--- a/src/index.css
++++ b/src/index.css
+@@ -1,84 +1,362 @@
+-/* DimmingLab - Core Styles & Print Stylesheet */
+-
+-*, *::before, *::after {
+-  box-sizing: border-box;
+-}
+-
+-body {
+-  margin: 0;
+-  padding: 0;
+-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+-  -webkit-font-smoothing: antialiased;
+-  -moz-osx-font-smoothing: grayscale;
+-}
+-
+-/* Accessible keyboard focus states */
+-button:focus-visible,
+-input:focus-visible,
+-select:focus-visible,
+-textarea:focus-visible {
+-  outline: 2px solid #38bdf8 !important;
+-  outline-offset: 2px !important;
+-}
+-
+-/* Interactive card hover */
+-.investigation-card:hover {
+-  transform: translateY(-2px);
+-  border-color: #0284c7 !important;
+-}
+-
+-/* Spinner animation */
+-@keyframes spin {
+-  from { transform: rotate(0deg); }
+-  to { transform: rotate(360deg); }
+-}
+-
+-.spin-animate {
+-  animation: spin 1s linear infinite;
+-}
+-
+-/* Responsive Workspace Grid */
+-.workspace-grid {
+-  display: grid;
+-  grid-template-columns: minmax(0, 1.7fr) minmax(320px, 1fr);
+-  gap: 16px;
+-  align-items: start;
+-}
+-
+-@media (max-width: 960px) {
+-  .workspace-grid {
+-    grid-template-columns: minmax(0, 1fr) !important;
+-  }
+-}
+-
+-/* Print Stylesheet */
++/* DimmingLab · observatory notebook design system. Everything is bundled/offline. */
++*, *::before, *::after { box-sizing: border-box; }
++:root { font-family: 'Inter', 'Aptos', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-synthesis: none; text-rendering: optimizeLegibility; }
++body { margin: 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
++button, input, select, textarea { font: inherit; }
++button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
++button { cursor: pointer; }
++button:disabled { cursor: not-allowed; opacity: .55; }
++button, a { touch-action: manipulation; }
++svg { flex-shrink: 0; }
++button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3px solid var(--accent, #245be6) !important; outline-offset: 3px !important; }
++.app-shell {
++  --page: #f8f9fb; --surface: #fff; --surface-soft: #f3f5f8; --sidebar: #f0f2f5;
++  --ink: #202632; --muted: #606b7b; --faint: #7a8596; --border: #dfe3eb;
++  --accent: #245be6; --accent-hover: #1744b6; --accent-soft: #eaf0ff; --accent-text: #204dbd;
++  --success: #167256; --success-soft: #e9f5ef; --warning: #926020; --warning-soft: #fff6e7;
++  --danger: #b83c42; --danger-soft: #fff0f0; --brand-cutout: #fff;
++  min-height: 100vh; color: var(--ink); background: var(--page); font-size: 14px; line-height: 1.5;
++}
++.app-shell[data-theme='dark'] {
++  --page: #10141c; --surface: #191e28; --surface-soft: #141923; --sidebar: #141922;
++  --ink: #e9edf5; --muted: #a3adbe; --faint: #8995a9; --border: #303744;
++  --accent: #82a8ff; --accent-hover: #aac4ff; --accent-soft: #202f4d; --accent-text: #a5c2ff;
++  --success: #83d4b3; --success-soft: #1a332c; --warning: #e2bd7c; --warning-soft: #332b20;
++  --danger: #ff9ba0; --danger-soft: #392229; --brand-cutout: #141922;
++  color-scheme: dark;
++}
++.lab-brand { color: var(--ink); display: inline-flex; gap: 10px; align-items: center; font-size: 21px; font-weight: 750; letter-spacing: -.9px; white-space: nowrap; }
++.brand-light { font-weight: 420; }
++.eyebrow, .sidebar-section-label { font-size: 10px; font-weight: 650; letter-spacing: 1.3px; color: var(--muted); line-height: 1.5; }
++.button { min-height: 42px; padding: 10px 16px; border-radius: 7px; border: 1px solid transparent; display: inline-flex; align-items: center; justify-content: center; gap: 9px; font-size: 12px; font-weight: 600; line-height: 1.4; transition: background .15s, border-color .15s; text-decoration: none; }
++.button-primary { color: #fff; background: #245be6; box-shadow: 0 2px 3px #10285915; }
++.button-primary:hover { background: #1744b6; }
++.button-secondary { background: var(--surface); color: var(--ink); border-color: var(--border); }
++.button-secondary:hover { background: var(--surface-soft); border-color: var(--faint); }
++.text-button { border: 0; padding: 9px 0; display: inline-flex; align-items: center; justify-content: center; gap: 7px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 550; }
++.text-button:hover { color: var(--accent); }
++.icon-button { min-width: 38px; min-height: 38px; background: var(--surface); color: var(--muted); border: 1px solid var(--border); border-radius: 7px; display: inline-flex; align-items: center; justify-content: center; }
++.skip-link { position: fixed; top: -100px; left: 16px; background: var(--surface); color: var(--ink); padding: 10px 16px; z-index: 10001; }
++.skip-link:focus { top: 16px; }
++.status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--success); display: inline-block; flex-shrink: 0; }
++.library-layout { display: grid; grid-template-columns: 218px minmax(0, 1fr); min-height: 100vh; }
++.library-sidebar { padding: 31px 18px 20px; border-right: 1px solid var(--border); background: var(--sidebar); position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; }
++.library-sidebar > .lab-brand { margin: 0 8px 40px; }
++.sidebar-section-label { margin: 0 10px 9px; font-size: 9px; letter-spacing: 1px; }
++.sidebar-nav { display: grid; gap: 4px; margin-bottom: 29px; }
++.sidebar-link { display: flex; align-items: center; gap: 10px; width: 100%; border: 1px solid transparent; border-radius: 6px; padding: 10px 11px; text-align: left; background: transparent; color: var(--muted); font-size: 12px; line-height: 1.5; }
++.sidebar-link svg { color: var(--faint); }
++.sidebar-link:hover { color: var(--ink); background: var(--surface-soft); }
++.sidebar-link.active { background: var(--surface); border-color: var(--border); color: var(--ink); box-shadow: 0 1px 2px #00000004; font-weight: 600; }
++.sidebar-link.active svg { color: var(--accent); }
++.nav-count { margin-left: auto; font-size: 10px; background: var(--surface-soft); color: var(--muted); padding: 1px 5px; border-radius: 3px; font-variant-numeric: tabular-nums; }
++.sidebar-nav[aria-label='Resources'] .sidebar-link { font-size: 11px; gap: 8px; }
++.sidebar-fieldnote { margin: 26px 11px; padding-top: 26px; border-top: 1px solid var(--border); color: var(--muted); }
++.sidebar-fieldnote > svg { color: var(--accent); }
++.sidebar-fieldnote p { font-size: 13px; line-height: 1.65; color: var(--ink); font-weight: 550; margin: 13px 0 7px; }
++.sidebar-fieldnote > span { font-size: 11px; }
++.sidebar-bottom { margin-top: auto; padding: 16px 8px 0; }
++.sidebar-version { font-size: 8px; letter-spacing: .9px; color: var(--faint); }
++.theme-switch { display: flex; align-items: center; gap: 9px; background: none; border: 0; color: var(--muted); font-size: 11px; padding: 14px 0 0; }
++.library-content { min-width: 0; }
++.library-topbar { min-height: 68px; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; gap: 20px; border-bottom: 1px solid var(--border); background: var(--surface); }
++.breadcrumb { display: inline-flex; align-items: center; gap: 13px; font-size: 11px; color: var(--muted); }
++.breadcrumb strong { color: var(--ink); font-weight: 500; }
++.offline-state { display: flex; gap: 7px; align-items: center; color: var(--muted); font-size: 10px; }
++.offline-state.ready { color: var(--success); }
++.library-main { max-width: 1440px; margin: 0 auto; padding: 46px 40px 0; }
++.library-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, .9fr); gap: 46px; align-items: center; margin-bottom: 54px; }
++.hero-copy { padding: 12px 0; }
++.hero-copy .eyebrow { display: flex; align-items: center; gap: 8px; font-size: 9px; }
++.small-cross { font-size: 18px; line-height: 10px; color: var(--accent); font-weight: 400; }
++.hero-copy h1 { font-size: clamp(38px, 3.7vw, 62px); font-weight: 580; line-height: 1.08; letter-spacing: -2.8px; margin: 21px 0 20px; }
++.hero-copy h1 > span { color: var(--accent); }
++.hero-copy > p { font-size: 14px; color: var(--muted); line-height: 1.8; max-width: 410px; margin: 0 0 25px; }
++.hero-actions { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
++.hero-note { font-size: 10px; color: var(--muted); display: flex; align-items: center; gap: 7px; margin-top: 21px; }
++.hero-observatory { background: #131c30; border: 1px solid #26344f; color: #c2cfe7; border-radius: 12px; overflow: hidden; position: relative; }
++.observatory-top { padding: 17px 20px 0; display: flex; justify-content: space-between; gap: 12px; font-size: 8px; letter-spacing: 1.2px; color: #8b9bb9; }
++.observatory-live { display: flex; align-items: center; gap: 6px; color: #dbe7ff; }
++.observatory-live > span { width: 4px; height: 4px; border-radius: 50%; background: #9dbaff; }
++.orbit-scene { position: relative; height: 188px; overflow: hidden; background-image: radial-gradient(circle at 14% 30%, #b3cfff 0 1px, transparent 1.5px), radial-gradient(circle at 82% 58%, #b3cfff80 0 .7px, transparent 1px), radial-gradient(circle at 62% 16%, #b3cfff60 0 .6px, transparent 1px); }
++.orbit { position: absolute; top: 50%; left: 50%; border: 1px solid #667ba133; border-radius: 50%; transform: translate(-50%, -50%) rotate(-24deg); }
++.orbit-one { width: 290px; height: 127px; }
++.orbit-two { width: 390px; height: 183px; border-style: dashed; opacity: .6; }
++.star-disc { position: absolute; top: 50%; left: 50%; width: 88px; height: 88px; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle at 35% 28%, #fffae9, #e8d5aa 58%, #ad9973); box-shadow: 0 0 0 9px #e6d4ab05, 0 0 35px #e6d4ab12; }
++.planet-disc { position: absolute; width: 31px; height: 31px; top: calc(50% - 8px); left: calc(50% + 9px); border-radius: 50%; background: #19243a; border: 1px solid #3a4965; box-shadow: inset -4px 3px 7px #344669; }
++.orbit-marker { position: absolute; width: 5px; height: 5px; background: #8aa9eb; border-radius: 50%; left: 21%; top: 67%; box-shadow: 0 0 0 4px #8aa9eb10; }
++.scene-coordinate { position: absolute; font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace; font-size: 7px; letter-spacing: 1px; color: #8093b4; }
++.coordinate-top { left: 20px; top: 25px; }
++.coordinate-bottom { bottom: 11px; right: 20px; }
++.observatory-chart { margin: 0 18px; padding-top: 12px; border-top: 1px solid #ffffff12; }
++.observatory-caption { display: flex; justify-content: space-between; font-size: 7px; color: #9dadca; letter-spacing: 1px; }
++.observatory-foot { text-align: center; padding: 8px 10px 12px; font-size: 8px; color: #93a5c4; }
++.signal-preview { margin: 0; color: var(--accent); width: 100%; }
++.signal-preview > svg { display: block; width: 100%; height: auto; }
++.preview-grid { stroke: var(--border); stroke-width: .6; }
++.signal-preview figcaption { display: flex; justify-content: space-between; font-size: 8px; color: var(--muted); padding: 0 12px; font-family: ui-monospace, Consolas, monospace; }
++.signal-preview-hero { color: #9dbaff; padding-top: 5px; }
++.signal-preview-hero .preview-grid { stroke: #ffffff12; }
++.signal-preview-hero figcaption { color: #9dadca; font-size: 7px; }
++.resume-strip { border: 1px solid var(--border); border-radius: 8px; display: flex; gap: 13px; padding: 16px 20px; align-items: center; margin: -20px 0 35px; background: var(--surface); }
++.resume-icon { display: flex; align-items: center; justify-content: center; background: var(--accent-soft); color: var(--accent); border-radius: 7px; width: 38px; height: 38px; }
++.resume-strip .eyebrow { font-size: 8px; }
++.resume-strip p { margin: 3px 0 0; font-size: 12px; font-weight: 550; }
++.resume-strip .button { margin-left: auto; font-size: 11px; }
++.section-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 18px; margin-bottom: 25px; }
++.section-heading h2 { font-size: 23px; line-height: 1.3; font-weight: 580; letter-spacing: -.7px; margin: 7px 0; }
++.section-heading p { margin: 0; font-size: 12px; color: var(--muted); }
++.catalog-count { font-size: 9px; color: var(--muted); padding-bottom: 3px; white-space: nowrap; }
++.catalog-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
++.filter-tabs { display: flex; gap: 21px; }
++.filter-tabs button { padding: 9px 0 13px; background: none; border: 0; border-bottom: 2px solid transparent; font-size: 11px; color: var(--muted); margin-bottom: -1px; display: flex; align-items: center; gap: 7px; }
++.filter-tabs button.selected { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
++.filter-tabs button > span { font-size: 8px; border: 1px solid var(--border); padding: 0 4px; border-radius: 4px; color: var(--muted); }
++.catalog-hint { font-size: 9px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
++.investigation-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
++.investigation-card { min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 9px; overflow: hidden; transition: border-color .15s, box-shadow .15s; }
++.investigation-card:hover, .investigation-card:focus-within { border-color: var(--faint); box-shadow: 0 4px 12px #172f4a06; }
++.case-topline { padding: 17px 19px 10px; display: flex; align-items: center; justify-content: space-between; gap: 9px; }
++.case-index { color: var(--muted); font-size: 9px; font-family: ui-monospace, Consolas, monospace; letter-spacing: 1px; }
++.data-kind { display: inline-flex; align-items: center; gap: 5px; font-size: 9px; color: var(--muted); }
++.data-kind.observed { color: var(--accent-text); }
++.case-visual { margin: 0 10px; padding-bottom: 11px; border-bottom: 1px solid var(--border); }
++.case-copy { padding: 17px 19px 0; }
++.case-target { color: var(--muted); font-family: ui-monospace, Consolas, monospace; font-size: 8px; letter-spacing: .6px; }
++.case-copy h3 { font-size: 18px; font-weight: 580; letter-spacing: -.45px; margin: 5px 0 6px; }
++.case-copy > p { color: var(--muted); font-size: 12px; margin: 0 0 20px; min-height: 36px; max-width: 350px; }
++.case-skill { display: grid; gap: 4px; margin-bottom: 20px; }
++.case-skill > span { color: var(--faint); font-size: 8px; letter-spacing: .9px; }
++.case-skill strong { font-size: 11px; font-weight: 500; }
++.case-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 53px; border-top: 1px solid var(--border); }
++.case-footer > span { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--muted); white-space: nowrap; }
++.case-open { display: flex; align-items: center; gap: 8px; padding: 12px 0 12px 10px; color: var(--accent-text); background: transparent; border: 0; font-size: 11px; font-weight: 600; }
++.case-open:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
++.saved-case-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 5px 0 13px; }
++.saved-case-row span { color: var(--success); font-size: 10px; display: flex; gap: 5px; align-items: center; }
++.saved-case-row button { color: var(--muted); font-size: 10px; background: none; border: 0; padding: 5px 0 5px 10px; text-decoration: underline; text-underline-offset: 3px; }
++.method-strip { display: grid; grid-template-columns: minmax(200px, .9fr) minmax(0, 1fr); gap: 40px; padding: 36px 0; margin-top: 38px; border-top: 1px solid var(--border); }
++.method-strip h2 { font-size: 22px; line-height: 1.45; font-weight: 520; letter-spacing: -.6px; margin: 10px 0; }
++.method-strip ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; }
++.method-strip li { display: flex; gap: 16px; }
++.method-strip li > span { color: var(--accent); font-size: 10px; font-family: ui-monospace, Consolas, monospace; padding-top: 3px; }
++.method-strip strong { font-size: 13px; font-weight: 600; }
++.method-strip p { color: var(--muted); font-size: 11px; margin: 2px 0 0; }
++.library-footer { display: flex; gap: 20px; align-items: center; border-top: 1px solid var(--border); padding: 23px 0 28px; }
++.library-footer .lab-brand { font-size: 15px; gap: 7px; }
++.library-footer .lab-brand svg { width: 22px; height: 22px; }
++.library-footer > span { font-size: 9px; color: var(--muted); }
++.library-footer > button { font-size: 9px; margin-left: auto; }
++/* Investigation workspace */
++.workspace-page { max-width: 1520px; margin: 0 auto; padding: 0 32px 40px; }
++.workspace-masthead { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: 19px 0; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
++.workspace-masthead > div, .workspace-tools { display: flex; align-items: center; gap: 14px; }
++.workspace-masthead .lab-brand { font-size: 19px; }
++.masthead-divider { width: 1px; height: 20px; background: var(--border); margin: 0 6px; }
++.workspace-titlebar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
++.workspace-titlebar h1 { margin: 6px 0 7px; font-size: 28px; line-height: 1.25; letter-spacing: -.8px; font-weight: 580; }
++.workspace-titlebar p { margin: 0; font-size: 11px; color: var(--muted); }
++.workspace-titlebar .data-kind { font-size: 10px; border: 1px solid var(--border); padding: 5px 9px; border-radius: 5px; background: var(--surface); white-space: nowrap; }
++.save-status { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--success); }
++.save-status.error { color: var(--danger); }
++.task-note { border-left: 2px solid var(--accent); padding: 10px 15px; display: flex; gap: 10px; align-items: flex-start; background: var(--accent-soft); margin-bottom: 22px; font-size: 12px; line-height: 1.6; color: var(--accent-text); border-radius: 0 5px 5px 0; }
++.task-note svg { margin-top: 2px; }
++.task-note strong { font-weight: 600; }
++.analysis-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--border); border-radius: 8px; background: var(--surface); padding: 17px 0; margin-bottom: 24px; }
++.analysis-summary > div { padding: 0 22px; border-right: 1px solid var(--border); display: grid; gap: 5px; }
++.analysis-summary > div:last-child { border-right: 0; }
++.analysis-summary dt { color: var(--muted); font-size: 9px; }
++.analysis-summary dd { margin: 0; font-size: 21px; font-weight: 550; letter-spacing: -.5px; font-variant-numeric: tabular-nums; line-height: 1.3; }
++.analysis-summary dd small { font-size: 10px; font-weight: 400; letter-spacing: 0; color: var(--muted); }
++.workspace-grid { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 22px; align-items: start; }
++.workspace-analysis, .workspace-aside { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
++.analysis-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 20px; min-width: 0; }
++.panel-heading { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 16px; }
++.panel-number { font-family: ui-monospace, Consolas, monospace; font-size: 11px; color: var(--accent); border: 1px solid var(--border); padding: 3px 6px; border-radius: 4px; }
++.panel-heading h2 { font-size: 14px; margin: 1px 0 4px; font-weight: 600; letter-spacing: -.2px; }
++.panel-heading p { font-size: 11px; color: var(--muted); margin: 0; }
++.plot-legend { display: flex; flex-wrap: wrap; gap: 15px; padding-top: 13px; font-size: 9px; color: var(--muted); }
++.plot-legend > span { display: flex; gap: 6px; align-items: center; }
++.legend-dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #6083b6; }
++.legend-window { width: 11px; height: 7px; background: #0f8e9e20; border-left: 2px solid #0f8e9e; display: inline-block; }
++.legend-fit { display: inline-block; width: 12px; height: 2px; background: #b17822; }
++.parameter-controls-card, .evidence-rail-card, .conclusion-composer-card { margin-bottom: 0 !important; border-radius: 9px !important; padding: 20px !important; }
++.parameter-controls-card h3, .evidence-rail-card h3, .conclusion-composer-card h3 { letter-spacing: -.25px; font-size: 14px !important; }
++.parameter-controls-card p, .evidence-rail-card > div:first-child p, .conclusion-composer-card > div:first-child p { line-height: 1.65; font-size: 11px !important; margin-top: 5px !important; }
++.parameter-controls-card input, .parameter-controls-card select, .conclusion-composer-card select, .conclusion-composer-card textarea { min-height: 36px; font-size: 12px !important; border-radius: 5px !important; }
++.parameter-controls-card button { min-height: 32px; }
++.parameter-fields { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 17px !important; }
++.parameter-fields label { font-size: 11px !important; }
++.parameter-fields > div > span { font-size: 9px !important; }
++.evidence-checks { gap: 0 !important; }
++.evidence-check { background: transparent !important; border: 0 !important; border-bottom: 1px solid var(--border) !important; border-radius: 0 !important; }
++.evidence-check:last-child { border-bottom: 0 !important; }
++.evidence-toggle { padding: 15px 0 !important; }
++.evidence-toggle > div:first-child { gap: 5px !important; }
++.evidence-toggle > div:first-child > span:first-child { font-size: 12px !important; }
++.evidence-status { background: transparent !important; border: none !important; padding: 0 !important; border-radius: 0 !important; font-size: 9px !important; }
++.evidence-details { padding: 0 0 14px !important; border-top: 0 !important; }
++.evidence-details > p { font-size: 11px !important; line-height: 1.7 !important; margin-top: 0 !important; }
++.conclusion-composer-card label { font-size: 11px !important; }
++.conclusion-composer-card textarea { line-height: 1.6; }
++.plot-header-row { gap: 10px; align-items: start !important; flex-wrap: wrap; }
++.plot-header-row h4 { font-size: 11px !important; font-weight: 500 !important; }
++.plot-header-row button { min-height: 26px; white-space: nowrap; font-size: 9px !important; }
++.light-curve-plot-card { min-width: 0; }
++.light-curve-plot-card canvas { max-width: 100%; }
++.save-error { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; border: 1px solid var(--danger); background: var(--danger-soft); color: var(--danger); padding: 12px; border-radius: 7px; margin-bottom: 16px; font-size: 12px; }
++.workspace-footer { padding-top: 25px; text-align: center; font-size: 10px; color: var(--muted); }
++.evidence-report-container { padding-top: 28px !important; }
++.printable-sheet { border-radius: 7px !important; box-shadow: 0 3px 15px #25334d08 !important; }
++.teacher-page { padding-top: 28px !important; }
++.app-error { background: var(--danger-soft); border-bottom: 1px solid var(--danger); color: var(--danger); padding: 12px 20px; text-align: center; font-size: 12px; }
++.loading-bar { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); z-index: 10000; }
++@keyframes spin { to { transform: rotate(360deg); } }
++.spin-animate { animation: spin 1s linear infinite; }
++@media (min-width: 1600px) { .library-main { padding-top: 60px; } .library-hero { gap: 70px; margin-bottom: 65px; } }
++@media (max-width: 1150px) {
++  .library-layout { grid-template-columns: 190px minmax(0, 1fr); }
++  .library-sidebar { padding-left: 13px; padding-right: 13px; }
++  .library-main { padding: 32px 28px 0; }
++  .library-topbar { padding: 0 28px; }
++  .library-hero { gap: 25px; grid-template-columns: 1fr .9fr; }
++  .hero-copy h1 { font-size: 43px; letter-spacing: -2px; }
++  .hero-copy > p { font-size: 12px; }
++  .hero-actions { gap: 10px; }
++  .hero-note { font-size: 9px; }
++  .hero-copy .eyebrow { font-size: 8px; letter-spacing: .8px; }
++  .catalog-count { display: none; }
++  .workspace-page { padding: 0 22px 35px; }
++  .workspace-grid { grid-template-columns: minmax(0, 1fr) 315px; gap: 16px; }
++  .parameter-fields { grid-template-columns: minmax(0, 1fr) !important; }
++  .analysis-panel, .parameter-controls-card, .evidence-rail-card, .conclusion-composer-card { padding: 16px !important; }
++}
++@media (max-width: 900px) {
++  .library-layout { display: block; }
++  .library-sidebar { height: auto; position: static; padding: 15px 24px; display: flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 15px; border-right: 0; border-bottom: 1px solid var(--border); }
++  .library-sidebar > .lab-brand { margin: 0 auto 0 0; }
++  .sidebar-section-label, .sidebar-fieldnote, .sidebar-version { display: none; }
++  .sidebar-nav { display: flex; margin: 0; gap: 5px; }
++  .sidebar-link { width: auto; padding: 8px; font-size: 11px; gap: 7px; }
++  .sidebar-bottom { margin: 0; padding: 0; }
++  .theme-switch { padding: 8px; }
++  .theme-switch > span { display: none; }
++  .nav-count { display: none; }
++  .library-sidebar nav[aria-label='Resources'] { display: none; }
++  .library-topbar { min-height: 50px; }
++  .hero-copy h1 { font-size: 48px; }
++  .hero-copy > p { font-size: 13px; }
++  .library-main { padding-top: 37px; }
++  .workspace-grid { grid-template-columns: minmax(0, 1fr); }
++  .workspace-aside { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
++  .parameter-fields { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
++  .workspace-titlebar h1 { font-size: 24px; }
++  .analysis-summary > div { padding: 0 16px; }
++}
++@media (max-width: 620px) {
++  .library-sidebar { padding: 13px 18px; gap: 10px; }
++  .library-sidebar > .lab-brand { font-size: 20px; }
++  .library-sidebar .sidebar-nav:first-of-type { order: 3; width: 100%; gap: 5px; }
++  .sidebar-link { font-size: 10px; padding: 7px 9px; }
++  .sidebar-link svg { width: 14px; }
++  .sidebar-bottom { margin-left: 0; }
++  .library-topbar { padding: 0 18px; gap: 10px; }
++  .breadcrumb { font-size: 9px; gap: 6px; }
++  .offline-state { font-size: 8px; gap: 4px; }
++  .offline-state svg { width: 12px; }
++  .library-main { padding: 28px 18px 0; }
++  .library-hero { display: flex; flex-direction: column; gap: 26px; margin-bottom: 37px; align-items: stretch; }
++  .hero-copy { padding: 0; }
++  .hero-copy h1 { font-size: 47px; letter-spacing: -2.5px; margin: 17px 0; }
++  .hero-copy > p { font-size: 13px; max-width: 420px; margin-bottom: 20px; }
++  .hero-copy .eyebrow { font-size: 8px; letter-spacing: .6px; }
++  .hero-actions { gap: 16px; }
++  .hero-note { font-size: 9px; margin-top: 15px; }
++  .hero-observatory { max-width: 480px; }
++  .orbit-scene { height: 165px; }
++  .observatory-chart .signal-preview svg { max-height: 100px; }
++  .section-heading { margin-bottom: 17px; }
++  .section-heading h2 { font-size: 23px; max-width: 280px; }
++  .section-heading p { font-size: 11px; }
++  .catalog-hint { display: none; }
++  .filter-tabs { gap: 20px; width: 100%; }
++  .filter-tabs button { font-size: 10px; gap: 5px; }
++  .investigation-grid { grid-template-columns: minmax(0, 1fr); gap: 17px; }
++  .case-visual .signal-preview svg { max-height: 105px; }
++  .case-copy > p { min-height: 0; margin-bottom: 18px; }
++  .case-copy h3 { font-size: 20px; }
++  .case-skill { margin-bottom: 15px; }
++  .method-strip { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 26px 0; margin-top: 28px; }
++  .method-strip h2 { font-size: 24px; }
++  .method-strip ol { gap: 18px; }
++  .library-footer { flex-wrap: wrap; gap: 12px; padding: 22px 0; }
++  .library-footer > span { font-size: 8px; }
++  .library-footer > button { margin-left: 0; width: 100%; justify-content: flex-start; padding: 0; }
++  .resume-strip { padding: 13px; flex-wrap: wrap; gap: 10px; margin-top: 0; }
++  .resume-strip > div { min-width: 0; flex: 1; }
++  .resume-strip .button { width: 100%; margin-top: 4px; }
++  .workspace-page { padding: 0 14px 25px; }
++  .workspace-masthead { gap: 8px; margin-bottom: 20px; padding: 13px 0; flex-wrap: wrap; }
++  .workspace-masthead > div { gap: 7px; }
++  .workspace-masthead .lab-brand { font-size: 17px; gap: 6px; }
++  .workspace-masthead .lab-brand svg { width: 26px; height: 26px; }
++  .workspace-masthead .masthead-divider, .workspace-masthead .breadcrumb { display: none; }
++  .workspace-tools { gap: 9px !important; }
++  .workspace-tools .button { min-height: 32px; padding: 6px 9px; font-size: 10px; }
++  .workspace-tools .icon-button { min-height: 32px; min-width: 32px; }
++  .save-status { font-size: 9px; }
++  .workspace-titlebar { display: block; margin-bottom: 15px; }
++  .workspace-titlebar h1 { font-size: 24px; margin-top: 5px; }
++  .workspace-titlebar .data-kind { margin-top: 12px; font-size: 9px; }
++  .task-note { font-size: 11px; padding: 9px 11px; margin-bottom: 17px; }
++  .analysis-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 0; gap: 0; margin-bottom: 17px; }
++  .analysis-summary > div { padding: 12px 15px; }
++  .analysis-summary > div:nth-child(2) { border-right: 0; }
++  .analysis-summary > div:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
++  .analysis-summary dd { font-size: 20px; }
++  .workspace-aside { display: flex; }
++  .parameter-fields { grid-template-columns: minmax(0, 1fr) !important; }
++  .analysis-panel, .parameter-controls-card, .evidence-rail-card, .conclusion-composer-card { padding: 13px !important; }
++  .plot-header-row h4 { font-size: 10px !important; }
++  .panel-heading p { font-size: 10px; }
++  .report-action-bar > div { flex-wrap: wrap; }
++  .printable-sheet { padding: 18px !important; overflow-wrap: anywhere; }
++  .printable-sheet > div > div[style*='grid-template-columns'] { grid-template-columns: minmax(0, 1fr) !important; }
++  .printable-sheet > div[style*='grid-template-columns'] { grid-template-columns: minmax(0, 1fr) !important; }
++  .teacher-page { overflow-wrap: anywhere; }
++}
++@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+ @media print {
+-  body {
+-    background-color: #ffffff !important;
+-    color: #000000 !important;
+-  }
+-
+-  .no-print {
+-    display: none !important;
+-  }
+-
+-  .printable-sheet {
+-    box-shadow: none !important;
+-    border: none !important;
+-    padding: 0 !important;
+-    margin: 0 !important;
+-    width: 100% !important;
+-    max-width: 100% !important;
+-  }
+-
+-  .light-curve-plot-card {
+-    break-inside: avoid;
+-    page-break-inside: avoid;
+-    margin-bottom: 12px !important;
+-  }
+-
+-  @page {
+-    margin: 1.5cm;
+-    size: letter portrait;
+-  }
+-}
++  .app-shell { --page: #fff; --surface: #fff; --ink: #000; background: #fff !important; color: #000 !important; }
++  .no-print { display: none !important; }
++  .printable-sheet { box-shadow: none !important; border: 0 !important; padding: 0 !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; }
++  .light-curve-plot-card { break-inside: avoid; page-break-inside: avoid; margin-bottom: 12px !important; }
++  @page { margin: 1.5cm; size: letter portrait; }
++}
++.evidence-rail-card { background: var(--surface); border: 1px solid var(--border); }
++.evidence-intro h2 { margin: 7px 0 6px; font-size: 16px; font-weight: 600; letter-spacing: -.35px; }
++.evidence-intro p { margin: 0 0 7px; font-size: 11px; color: var(--muted); line-height: 1.7; }
++.evidence-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; border: 0; background: transparent; gap: 12px; color: var(--muted); text-align: left; }
++.evidence-toggle > div:first-child { display: flex; flex-direction: column; align-items: flex-start; }
++.evidence-title { color: var(--ink); font-size: 12px; font-weight: 550; }
++.evidence-status { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); }
++.evidence-status.measured { color: var(--success); }
++.evidence-status.needs_review { color: var(--danger); }
++.evidence-status.inconclusive { color: var(--warning); }
++.evidence-details p { color: var(--muted); }
++.evidence-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; padding: 13px 0; margin: 0; border-top: 1px solid var(--border); }
++.evidence-metrics > div { min-width: 0; }
++.evidence-metrics dt { color: var(--muted); font-size: 9px; }
++.evidence-metrics dd { margin: 3px 0 0; font-size: 12px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
++.evidence-limits { font-size: 10px; line-height: 1.7; color: var(--muted); padding: 10px 12px; background: var(--surface-soft); border-radius: 5px; }
++.evidence-limits strong { font-weight: 600; color: var(--ink); font-size: 10px; }
++.evidence-limits ul { padding-left: 15px; margin: 5px 0 0; }
++.chevron-expanded { transform: rotate(180deg); }
++.workspace-footer { display: flex; align-items: center; justify-content: center; gap: 6px; }
++@media (pointer: coarse) { button, .case-open, .theme-switch, .sidebar-link { min-height: 44px; } }
++.report-action-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
++.report-action-bar > div { display: flex; gap: 8px; }
++@media (max-width: 620px) { .report-action-bar .button { font-size: 11px; } .report-action-bar > div { flex-wrap: wrap; } }
++.evidence-intro p, .evidence-details > p { font-size: 12px !important; }
++.evidence-metrics dt { font-size: 10px; }
++.evidence-status { font-size: 10px !important; }
+--- a/vite.config.ts
++++ b/vite.config.ts
+@@ -63,5 +63,5 @@
+ export default defineConfig({
+   plugins: [react(), precachePlugin()],
+   worker: { format: 'es' },
+-  server: { port: 5173 },
++  server: { port: 5173, allowedHosts: ['terminal.local'] },
+ });

@@ -1,0 +1,1442 @@
+--- /dev/null
++++ b/Start_DimmingLab.cmd
+@@ -0,0 +1,4 @@
++@echo off
++cd /d "%~dp0"
++node scripts\serve_release.mjs
++pause
+--- /dev/null
++++ b/scripts/serve_release.mjs
+@@ -0,0 +1,28 @@
++import { createServer } from 'node:http';
++import { readFile, stat } from 'node:fs/promises';
++import { resolve, sep, extname } from 'node:path';
++import { fileURLToPath } from 'node:url';
++
++const root = fileURLToPath(new URL('../dist/', import.meta.url));
++const port = Number(process.env.DIMMINGLAB_PORT || 4173);
++if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid DIMMINGLAB_PORT.');
++const mime = { '.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8',
++  '.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ico':'image/x-icon' };
++const server = createServer(async (req, res) => {
++  if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405).end(); return; }
++  try {
++    const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
++    const file = resolve(root, '.' + (pathname === '/' ? '/index.html' : pathname));
++    if (file !== resolve(root) && !file.startsWith(resolve(root) + sep)) { res.writeHead(403).end(); return; }
++    if (!(await stat(file)).isFile()) { res.writeHead(404).end(); return; }
++    const data = await readFile(file);
++    res.writeHead(200, { 'Content-Type':mime[extname(file)] || 'application/octet-stream',
++      'Cache-Control':pathname.startsWith('/assets/') ? 'public, max-age=31536000, immutable' : 'no-cache' });
++    res.end(req.method === 'HEAD' ? undefined : data);
++  } catch { res.writeHead(404).end('Not found'); }
++});
++server.on('error', error => {
++  console.error(error.code === 'EADDRINUSE' ? `Port ${port} is already in use. Close the older preview terminal, then start this release again.` : error.message);
++  process.exitCode = 1;
++});
++server.listen(port, '127.0.0.1', () => console.log(`DimmingLab release: http://localhost:${port}\nKeep this terminal open. Press Ctrl+C to stop.`));
+--- a/scripts/test_e2e_browser.mjs
++++ b/scripts/test_e2e_browser.mjs
+@@ -12,6 +12,7 @@
+  */
+ 
+ import { chromium } from 'playwright';
++import { fileURLToPath } from 'node:url';
+ import { readFileSync, unlinkSync, existsSync } from 'fs';
+ 
+ async function runE2E() {
+@@ -138,7 +139,7 @@
+     const downloadPromise = page.waitForEvent('download');
+     await page.locator('button:has-text("Download Project (.json)")').click();
+     const download = await downloadPromise;
+-    const tempExportPath = `d:/Congressional_App_Challenge/temp_test_project.json`;
++    const tempExportPath = fileURLToPath(new URL('../temp_test_project.json', import.meta.url));
+     await download.saveAs(tempExportPath);
+     console.log(`   Exported project file to: ${tempExportPath}`);
+ 
+--- a/scripts/test_offline_reload.mjs
++++ b/scripts/test_offline_reload.mjs
+@@ -53,14 +53,16 @@
+     console.log('   Service Worker registered, active, controller ready:', isControlling);
+     
+     const cachedKeys = await page.evaluate(async () => {
+-      const cache = await caches.open('dimminglab-offline-v1');
++      const manifest = await (await fetch('/offline-manifest.json')).json();
++      const cache = await caches.open(manifest.cacheName);
+       const requests = await cache.keys();
+       return requests.map(r => r.url);
+     });
+     console.log('   Keys in cache before offline (' + cachedKeys.length + '):', cachedKeys);
+     
+     const matchTest = await page.evaluate(async () => {
+-      const cache = await caches.open('dimminglab-offline-v1');
++      const manifest = await (await fetch('/offline-manifest.json')).json();
++      const cache = await caches.open(manifest.cacheName);
+       const requests = await cache.keys();
+       const mainScriptReq = requests.find(r => r.url.includes('/assets/index-') && r.url.endsWith('.js'));
+       if (!mainScriptReq) {
+--- /dev/null
++++ b/scripts/test_packaged_release.mjs
+@@ -0,0 +1,51 @@
++// Tests HTTP assets and the generated service worker using a Node API harness, not a browser.
++import assert from 'node:assert/strict';
++import {readFile} from 'node:fs/promises';
++import {spawn} from 'node:child_process';
++import {fileURLToPath} from 'node:url';
++import {setTimeout as delay} from 'node:timers/promises';
++import vm from 'node:vm';
++
++const root=fileURLToPath(new URL('../',import.meta.url));
++const base='http://localhost:4176';
++const server=spawn(process.execPath,['scripts/serve_release.mjs'],{cwd:root,env:{...process.env,DIMMINGLAB_PORT:'4176'},stdio:['ignore','pipe','pipe']});
++try{
++  let running=false;
++  for(let i=0;i<60;i++){try{if((await fetch(base)).ok){running=true;break;}}catch{}await delay(100);}
++  assert.ok(running,'Release server failed to start.');
++  const manifest=await(await fetch(base+'/offline-manifest.json')).json();
++  assert.ok(manifest.assets.length>=10);
++  for(const asset of manifest.assets){const response=await fetch(base+asset);assert.ok(response.ok,`Missing packaged asset: ${asset}`);}
++  const source=await readFile(new URL('../dist/sw.js',import.meta.url),'utf8');
++  const cacheMaps=new Map(),listeners=new Map();let offline=false,claimed=false,activated=false;
++  const key=input=>new URL(typeof input==='string'?input:input.url,base).href;
++  const cacheFor=name=>{
++    if(!cacheMaps.has(name))cacheMaps.set(name,new Map());
++    const entries=cacheMaps.get(name);
++    return {
++      match:async input=>entries.get(key(input))?.clone(),
++      addAll:async requests=>{
++        const responses=await Promise.all(requests.map(async request=>{const r=await fetch(request);assert.ok(r.ok);return r;}));
++        requests.forEach((request,i)=>entries.set(key(request),responses[i]));
++      },
++    };
++  };
++  const storage={open:async name=>cacheFor(name),keys:async()=>[...cacheMaps.keys()],delete:async name=>cacheMaps.delete(name),
++    match:async request=>{for(const entries of cacheMaps.values()){const r=entries.get(key(request));if(r)return r.clone();}}};
++  class RelativeRequest extends Request{constructor(url,options){super(key(url),options);}}
++  const self={location:{origin:base},addEventListener:(name,handler)=>listeners.set(name,handler),skipWaiting:async()=>{activated=true;},clients:{claim:async()=>{claimed=true;}}};
++  vm.runInNewContext(source,{self,caches:storage,Request:RelativeRequest,Response,URL,
++    fetch:async input=>{if(offline)throw new Error('Offline');return fetch(key(input));}});
++  let installation;listeners.get('install')({waitUntil:promise=>{installation=promise;}});await installation;
++  assert.ok(activated);assert.equal(cacheMaps.get(manifest.cacheName).size,manifest.assets.length);
++  let activation;listeners.get('activate')({waitUntil:promise=>{activation=promise;}});await activation;assert.ok(claimed);
++  offline=true;
++  for(const asset of manifest.assets){
++    let responsePromise;listeners.get('fetch')({request:{url:base+asset,method:'GET',mode:asset==='/'?'navigate':'cors'},respondWith:promise=>{responsePromise=promise;}});
++    const response=await responsePromise;assert.ok(response.ok,`Offline resource failed: ${asset}`);
++  }
++  let crossOriginHandled=false;
++  listeners.get('fetch')({request:{url:'https://other.invalid/assets/x.js',method:'GET',mode:'cors'},respondWith:()=>{crossOriginHandled=true;}});
++  assert.equal(crossOriginHandled,false);
++  console.log(JSON.stringify({status:'passed',scope:'HTTP resources and generated service-worker API harness; not a live browser',buildId:manifest.buildId,assets:manifest.assets.length,offlineResourcesVerified:manifest.assets.length,crossOriginIgnored:true},null,2));
++}finally{server.kill();}
+--- /dev/null
++++ b/scripts/test_release_browser.mjs
+@@ -0,0 +1,86 @@
++// Portable production smoke test. Requires the project's Playwright package and a local browser.
++import assert from 'node:assert/strict';
++import { spawn } from 'node:child_process';
++import { setTimeout as delay } from 'node:timers/promises';
++import { chromium } from 'playwright';
++import { fileURLToPath } from 'node:url';
++
++const root=fileURLToPath(new URL('../',import.meta.url));
++const port=4175, origin=`http://localhost:${port}`;
++const server=spawn(process.execPath,['scripts/serve_release.mjs'],{cwd:root,env:{...process.env,DIMMINGLAB_PORT:String(port)},stdio:['ignore','pipe','pipe']});
++let browser;
++const errors=[];
++try {
++  let started=false;
++  for(let i=0;i<60;i++){try{const r=await fetch(origin);if(r.ok){started=true;break;}}catch{}await delay(100);}
++  assert.ok(started,'The production server did not start.');
++  try{browser=await chromium.launch({channel:'chrome',headless:true});}
++  catch{browser=await chromium.launch({headless:true});}
++  const context=await browser.newContext({viewport:{width:1280,height:850}});
++  const page=await context.newPage();
++  page.on('pageerror',e=>errors.push(e.message));
++  await page.goto(origin,{waitUntil:'networkidle'});
++  assert.equal(await page.locator('.investigation-card').count(),4);
++  await page.waitForFunction(()=>document.body.textContent.includes('Offline Classroom Pack Ready'),null,{timeout:20000});
++  console.log('PASS: library and exact offline pack readiness');
++
++  await page.locator('.investigation-card').nth(0).locator('button').first().click();
++  const conclusion='Release check: retain the very latest answer.';
++  await page.locator('#input-conclusion').fill(conclusion);
++  await page.getByRole('button',{name:'Library',exact:true}).click();
++  await page.locator('.investigation-card').nth(0).getByRole('button',{name:'Resume Saved Investigation'}).click();
++  assert.equal(await page.locator('#input-conclusion').inputValue(),conclusion);
++  console.log('PASS: immediate navigation flush and saved answer restore');
++  await page.getByRole('button',{name:'Library',exact:true}).click();
++
++  await page.getByRole('button',{name:'Import Light Curve (CSV)'}).click();
++  let csv='time,flux\n';
++  for(let i=0;i<=1000;i++){const time=i*.02;const center=.5+4*Math.round((time-.5)/4);csv+=`${time},${Math.abs(time-center)<=.0625?1008:1024}\n`;}
++  await page.locator('input[type=file][accept*=".csv"]').setInputFiles({name:'release_control.csv',mimeType:'text/csv',buffer:Buffer.from(csv)});
++  await page.locator('#csv-time-format').selectOption('BTJD');
++  await page.locator('#csv-data-kind').selectOption('synthetic');
++  await page.getByRole('button',{name:'Open in Workspace'}).click();
++  await page.locator('#input-period').fill('4');
++  await page.locator('#input-epoch').fill('0.5');
++  await page.locator('#input-duration').fill('3');
++  await page.locator('#input-conclusion').fill('The same 1.5625 percent depth must appear in the report.');
++  await page.getByRole('button',{name:'Generate Evidence Report'}).click();
++  assert.match(await page.locator('.printable-sheet').innerText(),/1\.5625/);
++  const downloadEvent=page.waitForEvent('download');
++  await page.getByRole('button',{name:'Download Project JSON'}).click();
++  const download=await downloadEvent;
++  const stream=await download.createReadStream();const buffers=[];
++  for await(const part of stream)buffers.push(part);
++  const projectBuffer=Buffer.concat(buffers),project=JSON.parse(projectBuffer.toString());
++  assert.equal(project.datasetMetadata.timeFormat,'BTJD');assert.equal(project.datasetMetadata.kind,'synthetic');
++  assert.equal(project.customPoints.length,1001);
++  console.log('PASS: custom data, consistent report units and provenance export');
++
++  await context.setOffline(true);
++  await page.reload({waitUntil:'networkidle'});
++  await page.locator('input[type=file][accept*=".json"]').setInputFiles({name:'saved.json',mimeType:'application/json',buffer:projectBuffer});
++  assert.equal(await page.locator('#input-conclusion').inputValue(),project.learnerConclusion);
++  await page.getByRole('button',{name:'Generate Evidence Report'}).click();
++  assert.match(await page.locator('.printable-sheet').innerText(),/1\.5625/);
++  console.log('PASS: offline hard reload, JSON reopen and regenerated report');
++  await page.getByRole('button',{name:'Back to Workspace'}).click();
++  await page.getByRole('button',{name:'Library',exact:true}).click();
++  await page.locator('.investigation-card').nth(3).locator('button').first().click();
++  await page.getByRole('button',{name:'Search for Repeating Dips'}).click();
++  await page.getByRole('button',{name:'Apply',exact:true}).first().click({timeout:20000});
++  assert.ok(Number(await page.locator('#input-period').inputValue())>0);
++  console.log('PASS: offline worker search and candidate application');
++
++  for(const width of [375,768,1280]){
++    await page.setViewportSize({width,height:850});
++    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1),`Page overflow at ${width}px`);
++    const contained=await page.locator('.parameter-controls-card input').evaluateAll(inputs=>inputs.every(input=>{
++      const card=input.closest('.parameter-controls-card').getBoundingClientRect(),rect=input.getBoundingClientRect();
++      return rect.left>=card.left-1&&rect.right<=card.right+1;
++    }));
++    assert.ok(contained,`Parameter inputs escape their card at ${width}px`);
++  }
++  assert.deepEqual(errors,[]);
++  console.log('PASS: responsive containment and no browser page errors');
++  console.log('RELEASE BROWSER CHECKS PASSED');
++}finally{if(browser)await browser.close();server.kill();}
+--- a/src/app/App.tsx
++++ b/src/app/App.tsx
+@@ -12,7 +12,7 @@
+ import { TeacherGuideView } from '../features/teacher/TeacherGuideView';
+ import { CsvImportModal } from '../features/import/CsvImportModal';
+ import { listAllProjects, getCachedDataset, cacheDatasetLocally, loadActiveProject, saveActiveProject } from '../storage/db';
+-import { validateProjectJson, restoreCustomDatasetFromProject } from '../features/evidence/exportImport';
++import { validateProjectJson, restoreCustomDatasetFromProject, assertDatasetMatchesProject, CURATED_DATASET_HASHES } from '../features/evidence/exportImport';
+ import { initOfflineSupport } from '../offline/offlineManager';
+ 
+ export const App: React.FC = () => {
+@@ -68,6 +68,11 @@
+     try {
+       // First check local Dexie cache
+       let data = await getCachedDataset(card.id);
++      if (data) {
++        try {
++          assertDatasetMatchesProject(data, { datasetId: card.id, datasetVersion: data.manifest.version, datasetHash: CURATED_DATASET_HASHES[card.id] });
++        } catch { data = undefined; }
++      }
+ 
+       if (!data) {
+         // Fetch JSON from public/data/
+@@ -76,6 +81,7 @@
+           throw new Error(`Failed to load dataset file: ${res.statusText}`);
+         }
+         data = await res.json() as LightCurveData;
++        assertDatasetMatchesProject(data, { datasetId: card.id, datasetVersion: data.manifest.version, datasetHash: CURATED_DATASET_HASHES[card.id] });
+         await cacheDatasetLocally(data);
+       }
+ 
+@@ -83,6 +89,7 @@
+       if (resumeSaved) {
+         projectToLoad = savedProjectsMap[card.id] || (await loadActiveProject(card.id)) || null;
+       }
++      if (projectToLoad) assertDatasetMatchesProject(data, projectToLoad);
+ 
+       setActiveDataset(data);
+       setActiveProject(projectToLoad);
+@@ -134,6 +141,8 @@
+         throw new Error(`Could not find or load underlying dataset '${project.datasetId}' for this project.`);
+       }
+ 
++      assertDatasetMatchesProject(data, project);
++
+       await saveActiveProject(project);
+       await refreshSavedProjects();
+ 
+@@ -173,6 +182,8 @@
+       if (!data) {
+         throw new Error('Could not find underlying dataset for saved investigation.');
+       }
++
++      assertDatasetMatchesProject(data, savedProject);
+ 
+       setActiveDataset(data);
+       setActiveProject(savedProject);
+--- a/src/domain/types.ts
++++ b/src/domain/types.ts
+@@ -163,6 +163,14 @@
+     fluxUnit?: string;
+     kind?: string;
+     targetId?: string | null;
++    sourceUrl?: string | null;
++    sourceProductId?: string | null;
++    sourceSha256?: string | null;
++    retrievedAt?: string | null;
++    segmentPolicy?: string;
++    qualityPolicy?: string;
++    preparationSteps?: string[];
++    reuseNotes?: string;
+   };
+   settings: InvestigationSettings;
+   evidence: EvidenceItem[];
+--- a/src/engine/analysis.ts
++++ b/src/engine/analysis.ts
+@@ -58,9 +58,8 @@
+   const { periodDays, epochDays, durationHours, normalization, qualityFilter } = settings;
+ 
+   // 1. Filter points according to qualityFilter policy
+-  const activePoints = qualityFilter === 'clean_only'
+-    ? points.filter((p) => p.quality === undefined || p.quality === 0)
+-    : points.filter((p) => Number.isFinite(p.time) && Number.isFinite(p.flux));
++  const activePoints = points.filter(p => Number.isFinite(p.time) && Number.isFinite(p.flux) &&
++    (qualityFilter !== 'clean_only' || p.quality === undefined || p.quality === 0));
+ 
+   // 2. Normalize light curve observations
+   const normalizedResult = normalizeLightCurve(activePoints, normalization);
+@@ -128,16 +127,16 @@
+     }
+     baselineNote = 'Normalized to median starlight baseline = 1.000.';
+   } else {
+-    rawDeficitText = `${rawDeficit.toFixed(2)} detector counts`;
++    rawDeficitText = `${rawDeficit.toFixed(4)} input flux units`;
+     if (fractionalDepth !== null && outMean > 0) {
+       relativePercentText = `${(boxFit.depthPercent ?? 0).toFixed(4)}%`;
+       relativePpmText = `${Math.round(boxFit.depthPpm ?? 0).toLocaleString()} ppm`;
+-      baselineNote = `Relative depth (out_mean - in_mean) / out_mean calculated assuming positive constant baseline of ${outMean.toFixed(1)} counts.`;
++      baselineNote = `Relative depth (out_mean - in_mean) / out_mean calculated assuming positive constant baseline of ${outMean.toFixed(4)} input flux units.`;
+     } else {
+       baselineNote = 'Relative percentage unavailable: out-of-transit baseline is zero or negative.';
+     }
+     if (boxFit.rawDepthStdErr !== null) {
+-      uncertaintyText = `±${boxFit.rawDepthStdErr.toFixed(2)} detector counts`;
++      uncertaintyText = `±${boxFit.rawDepthStdErr.toFixed(4)} input flux units`;
+       if (boxFit.fractionalDepthStdErr !== null) {
+         uncertaintyText += ` (±${(boxFit.fractionalDepthStdErr * 100).toFixed(4)}%)`;
+       }
+--- a/src/engine/evidence.ts
++++ b/src/engine/evidence.ts
+@@ -183,7 +183,7 @@
+       depth = primaryFit.outOfTransitMean - meanFlux;
+ 
+       // Estimate event depth standard error
+-      const hasErrors = inWindowPoints.some(p => p.fluxErr !== undefined && Number.isFinite(p.fluxErr) && p.fluxErr > 0);
++      const hasErrors = inWindowPoints.every(p => p.fluxErr !== undefined && Number.isFinite(p.fluxErr) && p.fluxErr > 0);
+       let eventStdErr = 0;
+ 
+       if (hasErrors) {
+@@ -199,7 +199,11 @@
+         eventStdErr = inVariance > 0 ? Math.sqrt(inVariance / sampleCount) : 0;
+       }
+ 
+-      depthStdErr = eventStdErr > 0 ? eventStdErr : (outOfTransitScatter > 0 ? outOfTransitScatter / Math.sqrt(sampleCount) : null);
++      const roundoffFloor = 64 * Number.EPSILON * Math.max(Math.abs(primaryFit.outOfTransitMean), Math.abs(meanFlux), Number.MIN_VALUE);
++      if (!hasErrors && eventStdErr <= roundoffFloor) eventStdErr = 0;
++      const baselineStdErr = primaryFit.outOfTransitStdErr;
++      const combinedError = Math.hypot(eventStdErr, baselineStdErr);
++      depthStdErr = Number.isFinite(combinedError) && combinedError > roundoffFloor ? combinedError : null;
+       significance = (depthStdErr !== null && depthStdErr > 0) ? depth / depthStdErr : null;
+ 
+       // Evidence classification:
+@@ -216,10 +220,10 @@
+         }
+       } else {
+         // Noiseless idealized series (depthStdErr is null or 0)
+-        // Detect genuine dimming for any measurable positive depth (> 1 ppm)
+-        if (depth >= 1e-6) {
++        // Describe finite changes above floating-point roundoff; no amplitude-based flatness cutoff.
++        if (depth > roundoffFloor) {
+           evidence = 'dimming_detected';
+-        } else if (depth <= -1e-6) {
++        } else if (depth < -roundoffFloor) {
+           evidence = 'brightening';
+         } else {
+           evidence = 'flat_baseline';
+@@ -467,7 +471,7 @@
+   // 0 dimming events
+   let explanation = 'Zero transit dimming events were observed at this trial period and epoch.';
+   if (covered > 0) {
+-    explanation = `Zero transit dimming detected: ${covered} predicted windows were observed (${adequate} adequate, ${partial} partial), and all are consistent with flat baseline starlight${brightening > 0 ? ` (${brightening} brightening)` : ''}${ambiguous > 0 ? ` (${ambiguous} ambiguous)` : ''}.`;
++    explanation = `No dimming events meet the assessment criteria: ${covered} predicted windows were observed (${adequate} adequate, ${partial} partial), with ${flat} consistent with baseline, ${brightening} brightening, and ${ambiguous} ambiguous. Partial or insufficient observations do not establish absence of a dip.`;
+   } else {
+     explanation = `Zero transit windows were observed: all ${predicted} predicted cycles fall inside unobserved telescope gaps.`;
+   }
+@@ -553,18 +557,18 @@
+   const depthDiff = Math.abs(depthOdd - depthEven);
+ 
+   // Propagate pooled error from odd and even fit uncertainties
+-  const errOdd = oddFit.inTransitStdErr;
+-  const errEven = evenFit.inTransitStdErr;
+-  const pooledErr = (errOdd > 1e-6 || errEven > 1e-6) ? Math.sqrt(errOdd * errOdd + errEven * errEven) : 0;
++  const errOdd = oddFit.fractionalDepthStdErr;
++  const errEven = evenFit.fractionalDepthStdErr;
++  const pooledErr = errOdd !== null && errEven !== null ? Math.hypot(errOdd, errEven) : null;
+ 
+   // Standardized difference (Z-score). If pooledErr is 0 (noiseless simulation), mark null / not-estimable.
+-  const diffSignificance = pooledErr > 1e-6 ? depthDiff / pooledErr : null;
++  const diffSignificance = pooledErr !== null && pooledErr > 0 ? depthDiff / pooledErr : null;
+   const depthRatio = Math.min(depthOdd, depthEven) / Math.max(depthOdd, depthEven || 1e-9);
+ 
+   // Flag significant disparity:
+   // Case 1: Error-bearing data with Z > 3.0 and ratio < 0.85
+   // Case 2: Noiseless data with pooledErr <= 1e-6 and measurable difference > 0.001
+-  const isNoiselessDisparity = (pooledErr <= 1e-6 || diffSignificance === null) && depthDiff > 0.001 && depthRatio < 0.85;
++  const isNoiselessDisparity = diffSignificance === null && depthDiff > 64 * Number.EPSILON && depthRatio < 0.85;
+   const isStatisticalDisparity = diffSignificance !== null && diffSignificance > 3.0 && depthRatio < 0.85;
+ 
+   if (isStatisticalDisparity || isNoiselessDisparity) {
+@@ -712,17 +716,17 @@
+       kind: 'sampling_gaps',
+       status: 'measured',
+       title: 'Observation Coverage & Gaps',
+-      explanation: `Complete observation continuity: All ${predictedCount} predicted transit windows fall within observed data intervals (0 unobserved gaps).`,
++      explanation: `All ${predictedCount} predicted windows contain observations (${adequateCount} adequate, ${partialCount} partial; 0 unobserved gaps). Measurements in a window do not establish continuous coverage of its full duration.`,
+       metrics: [
+         { name: 'Covered Windows', value: coveredCount, unit: 'windows' },
+         { name: 'Adequate Coverage', value: adequateCount, unit: 'windows' },
+         { name: 'Partial Coverage', value: partialCount, unit: 'windows' },
+         { name: 'Unobserved Gaps', value: 0, unit: 'gaps' },
+-        { name: 'Coverage', value: 100, unit: '%' },
++      { name: 'Windows With Data', value: 100, unit: '%' },
+       ],
+       supportingView: 'time-series',
+       limitations: [
+-        'Full window coverage ensures no transits were missed within the dataset observation span.',
++        'Partial coverage and intervals between samples can hide dimming. Adequate coverage is an explicit sampling heuristic, not a guarantee that every possible transit was detected.',
+       ],
+     };
+   }
+--- a/src/engine/fit.ts
++++ b/src/engine/fit.ts
+@@ -76,6 +76,13 @@
+ 
+   const halfWidth = durationPhase / 2.0;
+ 
++  const validPoints = points.filter(p => Number.isFinite(p.time) && Number.isFinite(p.flux));
++  // Never mix inverse-variance weights with invented unit errors for missing values.
++  const hasCompleteErrors = validPoints.length > 0 && validPoints.every(p =>
++    p.fluxErr !== undefined && Number.isFinite(p.fluxErr) && p.fluxErr > 0 &&
++    Number.isFinite(1 / (p.fluxErr * p.fluxErr))
++  );
++
+   // Accumulate weighted sums for in-transit, out-of-transit, and all points
+   let sumWIn = 0;
+   let sumWYIn = 0;
+@@ -91,16 +98,15 @@
+   // First pass: collect points and compute means
+   const filtered: Array<{ phase: number; flux: number; weight: number }> = [];
+ 
+-  for (let i = 0; i < points.length; i++) {
+-    const pt = points[i];
+-    if (!Number.isFinite(pt.flux)) continue;
++  for (let i = 0; i < validPoints.length; i++) {
++    const pt = validPoints[i];
+ 
+     const { phase } = computePhaseAndCycle(pt.time, epochDays, periodDays);
+     
+     // Weight: 1/err^2 if positive finite err exists, otherwise 1.0
+     let weight = 1.0;
+-    if (pt.fluxErr !== undefined && Number.isFinite(pt.fluxErr) && pt.fluxErr > 0) {
+-      weight = 1.0 / (pt.fluxErr * pt.fluxErr);
++    if (hasCompleteErrors) {
++      weight = 1.0 / (pt.fluxErr! * pt.fluxErr!);
+     }
+ 
+     filtered.push({ phase, flux: pt.flux, weight });
+@@ -153,8 +159,7 @@
+   }
+ 
+   // Uncertainty modeling
+-  const knownErrCount = points.filter(p => Number.isFinite(p.flux) && p.fluxErr !== undefined && Number.isFinite(p.fluxErr) && p.fluxErr > 0).length;
+-  const isKnownErrorModel = knownErrCount >= Math.min(10, Math.floor(0.8 * filtered.length));
++  const isKnownErrorModel = hasCompleteErrors;
+ 
+   let inStdErr = 0;
+   let outStdErr = 0;
+@@ -162,15 +167,12 @@
+   let fractionalDepthStdErr: number | null = null;
+   let uncertaintyModel: UncertaintyModel = 'not_estimable';
+ 
+-  const sampleInStdErr = countIn > 1 ? Math.sqrt(varianceInSum / (countIn * (countIn - 1))) : 0;
+-  const sampleOutStdErr = countOut > 1 ? Math.sqrt(varianceOutSum / (countOut * (countOut - 1))) : 0;
+-
+   if (isKnownErrorModel && sumWIn > 0 && sumWOut > 0) {
+     uncertaintyModel = 'known_errors';
+     const varIn = 1.0 / sumWIn;
+     const varOut = 1.0 / sumWOut;
+-    inStdErr = sampleInStdErr;
+-    outStdErr = sampleOutStdErr;
++    inStdErr = Math.sqrt(varIn);
++    outStdErr = Math.sqrt(varOut);
+     rawDepthStdErr = Math.sqrt(varIn + varOut);
+     if (meanOut > 0) {
+       // Propagate uncertainty to fractional depth (meanOut - meanIn) / meanOut = 1 - meanIn/meanOut
+@@ -183,7 +185,8 @@
+     const pooledVariance = wrssBox / dof;
+     const pooledStd = Math.sqrt(pooledVariance);
+ 
+-    if (pooledStd > 1e-6) {
++    const roundoffFloor = 64 * Number.EPSILON * Math.max(Math.abs(meanIn), Math.abs(meanOut), Number.MIN_VALUE);
++    if (pooledStd > roundoffFloor) {
+       uncertaintyModel = 'empirical_residuals';
+       const varIn = pooledVariance / countIn;
+       const varOut = pooledVariance / countOut;
+@@ -191,7 +194,7 @@
+       outStdErr = Math.sqrt(varOut);
+       rawDepthStdErr = Math.sqrt(varIn + varOut);
+       if (meanOut > 0) {
+-        fractionalDepthStdErr = rawDepthStdErr / meanOut;
++        fractionalDepthStdErr = Math.sqrt(varIn / meanOut ** 2 + meanIn ** 2 * varOut / meanOut ** 4);
+       }
+     } else {
+       // Noiseless simulation without error bars
+--- a/src/engine/search.ts
++++ b/src/engine/search.ts
+@@ -43,12 +43,15 @@
+   const validPoints: Array<{ time: number; flux: number; weight: number }> = [];
+   let sumWeightAll = 0;
+   let sumWeightedFluxAll = 0;
++  const finitePoints = points.filter(p => Number.isFinite(p.time) && Number.isFinite(p.flux));
++  const completeErrors = finitePoints.every(p => p.fluxErr !== undefined && Number.isFinite(p.fluxErr) &&
++    p.fluxErr > 0 && Number.isFinite(1 / (p.fluxErr * p.fluxErr)));
+ 
+   for (let i = 0; i < points.length; i++) {
+     const pt = points[i];
+     if (!Number.isFinite(pt.flux) || !Number.isFinite(pt.time)) continue;
+ 
+-    const w = (pt.fluxErr && pt.fluxErr > 0) ? 1.0 / (pt.fluxErr * pt.fluxErr) : 1.0;
++    const w = completeErrors ? 1.0 / (pt.fluxErr! * pt.fluxErr!) : 1.0;
+     validPoints.push({ time: pt.time, flux: pt.flux, weight: w });
+     sumWeightAll += w;
+     sumWeightedFluxAll += w * pt.flux;
+--- a/src/features/evidence/exportImport.ts
++++ b/src/features/evidence/exportImport.ts
+@@ -8,8 +8,23 @@
+ import { CURATED_INVESTIGATIONS } from '../../data/curatedDatasets';
+ 
+ export const CURRENT_SCHEMA_VERSION = 1;
+-export const CURRENT_ENGINE_VERSION = '1.0.0';
+-export const CURRENT_APP_VERSION = '1.0.0';
++export const CURRENT_ENGINE_VERSION = '1.1.0';
++export const CURRENT_APP_VERSION = '1.0.1';
++export const CURATED_DATASET_HASHES: Record<string, string> = {
++  case_a_kepler8b: 'ba188e8782ff0be96198b66424302c17a4f68a7cc472b7b1a2e4778312c48bf8',
++  case_b_eclipsing_binary: 'a374184d137bed94ed8b59421c7ca779a8ef098f1c838e78ea85feae72aadd0c',
++  case_c_single_dropout: 'd472c1dde4827b3d7ae5a5a7272a9fbc4e3548d39f4aa760c1d2b20d10adc12d',
++  case_d_injection: 'e0aa16ce1b07d26c9be4e728bdc549657db29df8a59de8c4807c51717ea6c7f8',
++};
++
++export function assertDatasetMatchesProject(dataset: LightCurveData, project: Pick<InvestigationProject, 'datasetId' | 'datasetHash' | 'datasetVersion'>): void {
++  if (!dataset?.manifest || !Array.isArray(dataset.points) || dataset.manifest.id !== project.datasetId ||
++      dataset.manifest.version !== project.datasetVersion ||
++      computeSha256(canonicalPointsRepresentation(dataset.points)) !== project.datasetHash ||
++      dataset.manifest.canonicalDataSha256 !== project.datasetHash) {
++    throw new Error('The loaded measurements do not match this investigation. Reload the official dataset or select the original project file.');
++  }
++}
+ 
+ export const VALID_HYPOTHESES: readonly LearnerHypothesis[] = [
+   'candidate_planet',
+@@ -45,7 +60,7 @@
+       error: `Unsupported schema version: ${String(p.schemaVersion)}. Expected schema version 1.`,
+     };
+   }
+-  if (p.engineVersion !== undefined && (typeof p.engineVersion !== 'string' || p.engineVersion !== CURRENT_ENGINE_VERSION)) {
++  if (p.engineVersion !== undefined && (typeof p.engineVersion !== 'string' || !['1.0.0', CURRENT_ENGINE_VERSION].includes(p.engineVersion))) {
+     return {
+       valid: false,
+       error: `Unsupported engineVersion: '${String(p.engineVersion)}'. Expected engineVersion '${CURRENT_ENGINE_VERSION}'.`,
+@@ -57,6 +72,7 @@
+     return { valid: false, error: 'Project missing required datasetId string.' };
+   }
+   const datasetId = p.datasetId.trim();
++  if (!/^[A-Za-z0-9_-]{1,160}$/.test(datasetId)) return { valid: false, error: 'Invalid dataset identifier.' };
+ 
+   // 3. Dataset Hash syntax validation (must be 64-character hex string)
+   if (typeof p.datasetHash !== 'string' || !/^[a-f0-9]{64}$/i.test(p.datasetHash.trim())) {
+@@ -121,14 +137,19 @@
+   if (!Array.isArray(p.evidence)) {
+     return { valid: false, error: 'Project missing required evidence array.' };
+   }
++  const evidenceKinds = ['repetition', 'alternating_depths', 'opposite_phase', 'sampling_gaps', 'unassessed_limits'];
++  const evidenceStatuses = ['measured', 'needs_review', 'inconclusive', 'not_assessed'];
++  for (const item of p.evidence) {
++    if (!item || typeof item !== 'object' || typeof item.id !== 'string' || !evidenceKinds.includes(item.kind) ||
++        !evidenceStatuses.includes(item.status) || typeof item.title !== 'string' || typeof item.explanation !== 'string' ||
++        !Array.isArray(item.metrics) || !Array.isArray(item.limitations) || !item.limitations.every((v: unknown) => typeof v === 'string') ||
++        !item.metrics.every((m: {name?: unknown; value?: unknown}) => m && typeof m.name === 'string' && (m.value === null || Number.isFinite(m.value)))) {
++      return { valid: false, error: 'Project contains malformed evidence records.' };
++    }
++  }
+ 
+   // 6. Anti-impersonation and Custom points validation
+-  const KNOWN_CURATED_HASHES: Record<string, string> = {
+-    case_a_kepler8b: 'ba188e8782ff0be96198b66424302c17a4f68a7cc472b7b1a2e4778312c48bf8',
+-    case_b_eclipsing_binary: 'a374184d137bed94ed8b59421c7ca779a8ef098f1c838e78ea85feae72aadd0c',
+-    case_c_single_dropout: 'd472c1dde4827b3d7ae5a5a7272a9fbc4e3548d39f4aa760c1d2b20d10adc12d',
+-    case_d_injection: 'e0aa16ce1b07d26c9be4e728bdc549657db29df8a59de8c4807c51717ea6c7f8',
+-  };
++  const KNOWN_CURATED_HASHES = CURATED_DATASET_HASHES;
+ 
+   const isCurated = CURATED_INVESTIGATIONS.some(c => c.id === datasetId) || datasetId in KNOWN_CURATED_HASHES;
+ 
+@@ -148,6 +169,7 @@
+       };
+     }
+   } else {
++    if (!datasetId.startsWith('custom_')) return { valid: false, error: 'Custom dataset identifiers must begin with custom_.' };
+     // Custom uploads must provide customPoints
+     if (p.customPoints === undefined) {
+       return {
+@@ -178,6 +200,14 @@
+       if (!Number.isFinite(pt.time) || !Number.isFinite(pt.flux)) {
+         return { valid: false, error: `Point at index ${i} has non-finite time (${pt.time}) or flux (${pt.flux}).` };
+       }
++      if (pt.fluxErr !== undefined && (!Number.isFinite(pt.fluxErr) || pt.fluxErr <= 0)) {
++        return { valid: false, error: `Point at index ${i} has invalid measurement uncertainty.` };
++      }
++      for (const field of ['quality', 'segment', 'originalIndex']) {
++        if (pt[field] !== undefined && (!Number.isInteger(pt[field]) || (field !== 'segment' && pt[field] < 0))) {
++          return { valid: false, error: `Point at index ${i} has invalid ${field}.` };
++        }
++      }
+     }
+     customPoints = p.customPoints as LightCurvePoint[];
+ 
+@@ -198,6 +228,15 @@
+   let datasetMetadata: InvestigationProject['datasetMetadata'];
+   if (typeof p.datasetMetadata === 'object' && p.datasetMetadata !== null) {
+     const raw = p.datasetMetadata as Record<string, unknown>;
++    for (const [field, permitted] of Object.entries({
++      mission: ['Kepler', 'TESS', 'other', 'simulation'],
++      timeFormat: ['relative_days', 'BKJD', 'BTJD', 'BJD_TDB'],
++      kind: ['observed', 'synthetic', 'injection'],
++    })) {
++      if (raw[field] !== undefined && !permitted.includes(raw[field] as string)) {
++        return { valid: false, error: `Unsupported dataset metadata ${field}.` };
++      }
++    }
+     const timeSpan = Number(raw.timeSpanDays);
+     const count = Number(raw.pointCount);
+     datasetMetadata = {
+@@ -210,6 +249,14 @@
+       fluxUnit: typeof raw.fluxUnit === 'string' ? raw.fluxUnit : undefined,
+       kind: typeof raw.kind === 'string' ? raw.kind : undefined,
+       targetId: typeof raw.targetId === 'string' ? raw.targetId : null,
++      sourceUrl: typeof raw.sourceUrl === 'string' ? raw.sourceUrl : null,
++      sourceProductId: typeof raw.sourceProductId === 'string' ? raw.sourceProductId : null,
++      sourceSha256: typeof raw.sourceSha256 === 'string' ? raw.sourceSha256 : null,
++      retrievedAt: typeof raw.retrievedAt === 'string' ? raw.retrievedAt : null,
++      segmentPolicy: typeof raw.segmentPolicy === 'string' ? raw.segmentPolicy : undefined,
++      qualityPolicy: typeof raw.qualityPolicy === 'string' ? raw.qualityPolicy : undefined,
++      preparationSteps: Array.isArray(raw.preparationSteps) && raw.preparationSteps.every(v => typeof v === 'string') ? raw.preparationSteps : undefined,
++      reuseNotes: typeof raw.reuseNotes === 'string' ? raw.reuseNotes : undefined,
+     };
+   }
+ 
+@@ -258,12 +305,10 @@
+     if (pt.time < minT) minT = pt.time;
+     if (pt.time > maxT) maxT = pt.time;
+   }
+-  const computedTimeSpan = Number.isFinite(minT) && Number.isFinite(maxT) ? Math.max(0.001, maxT - minT) : 10.0;
+-  const timeSpanDays = (project.datasetMetadata?.timeSpanDays && project.datasetMetadata.timeSpanDays > 0)
+-    ? project.datasetMetadata.timeSpanDays
+-    : computedTimeSpan;
+-
+-  const pointCount = project.datasetMetadata?.pointCount || pts.length;
++  const timeSpanDays = maxT - minT;
++  if (!Number.isFinite(timeSpanDays) || timeSpanDays <= 0) throw new Error('Custom observations must span a positive time interval.');
++
++  const pointCount = pts.length;
+   const mission = (project.datasetMetadata?.mission as LightCurveData['manifest']['mission']) || 'other';
+   const timeFormat = (project.datasetMetadata?.timeFormat as LightCurveData['manifest']['timeFormat']) || 'relative_days';
+   const attribution = project.datasetMetadata?.attribution || 'User Upload (Custom Light Curve)';
+@@ -278,19 +323,19 @@
+       kind,
+       mission,
+       targetId: project.datasetMetadata?.targetId || project.datasetTitle,
+-      sourceUrl: null,
+-      sourceProductId: null,
+-      retrievedAt: project.createdAt,
+-      sourceSha256: null,
++      sourceUrl: project.datasetMetadata?.sourceUrl ?? null,
++      sourceProductId: project.datasetMetadata?.sourceProductId ?? null,
++      retrievedAt: project.datasetMetadata?.retrievedAt ?? project.createdAt,
++      sourceSha256: project.datasetMetadata?.sourceSha256 ?? null,
+       canonicalDataSha256: project.datasetHash,
+       timeFormat,
+-      timeReference: project.datasetMetadata?.timeReference || 'User timestamps',
++      timeReference: project.datasetMetadata?.timeReference || 'Legacy user timestamps assumed in days; confirm the time reference before interpreting epochs.',
+       fluxUnit: project.datasetMetadata?.fluxUnit || 'Relative Flux',
+-      segmentPolicy: 'Imported points',
+-      qualityPolicy: 'Validated',
+-      preparationSteps: ['Imported from DimmingLab project JSON export.'],
++      segmentPolicy: project.datasetMetadata?.segmentPolicy || 'Imported points',
++      qualityPolicy: project.datasetMetadata?.qualityPolicy || 'Validated',
++      preparationSteps: project.datasetMetadata?.preparationSteps || ['Imported from DimmingLab project JSON export.'],
+       attribution,
+-      reuseNotes: 'Restored from learner project file.',
++      reuseNotes: project.datasetMetadata?.reuseNotes || 'Restored from learner project file.',
+       pointCount,
+       timeSpanDays,
+     },
+--- a/src/features/import/CsvImportModal.tsx
++++ b/src/features/import/CsvImportModal.tsx
+@@ -6,7 +6,7 @@
+ 
+ import React, { useState } from 'react';
+ import { ColumnMapping, parseLightCurveCsv, ParseValidationResult } from './csvParser';
+-import { LightCurveData, DatasetManifest } from '../../domain/types';
++import { LightCurveData, DatasetManifest, TimeFormat, DatasetKind } from '../../domain/types';
+ import { hashLightCurvePoints } from '../../engine/hash';
+ import { Upload, X, AlertTriangle, CheckCircle } from 'lucide-react';
+ 
+@@ -28,6 +28,8 @@
+   const [title, setTitle] = useState('');
+   const [validation, setValidation] = useState<ParseValidationResult | null>(null);
+   const [customMapping, setCustomMapping] = useState<Partial<ColumnMapping>>({});
++  const [timeFormat, setTimeFormat] = useState<TimeFormat | ''>('');
++  const [dataKind, setDataKind] = useState<DatasetKind | ''>('');
+ 
+   if (!isOpen) return null;
+ 
+@@ -67,7 +69,7 @@
+   };
+ 
+   const handleConfirmImport = () => {
+-    if (!validation || validation.validPoints.length === 0) return;
++    if (!validation || validation.validPoints.length === 0 || validation.errors.length > 0 || !timeFormat || !dataKind) return;
+ 
+     const dataHash = hashLightCurvePoints(validation.validPoints);
+     const datasetId = 'custom_' + Date.now();
+@@ -77,7 +79,7 @@
+       version: '1.0.0',
+       title: title.trim() || 'Imported Light Curve',
+       subtitle: `Imported from ${filename || 'CSV file'}`,
+-      kind: 'observed',
++      kind: dataKind,
+       mission: 'other',
+       targetId: title.trim() || filename,
+       sourceUrl: null,
+@@ -85,9 +87,9 @@
+       retrievedAt: new Date().toISOString(),
+       sourceSha256: null,
+       canonicalDataSha256: dataHash,
+-      timeFormat: 'relative_days',
+-      timeReference: 'User-specified time units',
+-      fluxUnit: 'Relative Flux',
++      timeFormat,
++      timeReference: `User-confirmed ${timeFormat}; timestamps in days`,
++      fluxUnit: 'User-supplied flux units',
+       segmentPolicy: 'Imported segments',
+       qualityPolicy: 'Validated finite numeric values',
+       preparationSteps: [
+@@ -162,6 +164,19 @@
+ 
+         {/* Content */}
+         <div style={{ padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
++          <label htmlFor="csv-time-format">Time convention (all numeric timestamps must be in days)
++            <select id="csv-time-format" value={timeFormat} onChange={e => setTimeFormat(e.target.value as TimeFormat | '')} style={{display:'block',width:'100%',marginTop:6,padding:8}}>
++              <option value="">Choose the time convention</option>
++              <option value="relative_days">Relative days</option><option value="BKJD">BKJD</option>
++              <option value="BTJD">BTJD</option><option value="BJD_TDB">BJD (TDB)</option>
++            </select>
++          </label>
++          <label htmlFor="csv-data-kind">Data origin
++            <select id="csv-data-kind" value={dataKind} onChange={e => setDataKind(e.target.value as DatasetKind | '')} style={{display:'block',width:'100%',marginTop:6,padding:8}}>
++              <option value="">Choose the data origin</option><option value="observed">Observed measurements</option>
++              <option value="synthetic">Synthetic simulation</option><option value="injection">Signal injection</option>
++            </select>
++          </label>
+           <div>
+             <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: textCol, marginBottom: '6px' }}>
+               Select CSV File:
+@@ -304,7 +319,7 @@
+           <button
+             type="button"
+             onClick={handleConfirmImport}
+-            disabled={!validation || validation.validPoints.length === 0 || validation.errors.length > 0}
++            disabled={!validation || validation.validPoints.length === 0 || validation.errors.length > 0 || !timeFormat || !dataKind}
+             style={{
+               padding: '8px 18px',
+               borderRadius: '6px',
+--- a/src/features/workspace/WorkspaceView.tsx
++++ b/src/features/workspace/WorkspaceView.tsx
+@@ -19,7 +19,7 @@
+ import { ConclusionComposer } from '../evidence/ConclusionComposer';
+ import { SearchWorkerClient } from '../../workers/searchWorkerClient';
+ import { saveActiveProject } from '../../storage/db';
+-import { downloadProjectFile } from '../evidence/exportImport';
++import { downloadProjectFile, CURRENT_APP_VERSION, CURRENT_ENGINE_VERSION } from '../evidence/exportImport';
+ import { computeAnalysisSnapshot } from '../../engine/analysis';
+ import { ArrowLeft, Save, Sun, Moon, Info } from 'lucide-react';
+ 
+@@ -90,8 +90,8 @@
+   // Current project representation
+   const currentProject: InvestigationProject = useMemo(() => ({
+     schemaVersion: 1,
+-    appVersion: '1.0.0',
+-    engineVersion: '1.0.0',
++    appVersion: CURRENT_APP_VERSION,
++    engineVersion: CURRENT_ENGINE_VERSION,
+     datasetId: manifest.id,
+     datasetVersion: manifest.version,
+     datasetHash: manifest.canonicalDataSha256,
+@@ -105,6 +105,15 @@
+       kind: manifest.kind,
+       mission: manifest.mission,
+       targetId: manifest.targetId,
++      sourceUrl: manifest.sourceUrl,
++      sourceProductId: manifest.sourceProductId,
++      sourceSha256: manifest.sourceSha256,
++      retrievedAt: manifest.retrievedAt,
++      attribution: manifest.attribution,
++      segmentPolicy: manifest.segmentPolicy,
++      qualityPolicy: manifest.qualityPolicy,
++      preparationSteps: manifest.preparationSteps,
++      reuseNotes: manifest.reuseNotes,
+     },
+     settings,
+     evidence: diagnosticReport.items,
+@@ -118,24 +127,24 @@
+   }), [manifest, settings, diagnosticReport.items, hypothesis, conclusion, alternativeExplanation, nextObservation, initialProject, dataset.points]);
+ 
+   // Synchronous flush save function ensuring no lost edits on navigation
+-  const flushSave = async (): Promise<void> => {
++  const flushSave = async (): Promise<boolean> => {
+     try {
+       await saveActiveProject(currentProject);
+       setSaveIndicator('saved');
++      return true;
+     } catch {
+       setSaveIndicator('error');
+       setSaveError('Local browser save failed (quota exceeded or storage disabled). Export to JSON to save your work.');
++      return false;
+     }
+   };
+ 
+   const handleBackToLibrary = async () => {
+-    await flushSave();
+-    onBackToLibrary();
++    if (await flushSave()) onBackToLibrary();
+   };
+ 
+   const handleOpenReport = async () => {
+-    await flushSave();
+-    onOpenReport(currentProject);
++    if (await flushSave()) onOpenReport(currentProject);
+   };
+ 
+   // Auto-save to IndexedDB debounced
+--- a/src/offline/offlineManager.ts
++++ b/src/offline/offlineManager.ts
+@@ -1,11 +1,5 @@
+-/**
+- * DimmingLab - Offline Pack Manager
+- * Registers service worker, verifies application shell and dataset availability in CacheStorage,
+- * confirms worker controller readiness, and reports structured offline states.
+- */
+-
++/** Readiness is tied to every exact URL in the current production build. */
+ export type OfflineStatus = 'preparing' | 'ready' | 'unavailable' | 'failed';
+-
+ export interface OfflineState {
+   status: OfflineStatus;
+   controllerReady: boolean;
+@@ -13,187 +7,83 @@
+   shellReady: boolean;
+   message: string;
+ }
++export interface OfflineManifest {
++  schemaVersion: 1;
++  buildId: string;
++  cacheName: string;
++  assets: string[];
++}
+ 
+-const DATASET_URLS = [
+-  '/data/case_a_kepler8b.json',
+-  '/data/case_b_eclipsing_binary.json',
+-  '/data/case_c_single_dropout.json',
+-  '/data/case_d_injection.json',
+-];
++export function parseOfflineManifest(value: unknown): OfflineManifest {
++  const v = value as Partial<OfflineManifest> | null;
++  if (!v || v.schemaVersion !== 1 || typeof v.buildId !== 'string' || !/^[a-f0-9]{16}$/.test(v.buildId) ||
++      v.cacheName !== `dimminglab-build-${v.buildId}` || !Array.isArray(v.assets) ||
++      !v.assets.every(url => typeof url === 'string' && /^\/(?!\/)/.test(url) && !url.includes('..'))) {
++    throw new Error('Invalid offline build manifest.');
++  }
++  const required = ['/index.html', '/offline-manifest.json',
++    ...['case_a_kepler8b', 'case_b_eclipsing_binary', 'case_c_single_dropout', 'case_d_injection'].map(id => `/data/${id}.json`)];
++  if (!required.every(url => v.assets!.includes(url)) ||
++      !v.assets.some(url => /^\/assets\/index-.*\.js$/.test(url)) ||
++      !v.assets.some(url => /^\/assets\/.*\.css$/.test(url)) ||
++      !v.assets.some(url => /^\/assets\/searchWorker-.*\.js$/.test(url)) ||
++      !v.assets.some(url => /^\/assets\/search-.*\.js$/.test(url))) {
++    throw new Error('Offline manifest is missing required application resources.');
++  }
++  return v as OfflineManifest;
++}
+ 
+-export const CACHE_NAME = 'dimminglab-offline-v1';
++export async function missingOfflineAssets(cache: Pick<Cache, 'match'>, manifest: OfflineManifest): Promise<string[]> {
++  const present = await Promise.all(manifest.assets.map(async url => (await cache.match(url))?.ok === true));
++  return manifest.assets.filter((_, index) => !present[index]);
++}
+ 
+ export async function checkOfflineSupport(): Promise<OfflineState> {
++  const state: OfflineState = { status: 'preparing', controllerReady: false, datasetsReady: false, shellReady: false,
++    message: 'Preparing offline classroom pack…' };
+   if (!('serviceWorker' in navigator) || !('caches' in window)) {
+-    return {
+-      status: 'unavailable',
+-      controllerReady: false,
+-      datasetsReady: false,
+-      shellReady: false,
+-      message: 'Offline mode unavailable (Service Worker or CacheStorage not supported in this browser).',
+-    };
++    return { ...state, status: 'unavailable', message: 'Offline installation is unavailable in this browser.' };
+   }
+-
+   try {
+-    await navigator.serviceWorker.register('/sw.js');
+-
+-    // Wait for the service worker to activate
+-    await navigator.serviceWorker.ready;
+-
+-    // Check if a service worker is actively controlling this client
+-    let controllerReady = navigator.serviceWorker.controller !== null;
+-    if (!controllerReady) {
+-      await new Promise<void>((resolve) => {
+-        navigator.serviceWorker.addEventListener('controllerchange', () => {
+-          controllerReady = true;
+-          resolve();
+-        }, { once: true });
+-        setTimeout(resolve, 2000);
++    const registration = await navigator.serviceWorker.register('/sw.js');
++    registration.update().catch(() => undefined);
++    let timer: ReturnType<typeof setTimeout> | undefined;
++    const ready = await Promise.race([
++      navigator.serviceWorker.ready.then(() => true),
++      new Promise<boolean>(resolve => { timer = setTimeout(() => resolve(false), 12000); }),
++    ]);
++    clearTimeout(timer);
++    if (!ready) return state;
++    if (!navigator.serviceWorker.controller) {
++      await new Promise<void>(resolve => {
++        const done = () => { clearTimeout(timeout); navigator.serviceWorker.removeEventListener('controllerchange', done); resolve(); };
++        const timeout = setTimeout(done, 3000);
++        navigator.serviceWorker.addEventListener('controllerchange', done);
+       });
+-      controllerReady = navigator.serviceWorker.controller !== null;
+     }
+-
+-    const cache = await caches.open(CACHE_NAME);
+-
+-    // 1. Verify Application Shell (index.html or /)
+-    const shellMatch = (await cache.match('/index.html', { ignoreVary: true })) ||
+-                       (await cache.match('/', { ignoreVary: true }));
+-    const shellReady = !!shellMatch;
+-
+-    // 2. Verify all 4 scientific datasets
+-    let allDatasetsPresent = true;
+-    for (const url of DATASET_URLS) {
+-      const match = await cache.match(url, { ignoreVary: true });
+-      if (!match) {
+-        try {
+-          const resp = await fetch(url);
+-          if (resp.ok) {
+-            await cache.put(url, resp.clone());
+-          } else {
+-            allDatasetsPresent = false;
+-          }
+-        } catch {
+-          allDatasetsPresent = false;
+-        }
+-      }
++    state.controllerReady = navigator.serviceWorker.controller !== null;
++    const response = await fetch('/offline-manifest.json', { cache: 'no-store' });
++    if (!response.ok) return state;
++    const manifest = parseOfflineManifest(await response.json());
++    const cache = await caches.open(manifest.cacheName);
++    const missing = await missingOfflineAssets(cache, manifest);
++    state.datasetsReady = !missing.some(url => url.startsWith('/data/'));
++    state.shellReady = !missing.includes('/index.html');
++    if (state.controllerReady && missing.length === 0) {
++      return { ...state, status: 'ready', message: 'Offline Classroom Pack Ready (Works without internet)' };
+     }
+-
+-    // 3. Verify and prefetch complete production build assets
+-    if (shellMatch) {
+-      try {
+-        const htmlText = await shellMatch.clone().text();
+-        const scriptMatch = htmlText.match(/src="(\/assets\/index-[^"]+\.js)"/);
+-        const cssMatch = htmlText.match(/href="(\/assets\/index-[^"]+\.css)"/);
+-
+-        if (scriptMatch) {
+-          const scriptUrl = scriptMatch[1];
+-          let scriptResp = await cache.match(scriptUrl, { ignoreVary: true });
+-          if (!scriptResp) {
+-            try {
+-              const resp = await fetch(scriptUrl);
+-              if (resp.ok) {
+-                await cache.put(scriptUrl, resp.clone());
+-                scriptResp = resp;
+-              }
+-            } catch {
+-              // fetch failed
+-            }
+-          }
+-          if (scriptResp) {
+-            const scriptText = await scriptResp.clone().text();
+-            const workerMatch = scriptText.match(/["'](\/?assets\/searchWorker-[^"']+\.js)["']/);
+-            if (workerMatch) {
+-              const workerUrl = workerMatch[1].startsWith('/') ? workerMatch[1] : `/${workerMatch[1]}`;
+-              const hasWorker = await cache.match(workerUrl, { ignoreVary: true });
+-              if (!hasWorker) {
+-                try {
+-                  const wResp = await fetch(workerUrl);
+-                  if (wResp.ok) await cache.put(workerUrl, wResp.clone());
+-                } catch {
+-                  // worker fetch failed
+-                }
+-              }
+-            }
+-            const chunkMatch = scriptText.match(/["'](\.?\/?assets\/search-[^"']+\.js)["']/);
+-            if (chunkMatch) {
+-              let chunkUrl = chunkMatch[1].replace(/^\.\//, '/');
+-              if (!chunkUrl.startsWith('/')) chunkUrl = `/${chunkUrl}`;
+-              const hasChunk = await cache.match(chunkUrl, { ignoreVary: true });
+-              if (!hasChunk) {
+-                try {
+-                  const cResp = await fetch(chunkUrl);
+-                  if (cResp.ok) await cache.put(chunkUrl, cResp.clone());
+-                } catch {
+-                  // chunk fetch failed
+-                }
+-              }
+-            }
+-          }
+-        }
+-
+-        if (cssMatch) {
+-          const cssUrl = cssMatch[1];
+-          const hasCss = await cache.match(cssUrl, { ignoreVary: true });
+-          if (!hasCss) {
+-            try {
+-              const resp = await fetch(cssUrl);
+-              if (resp.ok) await cache.put(cssUrl, resp.clone());
+-            } catch {
+-              // css fetch failed
+-            }
+-          }
+-        }
+-      } catch {
+-        // Pre-caching discovery encountered error or running offline
+-      }
+-    }
+-
+-    // Inspect actual cached keys strictly against complete asset requirements
+-    const keys = await cache.keys();
+-    const urls = keys.map(k => k.url);
+-
+-    const hasMainScript = urls.some(u => /\/assets\/index-.*\.js/.test(u));
+-    const hasStylesheet = urls.some(u => /\/assets\/index-.*\.css/.test(u) || u.endsWith('.css'));
+-    const hasSearchWorker = urls.some(u => u.includes('searchWorker'));
+-    const hasSearchChunk = urls.some(u => /\/assets\/search-.*\.js/.test(u) || (u.includes('search-') && !u.includes('searchWorker')));
+-
+-    const hasCompleteBuildAssets = hasMainScript && hasStylesheet && hasSearchWorker && hasSearchChunk;
+-
+-    const isFullyReady = controllerReady && shellReady && allDatasetsPresent && hasCompleteBuildAssets;
+-
+-    if (isFullyReady) {
+-      return {
+-        status: 'ready',
+-        controllerReady: true,
+-        datasetsReady: true,
+-        shellReady: true,
+-        message: 'Offline Classroom Pack Ready (Works without internet)',
+-      };
+-    }
+-
+-    return {
+-      status: 'preparing',
+-      controllerReady,
+-      datasetsReady: allDatasetsPresent,
+-      shellReady,
+-      message: 'Preparing offline classroom pack (downloading assets)...',
+-    };
+-  } catch (err: unknown) {
+-    const msg = err instanceof Error ? err.message : String(err);
+-    return {
+-      status: 'failed',
+-      controllerReady: false,
+-      datasetsReady: false,
+-      shellReady: false,
+-      message: `Offline setup failed: ${msg}`,
+-    };
++    return state;
++  } catch {
++    return { ...state, status: 'failed', message: 'Offline installation is incomplete. Connect to the internet and reload.' };
+   }
+ }
+ 
+-/**
+- * Backward compatibility helper returning boolean
+- */
+ export async function initOfflineSupport(): Promise<boolean> {
+-  const state = await checkOfflineSupport();
+-  return state.status === 'ready';
++  for (let attempt = 0; attempt < 8; attempt++) {
++    const state = await checkOfflineSupport();
++    if (state.status === 'ready') return true;
++    if (state.status !== 'preparing' || !state.controllerReady) return false;
++    await new Promise(resolve => setTimeout(resolve, 500));
++  }
++  return false;
+ }
+--- a/tests/controls.test.ts
++++ b/tests/controls.test.ts
+@@ -29,8 +29,9 @@
+     expect(Number.isFinite(fit.fitImprovement)).toBe(true);
+     expect(fit.depth).toBeCloseTo(0.0, 7);
+     expect(fit.fitImprovement).toBeCloseTo(0.0, 7);
+-    expect(fit.inTransitStdErr).toBe(0);
+-    expect(fit.outOfTransitStdErr).toBe(0);
++    // A flat realization does not erase supplied nonzero measurement errors.
++    expect(fit.inTransitStdErr).toBeCloseTo(0.001 / Math.sqrt(fit.inTransitCount), 12);
++    expect(fit.outOfTransitStdErr).toBeCloseTo(0.001 / Math.sqrt(fit.outOfTransitCount), 12);
+   });
+ 
+   // 2. Pure noise search control
+--- a/tests/priority_regressions.test.ts
++++ b/tests/priority_regressions.test.ts
+@@ -47,7 +47,7 @@
+     expect(snapshot.boxFit.fractionalDepth).toBeCloseTo(0.015625, 6);
+     expect(snapshot.boxFit.depthPercent).toBeCloseTo(1.5625, 4);
+     expect(snapshot.depthFormatted.relativePercentText).toBe('1.5625%');
+-    expect(snapshot.depthFormatted.rawDeficitText).toBe('16.00 detector counts');
++    expect(snapshot.depthFormatted.rawDeficitText).toBe('16.0000 input flux units');
+ 
+     // Both workspace and report use computeAnalysisSnapshot directly
+     const reportSnapshot = computeAnalysisSnapshot(points, settings);
+@@ -68,7 +68,7 @@
+     expect(scaledSnapshot.boxFit.fractionalDepth).toBeCloseTo(0.015625, 6);
+     expect(scaledSnapshot.boxFit.depthPercent).toBeCloseTo(1.5625, 4);
+     expect(scaledSnapshot.depthFormatted.relativePercentText).toBe('1.5625%');
+-    expect(scaledSnapshot.depthFormatted.rawDeficitText).toBe('160.00 detector counts');
++    expect(scaledSnapshot.depthFormatted.rawDeficitText).toBe('160.0000 input flux units');
+   });
+ 
+   it('Quality-flagged outlier is included or excluded consistently across workspace, report, plots, and diagnostics', () => {
+--- /dev/null
++++ b/tests/release_regressions.test.ts
+@@ -0,0 +1,139 @@
++import { describe, it, expect } from 'vitest';
++import { readFileSync } from 'node:fs';
++import { calculateBoxFit } from '../src/engine/fit';
++import { computeAnalysisSnapshot } from '../src/engine/analysis';
++import { computePhaseAndCycle } from '../src/engine/folding';
++import { assessEvidence } from '../src/engine/evidence';
++import { hashLightCurvePoints } from '../src/engine/hash';
++import { parseOfflineManifest, missingOfflineAssets, type OfflineManifest } from '../src/offline/offlineManager';
++import { assertDatasetMatchesProject, validateProjectJson, restoreCustomDatasetFromProject } from '../src/features/evidence/exportImport';
++import type { InvestigationSettings, LightCurveData, LightCurvePoint, InvestigationProject } from '../src/domain/types';
++
++const settings: InvestigationSettings = { periodDays: 4, epochDays: 0.5, durationHours: 3, normalization: 'none', qualityFilter: 'all' };
++function series(depth = 1 / 64, error?: number): LightCurvePoint[] {
++  return Array.from({length:1001}, (_, i) => {
++    const time = i * 0.02;
++    const {phase} = computePhaseAndCycle(time, settings.epochDays, settings.periodDays);
++    return { time, flux: Math.abs(phase) <= 3 / 24 / 4 / 2 ? 1 - depth : 1, fluxErr:error, originalIndex:i };
++  });
++}
++function custom(): InvestigationProject {
++  const customPoints = series();
++  return { schemaVersion:1, appVersion:'1.0.0',engineVersion:'1.0.0',datasetId:'custom_release',datasetVersion:'1.0.0',
++    datasetTitle:'Release control',datasetHash:hashLightCurvePoints(customPoints),customPoints,settings,evidence:[],learnerHypothesis:'insufficient_evidence',
++    learnerConclusion:'Exact learner text',alternativeExplanation:'',nextObservation:'',createdAt:'2026-10-26T00:00:00Z',updatedAt:'2026-10-26T00:00:00Z' };
++}
++
++describe('Release blockers', () => {
++  it('propagates known uncertainty to each mean and to the depth, even for zero residual scatter', () => {
++    const fit = calculateBoxFit(series(1 / 64, 1 / 1024), settings);
++    expect(fit.inTransitStdErr).toBeCloseTo(1 / 1024 / Math.sqrt(fit.inTransitCount), 12);
++    expect(fit.outOfTransitStdErr).toBeCloseTo(1 / 1024 / Math.sqrt(fit.outOfTransitCount), 12);
++    expect(fit.rawDepthStdErr! * 1e6).toBeCloseTo(168.032967, 4);
++  });
++  it('uses consistent empirical weights for incomplete errors and preserves scale invariance', () => {
++    const points = series(); points[0].fluxErr = 0.001; points[0].flux += 0.001;
++    const a = calculateBoxFit(points, settings);
++    const b = calculateBoxFit(points.map(p => ({...p,flux:p.flux*1024,fluxErr:p.fluxErr === undefined ? undefined : p.fluxErr*1024})), settings);
++    expect(a.uncertaintyModel).toBe('empirical_residuals');
++    expect(b.depthPercent).toBeCloseTo(a.depthPercent!, 10);
++    expect(b.fractionalDepthStdErr).toBeCloseTo(a.fractionalDepthStdErr!, 12);
++  });
++  it('does not count nonfinite timestamps as baseline observations', () => {
++    const points = series(); const a = calculateBoxFit(points, settings);
++    const b = calculateBoxFit([...points,{time:NaN,flux:1e6,originalIndex:1001}],settings);
++    expect(b).toEqual(a);
++    expect(computeAnalysisSnapshot([...points,{time:NaN,flux:1e6,quality:0,originalIndex:1001}],{...settings,qualityFilter:'clean_only'}).activePoints).toHaveLength(points.length);
++  });
++  it('retains exact shallow dips below one ppm without inventing significance', () => {
++    const snapshot = computeAnalysisSnapshot(series(1 / 2 ** 22), settings);
++    expect(snapshot.diagnostics.dimmingDetectedCount).toBe(5);
++    expect(snapshot.boxFit.significance).toBeNull();
++  });
++  it('describes brightening windows without claiming all windows are flat', () => {
++    const snapshot = computeAnalysisSnapshot(series(-1 / 64), settings);
++    expect(snapshot.diagnostics.items[0].explanation).not.toContain('all are consistent with flat');
++    expect(snapshot.diagnostics.items[0].metrics.find(m => m.name === 'Brightening Windows')?.value).toBe(5);
++  });
++  it('does not call tightly clustered partial measurements complete observation continuity', () => {
++    const cfg={...settings,epochDays:2,durationHours:9.6};
++    const points:LightCurvePoint[]=[];
++    for(let i=0;i<=2400;i++){
++      const time=i*.01;const {phase}=computePhaseAndCycle(time,2,4);
++      if(Math.abs(phase)>.4/4/2)points.push({time,flux:1,originalIndex:points.length});
++    }
++    for(let c=0;c<6;c++)for(let j=0;j<4;j++)points.push({time:2+4*c-.195+j*.001,flux:1,originalIndex:points.length});
++    points.sort((a,b)=>a.time-b.time);
++    const result=assessEvidence(points,cfg,calculateBoxFit(points,cfg));
++    expect(result.adequateCoverageCount).toBe(0);expect(result.partialCoverageCount).toBe(6);
++    const item=result.items.find(i=>i.id==='sampling_gaps')!;
++    expect(item.explanation).not.toContain('Complete observation continuity');
++    expect(item.explanation).toContain('6 partial');
++    expect(item.limitations.join(' ')).not.toContain('ensures no transits');
++  });
++  it('keeps known-error alternating-depth comparisons invariant under raw flux scaling', () => {
++    const points=series(0,0.003).map(p=>{
++      const {phase,cycle}=computePhaseAndCycle(p.time,settings.epochDays,settings.periodDays);
++      return {...p,flux:Math.abs(phase)<=3/24/4/2 ? 1-(Math.abs(cycle)%2 ? .025 : .01):1};
++    });
++    const diagnostic=(p:LightCurvePoint[])=>assessEvidence(p,settings,calculateBoxFit(p,settings)).items.find(i=>i.id==='alternating_depths')!;
++    const a=diagnostic(points), b=diagnostic(points.map(p=>({...p,flux:p.flux*1000,fluxErr:p.fluxErr!*1000})));
++    expect(a.status).toBe('needs_review');
++    expect(b.metrics.find(m=>m.name==='Standardized Diff')?.value).toBe(a.metrics.find(m=>m.name==='Standardized Diff')?.value);
++  });
++  it('keeps workspace and report measurements independent of detector-count scale', () => {
++    const points=series().map(p=>({...p,flux:p.flux*1024}));
++    for(const normalization of ['median','none'] as const) {
++      const a=computeAnalysisSnapshot(points,{...settings,normalization});
++      expect(a.boxFit.depthPercent).toBeCloseTo(1.5625,10);
++      expect(computeAnalysisSnapshot(points,{...settings,normalization}).boxFit).toEqual(a.boxFit);
++    }
++  });
++  it('rejects corrupt evidence and invalid optional measurement errors', () => {
++    expect(validateProjectJson({...custom(),evidence:[null]}).valid).toBe(false);
++    const p=custom();p.customPoints![0].fluxErr=-1;
++    expect(validateProjectJson(p).valid).toBe(false);
++  });
++  it('rejects unsupported dataset metadata enums', () => {
++    expect(validateProjectJson({...custom(),datasetMetadata:{pointCount:1001,timeSpanDays:20,timeFormat:'hours'}}).valid).toBe(false);
++  });
++  it('restores factual sample count and span instead of trusting stale metadata', () => {
++    const data=restoreCustomDatasetFromProject({...custom(),datasetMetadata:{timeSpanDays:30,pointCount:999,timeFormat:'BTJD',kind:'synthetic'}});
++    expect(data.manifest.timeSpanDays).toBe(20);expect(data.manifest.pointCount).toBe(1001);
++    expect(data.manifest.kind).toBe('synthetic');expect(data.manifest.timeFormat).toBe('BTJD');
++  });
++  it('preserves source provenance in a project round trip', () => {
++    const p={...custom(),datasetMetadata:{timeSpanDays:20,pointCount:1001,timeFormat:'BTJD',sourceUrl:'https://example.org/data',sourceProductId:'control',attribution:'Teaching control',preparationSteps:['Finite rows'],kind:'synthetic'}};
++    const result=validateProjectJson(JSON.parse(JSON.stringify(p)));
++    expect(result.valid).toBe(true);
++    const data=restoreCustomDatasetFromProject(result.project!);
++    expect(data.manifest.sourceUrl).toBe(p.datasetMetadata.sourceUrl);expect(data.manifest.preparationSteps).toEqual(['Finite rows']);
++  });
++  it('checks the resolved measurements against the saved identity, hash and version', () => {
++    const data=JSON.parse(readFileSync('public/data/case_a_kepler8b.json','utf8')) as LightCurveData;
++    const project={datasetId:data.manifest.id,datasetHash:data.manifest.canonicalDataSha256,datasetVersion:data.manifest.version};
++    expect(()=>assertDatasetMatchesProject(data,project)).not.toThrow();
++    data.points[0].flux+=.01;
++    expect(()=>assertDatasetMatchesProject(data,project)).toThrow(/do not match/);
++  });
++});
++
++describe('Exact offline build resources',()=>{
++  const manifest:OfflineManifest={schemaVersion:1,buildId:'1234567890abcdef',cacheName:'dimminglab-build-1234567890abcdef',assets:[
++    '/index.html','/offline-manifest.json',...['case_a_kepler8b','case_b_eclipsing_binary','case_c_single_dropout','case_d_injection'].map(id=>`/data/${id}.json`),
++    '/assets/index-current.js','/assets/index-current.css','/assets/searchWorker-current.js','/assets/search-current.js']};
++  it('requires all resource categories in a valid manifest',()=>{
++    expect(parseOfflineManifest(manifest)).toEqual(manifest);
++    expect(()=>parseOfflineManifest({...manifest,assets:manifest.assets.filter(p=>!p.includes('/assets/'))})).toThrow();
++  });
++  it('rejects a cache-name mismatch',()=>expect(()=>parseOfflineManifest({...manifest,cacheName:'dimminglab-old'})).toThrow());
++  it('does not accept old assets as a replacement for a missing current script',async()=>{
++    const present=new Set([...manifest.assets.filter(url=>url!=='/assets/index-current.js'),'/assets/index-old.js']);
++    const cache={match:async(input:RequestInfo|URL)=>present.has(String(input))?new Response('cached'):undefined} as Pick<Cache,'match'>;
++    expect(await missingOfflineAssets(cache,manifest)).toEqual(['/assets/index-current.js']);
++  });
++  it('accepts only the complete current pack',async()=>{
++    const cache={match:async()=>new Response('cached')} as Pick<Cache,'match'>;
++    expect(await missingOfflineAssets(cache,manifest)).toEqual([]);
++  });
++});
+--- a/vite.config.ts
++++ b/vite.config.ts
+@@ -1,103 +1,67 @@
+-import { defineConfig, Plugin } from 'vite';
++import { defineConfig, type Plugin } from 'vite';
+ import react from '@vitejs/plugin-react';
+-import fs from 'fs';
+-import path from 'path';
++import fs from 'node:fs';
++import path from 'node:path';
++import { createHash } from 'node:crypto';
+ 
+ function precachePlugin(): Plugin {
+   return {
+     name: 'sw-precache-manifest',
+     writeBundle(options, bundle) {
+-      const assetUrls = [
+-        '/',
+-        '/index.html',
+-        '/data/case_a_kepler8b.json',
+-        '/data/case_b_eclipsing_binary.json',
+-        '/data/case_c_single_dropout.json',
+-        '/data/case_d_injection.json',
+-      ];
+-
+-      for (const fileName of Object.keys(bundle)) {
+-        if (!fileName.endsWith('.map') && fileName !== 'sw.js') {
+-          assetUrls.push('/' + fileName);
+-        }
++      const datasets = ['case_a_kepler8b', 'case_b_eclipsing_binary', 'case_c_single_dropout', 'case_d_injection']
++        .map(id => `/data/${id}.json`);
++      const files = Object.keys(bundle).filter(name => !name.endsWith('.map') && name !== 'sw.js').sort();
++      const hash = createHash('sha256');
++      for (const name of files) {
++        const item = bundle[name];
++        hash.update(name).update(item.type === 'chunk' ? item.code : item.source);
+       }
+-
+-      const uniqueAssets = Array.from(new Set(assetUrls));
+-
+-      const swContent = `/**
+- * DimmingLab - Service Worker for Offline Classroom Support
+- * Auto-generated precache manifest containing all application bundles and scientific datasets.
+- */
+-
+-const CACHE_NAME = 'dimminglab-offline-v1';
+-const PRECACHE_ASSETS = ${JSON.stringify(uniqueAssets, null, 2)};
+-
+-self.addEventListener('install', (event) => {
+-  event.waitUntil(
+-    caches.open(CACHE_NAME).then((cache) => {
+-      return cache.addAll(PRECACHE_ASSETS);
+-    }).then(() => self.skipWaiting())
+-  );
++      for (const url of datasets) hash.update(fs.readFileSync(path.join('public', url.slice(1))));
++      const buildId = hash.digest('hex').slice(0, 16);
++      const assets = [...new Set(['/', '/index.html', '/offline-manifest.json', ...datasets, ...files.map(name => '/' + name)])];
++      const manifest = { schemaVersion: 1, buildId, cacheName: `dimminglab-build-${buildId}`, assets };
++      const outDir = options.dir || 'dist';
++      fs.writeFileSync(path.join(outDir, 'offline-manifest.json'), JSON.stringify(manifest, null, 2));
++      fs.writeFileSync(path.join(outDir, 'sw.js'), `// Generated atomically for build ${buildId}.
++const CACHE_NAME = ${JSON.stringify(manifest.cacheName)};
++const ASSETS = ${JSON.stringify(assets)};
++self.addEventListener('install', event => {
++  event.waitUntil(caches.open(CACHE_NAME).then(cache =>
++    cache.addAll(ASSETS.map(url => new Request(url, {cache: 'reload'})))
++  ).then(() => self.skipWaiting()));
+ });
+-
+-self.addEventListener('activate', (event) => {
+-  event.waitUntil(
+-    caches.keys().then((keys) => {
+-      return Promise.all(
+-        keys.map((key) => {
+-          if (key !== CACHE_NAME && key.startsWith('dimminglab-')) {
+-            return caches.delete(key);
+-          }
+-        })
+-      );
+-    }).then(() => self.clients.claim())
+-  );
++self.addEventListener('activate', event => {
++  // Retain the prior build's hashed resources for tabs already running that build.
++  event.waitUntil(caches.keys().then(keys => {
++    const previous = keys.filter(key => key.startsWith('dimminglab-build-') && key !== CACHE_NAME);
++    return Promise.all(previous.slice(0, Math.max(0, previous.length - 1)).map(key => caches.delete(key)));
++  }).then(() => self.clients.claim()));
+ });
+-
+-self.addEventListener('fetch', (event) => {
+-  if (event.request.method !== 'GET') return;
+-
++self.addEventListener('fetch', event => {
+   const url = new URL(event.request.url);
+-
+-  event.respondWith(
+-    caches.open(CACHE_NAME).then((cache) => {
+-      return cache.match(event.request, { ignoreVary: true }).then((cached) => {
+-        if (cached) return cached;
+-
+-        return cache.match(url.pathname, { ignoreVary: true }).then((pathMatch) => {
+-          if (pathMatch) return pathMatch;
+-
+-          return fetch(event.request).then((resp) => {
+-            if (resp && resp.status === 200) {
+-              cache.put(event.request, resp.clone());
+-            }
+-            return resp;
+-          }).catch(() => {
+-            if (event.request.mode === 'navigate') {
+-              return cache.match('/index.html', { ignoreVary: true }).then((html) => {
+-                return html || cache.match('/', { ignoreVary: true });
+-              });
+-            }
+-          });
+-        });
+-      });
+-    })
+-  );
++  if (event.request.method !== 'GET' || url.origin !== self.location.origin) return;
++  event.respondWith((async () => {
++    const cache = await caches.open(CACHE_NAME);
++    if (event.request.mode === 'navigate' || url.pathname === '/offline-manifest.json') {
++      try { const response = await fetch(event.request); if (response.ok) return response; } catch {}
++      return await cache.match(url.pathname === '/offline-manifest.json' ? '/offline-manifest.json' : '/index.html') || Response.error();
++    }
++    const cached = await cache.match(event.request);
++    if (cached) return cached;
++    if (url.pathname.startsWith('/assets/')) {
++      const previous = await caches.match(event.request);
++      if (previous) return previous;
++    }
++    try { return await fetch(event.request); } catch { return Response.error(); }
++  })());
+ });
+-`;
+-
+-      const outDir = options.dir || 'dist';
+-      fs.writeFileSync(path.join(outDir, 'sw.js'), swContent);
++`);
+     },
+   };
+ }
+ 
+ export default defineConfig({
+   plugins: [react(), precachePlugin()],
+-  worker: {
+-    format: 'es',
+-  },
+-  server: {
+-    port: 5173,
+-  },
++  worker: { format: 'es' },
++  server: { port: 5173 },
+ });

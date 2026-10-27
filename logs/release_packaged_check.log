@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "scope": "HTTP resources and generated service-worker API harness; not a live browser",
+  "buildId": "7fd91aabc720193f",
+  "assets": 11,
+  "offlineResourcesVerified": 11,
+  "crossOriginIgnored": true
+}

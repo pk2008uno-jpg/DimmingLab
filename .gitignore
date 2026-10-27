@@ -1,0 +1,6 @@
+node_modules
+dist
+test_kepler8.fits
+screenshot_library.png
+.DS_Store
+Thumbs.db

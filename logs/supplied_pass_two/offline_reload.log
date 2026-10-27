@@ -1,0 +1,42 @@
+=== Starting DimmingLab Real Offline Verification ===
+1. Loading app online in fresh browser context...
+   Waiting for Service Worker and offline pack readiness...
+   Service Worker registered, active, controller ready: true
+   Keys in cache before offline (10): [
+  'http://localhost:4173/',
+  'http://localhost:4173/index.html',
+  'http://localhost:4173/data/case_a_kepler8b.json',
+  'http://localhost:4173/data/case_b_eclipsing_binary.json',
+  'http://localhost:4173/data/case_c_single_dropout.json',
+  'http://localhost:4173/data/case_d_injection.json',
+  'http://localhost:4173/assets/index-DdMVv6k8.js',
+  'http://localhost:4173/assets/search-uvxffbkv.js',
+  'http://localhost:4173/assets/index-BWH97nAJ.css',
+  'http://localhost:4173/assets/searchWorker-D21eA_Np.js'
+]
+   Dynamic build asset cache match test: {
+  matched: true,
+  pathname: '/assets/index-DdMVv6k8.js',
+  matchExact: true,
+  matchPath: true,
+  matchReq: true
+}
+2. Disconnecting network (context.setOffline(true))...
+3. Performing full page reload while offline (page.reload())...
+   Current page URL after reload: http://localhost:4173/
+   Current HTML snippet: <!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22&gt;&lt;text y=%22.9em%22 font-size=%2290%22&gt;🪐&lt;/text&gt;&lt;/svg&gt;">
+    <meta name="vi
+   H1 after offline reload: DimmingLab — The Exoplanet Evidence Lab
+4. Opening Case A (Kepler-8 b) while completely offline...
+   Workspace H1 offline: Kepler-8 b: The Repeating Transit
+   Rendered 2 canvases offline.
+5. Adjusting period parameter and computing offline fit...
+   Repetition status offline: Repetition AssessmentMeasured
+6. Generating Evidence Report offline...
+   Report title offline: Scientific Evidence Report
+   Captured offline reload proof screenshot: docs/screenshots/offline_reload_verified.png
+7. Testing first-visit-without-cache behavior (cold offline)...
+   First visit without cache fails as expected (offline browser error): true
+=== REAL OFFLINE VERIFICATION COMPLETE: ALL CHECKS PASSED ===

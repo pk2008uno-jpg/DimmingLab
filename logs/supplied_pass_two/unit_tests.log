@@ -1,0 +1,54 @@
+
+> dimminglab@1.0.0 test
+> vitest run --run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90mD:/Congressional_App_Challenge[39m
+
+[90mstdout[2m | tests/hashes.test.ts[2m > [22m[2mData Hash Verification[2m > [22m[2mreproduces exact canonical SHA-256 hash for Case A (Kepler-8 b)
+[22m[39mCase A (Kepler-8 b) Canonical Hash: ba188e8782ff0be96198b66424302c17a4f68a7cc472b7b1a2e4778312c48bf8
+
+[90mstdout[2m | tests/hashes.test.ts[2m > [22m[2mData Hash Verification[2m > [22m[2mreproduces exact canonical SHA-256 hash for Case B (Eclipsing Binary)
+[22m[39mCase B (Eclipsing Binary) Canonical Hash: a374184d137bed94ed8b59421c7ca779a8ef098f1c838e78ea85feae72aadd0c
+
+ [32m✓[39m tests/engine.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+[90mstdout[2m | tests/case_c.test.ts[2m > [22m[2mCase C Real Fixture Test[2m > [22m[2mcorrectly assesses Case C as inconclusive repetition
+[22m[39mCase C fit depth: [33m0.002184558311650335[39m fitImprovement: [33m63.33667045431389[39m
+Events:
+Cycle -4: center=100, sampleCount=5, depth=-0.001105581308437964, err=0.0008049844718999242, sig=-1.3734194224002498, ev=flat_baseline
+Cycle -3: center=103.75, sampleCount=9, depth=0.0012041298026730374, err=0.0006000000000000001, sig=2.0068830044550623, ev=ambiguous_dip
+Cycle -2: center=107.5, sampleCount=0, depth=undefined, err=null, sig=null, ev=unobserved
+Cycle -1: center=111.25, sampleCount=0, depth=undefined, err=null, sig=null, ev=unobserved
+Cycle 0: center=115, sampleCount=8, depth=0.011142268691562096, err=0.0006363961030678928, sig=17.50838611023582, ev=dimming_detected
+Cycle 1: center=118.75, sampleCount=0, depth=undefined, err=null, sig=null, ev=unobserved
+Cycle 2: center=122.5, sampleCount=0, depth=undefined, err=null, sig=null, ev=unobserved
+Cycle 3: center=126.25, sampleCount=9, depth=0.0000177964693397481, err=0.0006000000000000001, sig=0.029660782232913498, ev=flat_baseline
+Cycle 4: center=130, sampleCount=0, depth=undefined, err=null, sig=null, ev=unobserved
+Cycle 5: center=133.75, sampleCount=0, depth=undefined, err=null, sig=null, ev=unobserved
+Cycle 6: center=137.5, sampleCount=0, depth=undefined, err=null, sig=null, ev=unobserved
+Cycle 7: center=141.25, sampleCount=9, depth=0.0005287964693396763, err=0.0006000000000000001, sig=0.8813274488994604, ev=flat_baseline
+Cycle 8: center=145, sampleCount=5, depth=-0.00021018130843808436, err=0.0008049844718999242, sig=-0.26109982959300376, ev=flat_baseline
+Repetition status: inconclusive
+Explanation: Caution: Only 1 single transit event has observations (cycle 0), while 4 other predicted windows were observed to be flat (7 fell in gaps). This evidence indicates a single transient event or instrumental dropout rather than a repeating 3.75-day orbit.
+
+[90mstdout[2m | tests/hashes.test.ts[2m > [22m[2mData Hash Verification[2m > [22m[2mreproduces exact canonical SHA-256 hash for Case C (Mono-Transit)
+[22m[39mCase C (Mono-Transit) Canonical Hash: d472c1dde4827b3d7ae5a5a7272a9fbc4e3548d39f4aa760c1d2b20d10adc12d
+
+ [32m✓[39m tests/case_c.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m tests/student_repetition.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+[90mstdout[2m | tests/hashes.test.ts[2m > [22m[2mData Hash Verification[2m > [22m[2mreproduces exact canonical SHA-256 hash for Case D (Injection)
+[22m[39mCase D (Injection) Canonical Hash: e0aa16ce1b07d26c9be4e728bdc549657db29df8a59de8c4807c51717ea6c7f8
+
+ [32m✓[39m tests/hashes.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 44[2mms[22m[39m
+ [32m✓[39m tests/project_roundtrip.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m tests/scientific_regressions.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 47[2mms[22m[39m
+ [32m✓[39m tests/search.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 53[2mms[22m[39m
+ [32m✓[39m tests/csv_project.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/controls.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+ [32m✓[39m tests/priority_regressions.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 54[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m10 passed[39m[22m[90m (10)[39m
+[2m      Tests [22m [1m[32m61 passed[39m[22m[90m (61)[39m
+[2m   Start at [22m 20:50:48
+[2m   Duration [22m 404ms[2m (import 37%, tests 37%, transform 15%, worker 10%)[22m
+

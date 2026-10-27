@@ -1,0 +1,14 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> dimminglab@1.0.0 test
+> vitest run
+
+
+ RUN  v5.0.5 /workspace/scratch/a0c0ccd88033/dimminglab_release_candidate
+
+
+ Test Files  11 passed (11)
+      Tests  78 passed (78)
+   Start at  20:25:08
+   Duration  871ms (transform 41%, tests 40%, import 16%, worker 4%)
+
